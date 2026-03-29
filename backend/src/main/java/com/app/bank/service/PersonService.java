@@ -21,9 +21,16 @@ public class PersonService {
         return userRepository.findAll();
     }
 
-    public void newUser(Person user) {
+    public boolean validateUser(Person user){
         if (user == null || user.getUserID() == null || user.getUserID().isBlank()
                 || user.getPassword() == null || user.getPassword().isBlank()) {
+            return false;
+        }
+        return true;
+    }
+
+    public void newUser(Person user) {
+        if (!validateUser(user)) {
             throw new BadRequestException("UserID and password are required.");
         }
         if (checkforUser(user.getUserID())) {
@@ -44,8 +51,7 @@ public class PersonService {
     }
 
     public boolean checkforUserPassword(Person user) {
-        if (user == null || user.getUserID() == null || user.getUserID().isBlank()
-                || user.getPassword() == null || user.getPassword().isBlank()) {
+         if (!validateUser(user)){
             return false;
         }
         Optional<Person> existingUser = userRepository.getUserByUserID(user.getUserID());

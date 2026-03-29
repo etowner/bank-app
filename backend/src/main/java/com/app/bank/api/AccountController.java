@@ -15,13 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.bank.exception.BadRequestException;
+import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.service.AccountService;
+
 
 @CrossOrigin("*")
 @RequestMapping("api/v1/user/{userID}")
 @RestController
-
 public class AccountController {
     @Autowired
     private AccountService accountServices;
@@ -34,19 +36,24 @@ public class AccountController {
 
     @GetMapping(path = "/{accountID}")
     public ResponseEntity<Account> getUserAccount(@PathVariable("accountID") int accountID) {
-        Account account = accountServices.getAccount(accountID);
-        return ResponseEntity.ok(account);
+        return accountServices.getAccount(accountID)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping(path = "/{type}")
     public ResponseEntity<String> openAccount(@PathVariable("userID") String userID,
             @PathVariable("type") String type) {
+        if (type == null || type.isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account type is required.");
+        }
         try {
             accountServices.newAccount(new Account(userID, type));
             return ResponseEntity.ok("Account opened successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error occurred during account opening.");
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
@@ -54,23 +61,24 @@ public class AccountController {
     public ResponseEntity<?> deposit(@PathVariable("accountID") int accountID, @RequestBody float amount) {
         try {
             accountServices.depositAmount(accountID, amount);
-            return new ResponseEntity<Account>(accountServices.getAccount(accountID), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<String>("Error while depositing amount: " + e.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return accountServices.getAccount(accountID)
+                    .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PutMapping(path = "{accountID}/withdraw")
-    public ResponseEntity<Account> withdraw(@PathVariable("accountID") int accountID,
+    public ResponseEntity<?> withdraw(@PathVariable("accountID") int accountID,
             @RequestBody float amount) {
         try {
             accountServices.withdrawAmount(accountID, amount);
-            return new ResponseEntity<Account>(accountServices.getAccount(accountID), HttpStatus.OK);
-
-        } catch (Exception e) {
-            return new ResponseEntity<Account>(accountServices.getAccount(accountID), HttpStatus.INTERNAL_SERVER_ERROR);
+            return accountServices.getAccount(accountID)
+                    .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -84,9 +92,10 @@ public class AccountController {
         try {
             accountServices.transfer(accountID1, accountID2, amount);
             return ResponseEntity.ok("Transfer successful.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred during transfer.");
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
@@ -95,8 +104,8 @@ public class AccountController {
         try {
             accountServices.deleteAccount(accountID);
             return ResponseEntity.ok("Account closed successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred.");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
@@ -105,8 +114,8 @@ public class AccountController {
         try {
             accountServices.deleteUserAccounts(userID);
             return ResponseEntity.ok("Accounts closed successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred.");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
