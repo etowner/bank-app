@@ -24,8 +24,6 @@ import com.app.bank.service.PersonService;
 @RestController
 public class PersonController {
 
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(PersonController.class.getName());
-
     @Autowired
     private PersonService personService;
 
@@ -57,7 +55,6 @@ public class PersonController {
             personService.newUser(user);
             return ResponseEntity.ok("Account created successfully.");
         } catch (Exception e) {
-            LOGGER.log(java.util.logging.Level.SEVERE, "Error occurred while creating account", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while creating the account.");
         }
