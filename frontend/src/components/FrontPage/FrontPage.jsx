@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row } from "react-bootstrap";
 import AccountBox from "./AccountBox";
-import "./FrontPage.css";
+import "../../styles/FrontPage.css";
 
 const FrontPage = () => {
 

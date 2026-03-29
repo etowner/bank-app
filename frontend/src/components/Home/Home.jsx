@@ -5,7 +5,7 @@ import { api } from "../../api/axiosConfig";
 import Transfer from "../Transactions/Transfer";
 import AccList from "./AccList";
 import Header from "./Header";
-import "./Home.css";
+import "../../styles/Home.css";
 import OpenAccount from "./OpenAccount";
 import PieChart from "./PieChart";
 import { UserContext } from "../../UserContext";
