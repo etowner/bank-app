@@ -4,7 +4,7 @@ import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
-import "../Home/Home.css";
+import "../../styles/Home.css";
 import Deposit from "../Transactions/Deposit";
 import Withdraw from "../Transactions/Withdraw";
 import CloseAccount from "./CloseAccount";
