@@ -1,6 +1,8 @@
 package com.app.bank.api;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,10 +23,9 @@ import com.app.bank.service.PersonService;
 @CrossOrigin("*")
 @RequestMapping("api/v1/user")
 @RestController
-
 public class PersonController {
 
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(PersonController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PersonController.class.getName());
 
     @Autowired
     private PersonService personService;
@@ -40,21 +41,23 @@ public class PersonController {
 
     @GetMapping(path = "/{userID}")
     public ResponseEntity<Person> getUser(@PathVariable String userID) {
-        Person user = personService.getUser(userID);
-        return ResponseEntity.ok(user);
+        Optional<Person> user = personService.getUser(userID);
+        return user.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> createAccount(@RequestBody Person user) {
+        if (personService.validateUser(user) == false) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
+        }
+        if (personService.checkforUser(user)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Account already exists.");
+        }
         try {
-            if (personService.checkforUser(user)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Account already exists.");
-            } else {
-                personService.newUser(user);
-                return ResponseEntity.ok("Account created successfully.");
-            }
+            personService.newUser(user);
+            return ResponseEntity.ok("Account created successfully.");
         } catch (Exception e) {
-            LOGGER.log(java.util.logging.Level.SEVERE, "Error occurred while creating account", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while creating the account.");
         }
@@ -62,11 +65,14 @@ public class PersonController {
 
     @PostMapping("/login")
     public ResponseEntity<String> logIn(@RequestBody Person user) {
+        if (personService.validateUser(user) == false) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
+        }
         if (personService.checkforUser(user) && personService.checkforUserPassword(user)) {
             return ResponseEntity.ok("Logged in");
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Either incorrect UserID or incorrect password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Incorrect UserID or password.");
         }
     }
 
@@ -76,6 +82,10 @@ public class PersonController {
             personService.deleteUser(userID);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (Exception e) {
+            LOGGER.warning("Error deleting user with ID " + userID + ": " + e.getMessage());
+            if (e instanceof com.app.bank.exception.ResourceNotFoundException) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
+            }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred");
         }
     }
