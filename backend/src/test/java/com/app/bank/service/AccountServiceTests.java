@@ -1,10 +1,8 @@
 package com.app.bank.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -13,7 +11,6 @@ import java.util.Optional;
 
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
-import com.app.bank.model.Person;
 import com.app.bank.model.Account;
 import com.app.bank.repo.AccountRepository;
 
@@ -40,12 +37,10 @@ public class AccountServiceTests {
     @Mock
     private MongoTemplate mongoTemplate;
 
-    private Person validUser;
     private Account validAccount;
 
     @BeforeEach
     public void setUp() {
-        validUser = new Person("testUser", "testPass");
         validAccount = new Account("testUser", "Checking"); 
     }
 
