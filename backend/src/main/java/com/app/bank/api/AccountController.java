@@ -51,9 +51,9 @@ public class AccountController {
             accountServices.newAccount(new Account(userID, type));
             return ResponseEntity.ok("Account opened successfully.");
         } catch (BadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid account request.");
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         }
     }
 
@@ -65,7 +65,7 @@ public class AccountController {
                     .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (BadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid deposit request.");
         }
     }
 
