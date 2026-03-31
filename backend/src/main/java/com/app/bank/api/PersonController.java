@@ -2,6 +2,7 @@ package com.app.bank.api;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,8 @@ import com.app.bank.service.PersonService;
 @RequestMapping("api/v1/user")
 @RestController
 public class PersonController {
+
+    private static final Logger LOGGER = Logger.getLogger(PersonController.class.getName());
 
     @Autowired
     private PersonService personService;
@@ -79,8 +82,9 @@ public class PersonController {
             personService.deleteUser(userID);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (Exception e) {
+            LOGGER.warning("Error deleting user with ID " + userID + ": " + e.getMessage());
             if (e instanceof com.app.bank.exception.ResourceNotFoundException) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred");
         }
