@@ -78,7 +78,7 @@ public class AccountController {
                     .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (BadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid withdrawal request.");
         }
     }
 
@@ -93,9 +93,9 @@ public class AccountController {
             accountServices.transfer(accountID1, accountID2, amount);
             return ResponseEntity.ok("Transfer successful.");
         } catch (BadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid transfer request.");
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
         }
     }
 
@@ -105,7 +105,7 @@ public class AccountController {
             accountServices.deleteAccount(accountID);
             return ResponseEntity.ok("Account closed successfully.");
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
         }
     }
 
@@ -115,7 +115,7 @@ public class AccountController {
             accountServices.deleteUserAccounts(userID);
             return ResponseEntity.ok("Accounts closed successfully");
         } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User accounts not found.");
         }
     }
 
