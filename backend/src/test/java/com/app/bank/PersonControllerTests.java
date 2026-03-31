@@ -1,0 +1,126 @@
+package com.app.bank;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Optional;
+
+import com.app.bank.api.PersonController;
+import com.app.bank.exception.ResourceNotFoundException;
+import com.app.bank.model.Person;
+import com.app.bank.service.AccountService;
+import com.app.bank.service.PersonService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.actuate.endpoint.Show;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(PersonController.class)
+public class PersonControllerTests {
+
+    @Autowired
+    private MockMvc mvc;
+
+    @MockitoBean
+    private PersonService personService;
+    
+    @MockitoBean
+    private AccountService accountService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Test
+    public void getUser_returnsUser_whenFound() throws Exception {
+        Person user = new Person("testUser", "testPass");
+        when(personService.getUser("testUser")).thenReturn(Optional.of(user));
+
+        mvc.perform(get("/api/v1/user/testUser").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userID").value("testUser"))
+                .andExpect(jsonPath("$.password").value("testPass"));
+    }
+
+
+    @Test
+    public void register_returnsBadRequest_whenPayloadMissingFields() throws Exception {
+        Person user = new Person("", "password");
+        mvc.perform(post("/api/v1/user/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void login_returnsBadRequest_whenPayloadMissingFields() throws Exception {
+        Person user = new Person("testUser", "");
+        mvc.perform(post("/api/v1/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isBadRequest());
+    }
+
+   @Test
+    public void login_returnsUnauthorized_whenUserNotFound() throws Exception {
+        Person user = new Person("testUser", "wrongPass");
+        when(personService.validateUser(any(Person.class))).thenReturn(true);
+        when(personService.checkforUser(any(Person.class))).thenReturn(false); // doesn't exist in repo
+
+        mvc.perform(post("/api/v1/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void login_returnsUnauthorized_whenPasswordIncorrect() throws Exception {
+        Person user = new Person("testUser", "wrongPass");
+        when(personService.validateUser(any(Person.class))).thenReturn(true);
+        when(personService.checkforUser(any(Person.class))).thenReturn(true);   // exists
+        when(personService.checkforUserPassword(any(Person.class))).thenReturn(false); // wrong password
+
+        mvc.perform(post("/api/v1/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    public void login_returnsOk_whenCredentialsValid() throws Exception {
+        Person user = new Person("testUser", "testPass");
+        when(personService.validateUser(any(Person.class))).thenReturn(true);
+        when(personService.checkforUser(any(Person.class))).thenReturn(true);
+        when(personService.checkforUserPassword(any(Person.class))).thenReturn(true);
+
+        mvc.perform(post("/api/v1/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void deleteUser_returnsNotFound_whenUserMissing() throws Exception {
+        doThrow(new ResourceNotFoundException("User not found.")).when(personService).deleteUser("missingUser");
+
+        mvc.perform(delete("/api/v1/user/missingUser").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void deleteUser_returnsOk_whenUserExists() throws Exception {
+        mvc.perform(delete("/api/v1/user/testUser").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+}

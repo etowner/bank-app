@@ -45,7 +45,7 @@ public class PersonController {
 
     @PostMapping("/register")
     public ResponseEntity<String> createAccount(@RequestBody Person user) {
-        if (!personService.validateUser(user)) {
+        if (personService.validateUser(user) == false) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
         if (personService.checkforUser(user)) {
@@ -62,7 +62,7 @@ public class PersonController {
 
     @PostMapping("/login")
     public ResponseEntity<String> logIn(@RequestBody Person user) {
-        if (!personService.validateUser(user)) {
+        if (personService.validateUser(user) == false) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
         if (personService.checkforUser(user) && personService.checkforUserPassword(user)) {
