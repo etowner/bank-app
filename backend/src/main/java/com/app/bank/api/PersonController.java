@@ -2,11 +2,14 @@ package com.app.bank.api;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
+// import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,13 +28,19 @@ import com.app.bank.service.PersonService;
 @RestController
 public class PersonController {
 
-    private static final Logger LOGGER = Logger.getLogger(PersonController.class.getName());
+    // private static final Logger LOGGER = Logger.getLogger(PersonController.class.getName());
 
     @Autowired
     private PersonService personService;
 
     @Autowired
     private AccountService accountService;
+
+    private AuthenticationManager authenticationManager;
+
+    public PersonController(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
     @GetMapping
     public ResponseEntity<List<Person>> getAllUsers() {
@@ -65,15 +74,17 @@ public class PersonController {
 
     @PostMapping("/login")
     public ResponseEntity<String> logIn(@RequestBody Person user) {
-        if (personService.validateUser(user) == false) {
+        if (!personService.validateUser(user)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
-        if (personService.checkforUser(user) && personService.checkforUserPassword(user)) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
             return ResponseEntity.ok("Logged in");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Incorrect UserID or password.");
+        } catch (AuthenticationException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect UserID or password.");
         }
+        
     }
 
     @DeleteMapping(path = "/{userID}")
@@ -82,7 +93,6 @@ public class PersonController {
             personService.deleteUser(userID);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (Exception e) {
-            LOGGER.warning("Error deleting user with ID " + userID + ": " + e.getMessage());
             if (e instanceof com.app.bank.exception.ResourceNotFoundException) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
             }

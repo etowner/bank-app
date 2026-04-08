@@ -23,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(PersonController.class)
@@ -36,6 +39,9 @@ public class PersonControllerTests {
     
     @MockitoBean
     private AccountService accountService;
+
+    @MockitoBean
+    private AuthenticationManager authenticationManager;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -73,7 +79,8 @@ public class PersonControllerTests {
     public void login_returnsUnauthorized_whenUserNotFound() throws Exception {
         Person user = new Person("testUser", "wrongPass");
         when(personService.validateUser(any(Person.class))).thenReturn(true);
-        when(personService.checkforUser(any(Person.class))).thenReturn(false); // doesn't exist in repo
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+            .thenThrow(new BadCredentialsException("Bad credentials"));
 
         mvc.perform(post("/api/v1/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -85,8 +92,8 @@ public class PersonControllerTests {
     public void login_returnsUnauthorized_whenPasswordIncorrect() throws Exception {
         Person user = new Person("testUser", "wrongPass");
         when(personService.validateUser(any(Person.class))).thenReturn(true);
-        when(personService.checkforUser(any(Person.class))).thenReturn(true);   // exists
-        when(personService.checkforUserPassword(any(Person.class))).thenReturn(false); // wrong password
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+            .thenThrow(new BadCredentialsException("Bad credentials"));
 
         mvc.perform(post("/api/v1/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -99,8 +106,8 @@ public class PersonControllerTests {
     public void login_returnsOk_whenCredentialsValid() throws Exception {
         Person user = new Person("testUser", "testPass");
         when(personService.validateUser(any(Person.class))).thenReturn(true);
-        when(personService.checkforUser(any(Person.class))).thenReturn(true);
-        when(personService.checkforUserPassword(any(Person.class))).thenReturn(true);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+            .thenReturn(new UsernamePasswordAuthenticationToken("testUser", null));
 
         mvc.perform(post("/api/v1/user/login")
                 .contentType(MediaType.APPLICATION_JSON)

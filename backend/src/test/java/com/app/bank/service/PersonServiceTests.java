@@ -3,6 +3,7 @@ package com.app.bank.service;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,12 +21,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 public class PersonServiceTests {
 
     @Mock
     private PersonRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private PersonService personService;
@@ -59,10 +64,11 @@ public class PersonServiceTests {
     @Test
     public void newUser_shouldInsertUser_whenValid() {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
+        when(passwordEncoder.encode("testPass")).thenReturn("encodedPass");
 
         personService.newUser(validUser);
 
-        verify(userRepository).insert(validUser);
+        verify(userRepository).insert(any(Person.class));
     }
 
     @Test
@@ -92,6 +98,7 @@ public class PersonServiceTests {
     @Test
     public void checkforUserPassword_shouldReturnTrue_whenPasswordMatches() {
         when(userRepository.getUserByUserID(validUser.getUserID())).thenReturn(Optional.of(validUser));
+        when(passwordEncoder.matches("testPass", "testPass")).thenReturn(true);
 
         assertTrue(personService.checkforUserPassword(validUser));
     }
