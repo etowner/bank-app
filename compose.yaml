@@ -13,15 +13,16 @@ services:
     build: ./frontend
     restart: always
     ports:
-     - 5173:8080
+      - 5173:5173
     depends_on:
       - backend
     develop:
       watch:
-        # - path: ./frontend/package.json
-        #   action: rebuild
+        - action: rebuild
+          path: ./frontend/package.json
+         
         - path: ./frontend/src
-          target: /frontend/src
+          target: /usr/src/app/src
           action: sync
           ignore:
             - node_modules
@@ -40,7 +41,7 @@ services:
       - ./application.properties:/backend/src/main/resources/application.properties
     depends_on:
       db:
-        condition: service_healthy 
+        condition: service_started
     develop:
       watch:
         - path: ./backend/pom.xml
