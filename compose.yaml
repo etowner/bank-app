@@ -20,7 +20,6 @@ services:
       watch:
         - action: rebuild
           path: ./frontend/package.json
-         
         - path: ./frontend/src
           target: /usr/src/app/src
           action: sync
@@ -35,13 +34,7 @@ services:
     restart: always
     ports:
       - 8080:8080
-    env_file: 
-      - .env
-    volumes:
-      - ./application.properties:/backend/src/main/resources/application.properties
-    depends_on:
-      db:
-        condition: service_started
+    env_file: .env
     develop:
       watch:
         - path: ./backend/pom.xml
@@ -49,16 +42,3 @@ services:
         - path: ./backend/src
           target: /backend/src
           action: sync
-
-  db:
-    image: mongo:latest
-    restart: always
-    env_file:
-      - .env
-    volumes:
-      - mongo-data:/data
-  
-volumes:
-  mongo-data:
-
-   
