@@ -20,11 +20,11 @@ services:
       watch:
         - action: rebuild
           path: ./frontend/package.json
-        - path: ./frontend/src
-          target: /usr/src/app/src
-          action: sync
+        - action: sync
+          path: ./frontend
+          target: /usr/src/app
           ignore:
-            - node_modules
+            - node_modules/
       
 
   backend:
@@ -37,8 +37,5 @@ services:
     env_file: .env
     develop:
       watch:
-        - path: ./backend/pom.xml
-          action: rebuild
-        - path: ./backend/src
-          target: /backend/src
-          action: sync
+        - action: rebuild 
+          path: ./backend/pom.xml
