@@ -33,7 +33,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 # Create a development runtime stage.
 FROM base AS final
 
-# Use production node environment by default.
+# Use development node environment by default.
 ENV NODE_ENV development
 ENV HOST 0.0.0.0
 ENV PORT 5173
