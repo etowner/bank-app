@@ -1,0 +1,41 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "app".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+ 
+  frontend:
+    build: ./frontend
+    restart: always
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend
+    develop:
+      watch:
+        - action: rebuild
+          path: ./frontend/package.json
+        - action: sync
+          path: ./frontend
+          target: /usr/src/app
+          ignore:
+            - node_modules/
+      
+
+  backend:
+    build: 
+      context: ./backend
+      target: development
+    restart: always
+    ports:
+      - 8080:8080
+    env_file: .env
+    develop:
+      watch:
+        - action: rebuild 
+          path: ./backend/pom.xml
