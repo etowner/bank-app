@@ -26,7 +26,7 @@ export const UserContextProvider = ({ children }) => {
       const response = await api.post(`/api/v1/user/login`, { userID, password });
       console.log(response.data); // response.data is a string 
       await getUser(userID); 
-      setError(null); 
+      setError(null);
       navigate(`/home/${userID}`);
     } catch (err) {
       setError("Either the username or password was incorrect.");

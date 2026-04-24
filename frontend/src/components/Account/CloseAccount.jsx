@@ -14,9 +14,7 @@ export default function DeleteAccount() {
     event.preventDefault();
     api
       .delete(`/api/v1/user/${userID}/${accountID}/close`)
-      .then((response) => {
-        console.log(response.data);
-      })
+      .then((response) => {})
       .catch((error) => {
         console.error(error);
       });

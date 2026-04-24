@@ -17,7 +17,8 @@ public class PersonService {
 
     @Autowired
     private PersonRepository userRepository;
-  
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public List<Person> getAllUsers() {

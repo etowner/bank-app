@@ -25,7 +25,7 @@ const Home = () => {
     }
     try {
       const response = await api.post(`/api/v1/user/${userID}/${type}`);
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -34,9 +34,11 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getUser(userID);
+    if (!user?.userID || user.userID !== userID) {
+      getUser(userID);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userID]);
+  }, [userID, user?.userID]);
   
 
 
