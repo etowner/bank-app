@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 import java.util.Optional;
 
 import com.app.bank.api.PersonController;
@@ -52,8 +53,8 @@ public class PersonControllerTests {
 
         mvc.perform(get("/api/v1/user/testUser").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userID").value("testUser"))
-                .andExpect(jsonPath("$.password").value("testPass"));
+            .andExpect(jsonPath("$.userID").value("testUser"))
+            .andExpect(jsonPath("$.password").doesNotExist());
     }
 
 

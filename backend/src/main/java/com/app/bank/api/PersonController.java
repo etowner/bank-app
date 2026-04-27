@@ -1,15 +1,20 @@
 package com.app.bank.api;
 
-import java.util.List;
 import java.util.Optional;
-// import java.util.logging.Logger;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +33,8 @@ import com.app.bank.service.PersonService;
 @RestController
 public class PersonController {
 
-    // private static final Logger LOGGER = Logger.getLogger(PersonController.class.getName());
+    private record PersonResponse(String userID, int numOfAccounts) {
+    }
 
     @Autowired
     private PersonService personService;
@@ -36,28 +42,34 @@ public class PersonController {
     @Autowired
     private AccountService accountService;
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
     public PersonController(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
     @GetMapping
-    public ResponseEntity<List<Person>> getAllUsers() {
-        List<Person> users = personService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<PersonResponse> getCurrentUser(@AuthenticationPrincipal Object principal) {
+        if (!(principal instanceof UserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Optional<Person> user = personService.getUser(userDetails.getUsername());
+        return user.map(this::toPersonResponse)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @GetMapping(path = "/{userID}")
-    public ResponseEntity<Person> getUser(@PathVariable String userID) {
+    public ResponseEntity<PersonResponse> getUser(@PathVariable String userID) {
         Optional<Person> user = personService.getUser(userID);
-        return user.map(ResponseEntity::ok)
+        return user.map(this::toPersonResponse)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> createAccount(@RequestBody Person user) {
-        if (personService.validateUser(user) == false) {
+    public ResponseEntity<String> createAccount(@RequestBody Person user, HttpServletRequest request) {
+        if (!personService.validateUser(user)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
         if (personService.checkforUser(user)) {
@@ -65,6 +77,9 @@ public class PersonController {
         }
         try {
             personService.newUser(user);
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
+            storeAuthentication(authentication, request);
             return ResponseEntity.ok("Account created successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -73,18 +88,30 @@ public class PersonController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> logIn(@RequestBody Person user) {
+    public ResponseEntity<String> logIn(@RequestBody Person user, HttpServletRequest request) {
         if (!personService.validateUser(user)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
+            storeAuthentication(authentication, request);
             return ResponseEntity.ok("Logged in");
         } catch (AuthenticationException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect UserID or password.");
         }
-        
+    }
+
+    private void storeAuthentication(Authentication authentication, HttpServletRequest request) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+        request.getSession(true)
+                .setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+    }
+
+    private PersonResponse toPersonResponse(Person person) {
+        return new PersonResponse(person.getUserID(), person.getNumOfAccounts());
     }
 
     @DeleteMapping(path = "/{userID}")
