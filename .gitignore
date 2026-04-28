@@ -56,5 +56,6 @@ yarn-error.log*
 
 ### VS Code ###
 .vscode/
+plan.md
 
-Dockerfile(BuildKit)
+backend/src/main/java/com/app/bank/admin.java

@@ -12,7 +12,7 @@ import { UserContext } from "../../UserContext";
 
 const Home = () => {
   const { user, getUser } = useContext(UserContext)
-  const { userID } = useParams(); // This is the userID from the URL
+  //const { userID } = useParams(); // This is the userID from the URL
   const [password, setPassword] = useState();
   const [accList, setAccList] = useState([]);
   const [error, setError] = useState();
@@ -24,21 +24,23 @@ const Home = () => {
       return;
     }
     try {
-      const response = await api.post(`/api/v1/user/${userID}/${type}`);
-      // console.log(response.data);
+      const response = await api.post(`/api/v1/user/${user.userID}/${type}`);
+      // console.log("Opened account:", response.data);
     } catch (error) {
       console.error(error);
     }
 
-    getUser(userID); 
+    getUser(); 
   };
 
   useEffect(() => {
-    if (!user?.userID || user.userID !== userID) {
-      getUser(userID);
-    }
+    getUser();
+    // if (!user?.userID) {
+    //   getUser(userID);
+    // }
+    // console.log("Home useEffect user:", user);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userID, user?.userID]);
+  }, [user.userID]);
   
 
 
@@ -57,17 +59,17 @@ const Home = () => {
 
   return (
     <div className="Home">
-      <Header userID={userID} password={password} />
+      <Header userID={user.userID} password={password} />
       <Container>
         <Row className="mb-5">
-          <h2>Welcome {userID}</h2>
+          <h2>Welcome {user.userID}</h2>
         </Row>
         <Row xs={1} md={2} lg={2} className="g-4">
           {/* Lists Accounts and provides open account options */}
           <Col key={1}>
             <Card border="dark">
-              <AccList userID={userID} accList={accList} />
-              <OpenAccount userID={userID} openAcc={openAcc} setError={setError} />
+              <AccList userID={user.userID} accList={accList} />
+              <OpenAccount userID={user.userID} openAcc={openAcc} setError={setError} />
               {error && <Alert className="" variant="danger">{error}</Alert>}
             </Card>
           </Col>

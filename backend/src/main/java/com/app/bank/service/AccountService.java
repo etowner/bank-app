@@ -127,8 +127,6 @@ public class AccountService {
         accountRepository.save(account2);
     }
 
-    public void deleteAll() {
-        accountRepository.deleteAll();
-    }
+    
 
 }

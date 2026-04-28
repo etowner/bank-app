@@ -24,6 +24,7 @@ const Account = () => {
   };
 
   function CustomToggle({ children, eventKey }) {
+    const decoratedOnClick = useAccordionButton(eventKey, onclick);
 
     return (
       <Button variant="dark" onClick={decoratedOnClick} className="mb-3">

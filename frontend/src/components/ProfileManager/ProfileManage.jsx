@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button, Modal, Offcanvas, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
+import { UserContext } from "../../UserContext";
 
 export default function ProfileManage({ userID, password, ...props }) {
+  const { user } = useContext(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -18,9 +20,13 @@ export default function ProfileManage({ userID, password, ...props }) {
 
   const navigate = useNavigate();
 
-  const handleLogOut = (event) => {
-    event.preventDefault();
-    navigate("/");
+  const handleLogOut = async() => {
+    try {
+      await api.post('/logout');
+      navigate('/');
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
   };
 
   const handleYes = (event) => {

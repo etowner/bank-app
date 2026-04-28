@@ -1,6 +1,6 @@
 package com.app.bank.api;
 
-import java.util.Optional;
+import java.util.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.bank.model.Person;
+import com.app.bank.model.Account;
 import com.app.bank.service.AccountService;
 import com.app.bank.service.PersonService;
 
@@ -33,7 +34,7 @@ import com.app.bank.service.PersonService;
 @RestController
 public class PersonController {
 
-    private record PersonResponse(String userID, int numOfAccounts) {
+    private record PersonResponse(String userID, List<Account> accountList, int numOfAccounts) {
     }
 
     @Autowired
@@ -46,6 +47,17 @@ public class PersonController {
 
     public PersonController(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+    }
+
+    private void storeAuthentication(Authentication authentication, HttpServletRequest request) {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+        request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+    }
+
+    private PersonResponse toPersonResponse(Person person) {
+        return new PersonResponse(person.getUserID(), person.getAccountList(), person.getNumOfAccounts());
     }
 
     @GetMapping
@@ -102,22 +114,11 @@ public class PersonController {
         }
     }
 
-    private void storeAuthentication(Authentication authentication, HttpServletRequest request) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-        request.getSession(true)
-                .setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-    }
-
-    private PersonResponse toPersonResponse(Person person) {
-        return new PersonResponse(person.getUserID(), person.getNumOfAccounts());
-    }
-
     @DeleteMapping(path = "/{userID}")
     public ResponseEntity<String> delete(@PathVariable String userID) {
         try {
             personService.deleteUser(userID);
+            accountService.deleteUserAccounts(userID);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (Exception e) {
             if (e instanceof com.app.bank.exception.ResourceNotFoundException) {
@@ -127,10 +128,6 @@ public class PersonController {
         }
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> erase() {
-        personService.deleteAllUsers();
-        accountService.deleteAll();
-        return ResponseEntity.ok("All accounts deleted successfully");
-    }
+
+
 }

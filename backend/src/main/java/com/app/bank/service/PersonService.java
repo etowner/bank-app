@@ -78,8 +78,6 @@ public class PersonService {
         userRepository.delete(user.get());
     }
 
-    public void deleteAllUsers() {
-        userRepository.deleteAll();
-    }
+    
 
 }

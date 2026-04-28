@@ -19,6 +19,9 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.app.bank.service.DatabaseUserDetailsService;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
@@ -54,8 +57,14 @@ public class SecurityConfig {
             .requestMatchers("/api/v1/user/login").permitAll()
             .requestMatchers("/api/v1/user/register").permitAll()
             .anyRequest().authenticated()
-        )
-        .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+        ).logout(logout -> logout // Need custom logout handler to avoid redirecting to a nonexistent login page 
+            .logoutUrl("/logout")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+            .logoutSuccessHandler((request, response, authentication) -> {
+                response.setStatus(HttpServletResponse.SC_OK);  
+            })
+        ).exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
         return http.build();
     }
 
