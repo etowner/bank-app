@@ -12,14 +12,14 @@ export default function DeleteAccount({ userID }) {
   const handleYes = (event) => {
     event.preventDefault();
     api
-      .delete(`/api/v1/user/${userID}/closeAll`)
+      .delete(`/api/v1/account/closeAll`)
       .catch((error) => {
         console.error(error);
         setShowD(false);
       });
 
     api
-      .delete(`/api/v1/user/${userID}`)
+      .delete(`/api/v1/user`)
       .catch((error) => {
         console.error(error);
         setShowD(false);

@@ -21,7 +21,6 @@ import com.app.bank.service.PersonService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,7 +49,7 @@ public class AccountControllerTests {
     public void getUserAccounts_returnsList() throws Exception {
         when(accountService.getUserAccounts("testUser")).thenReturn(List.of(validAccount));
 
-        mvc.perform(get("/api/v1/user/testUser/accounts").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/v1/account/my-accounts").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].userID").value("testUser"))
                 .andExpect(jsonPath("$[0].type").value("Checking"));
@@ -59,13 +58,13 @@ public class AccountControllerTests {
     @Test
     public void getUserAccount_returnsNotFound_whenMissing() throws Exception {
         when(accountService.getAccount(1234)).thenReturn(Optional.empty());
-        mvc.perform(get("/api/v1/user/testUser/1234").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/v1/account/1234").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void openAccount_returnsOk_whenValid() throws Exception {
-        mvc.perform(post("/api/v1/user/testUser/Savings").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(post("/api/v1/account/Savings").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 

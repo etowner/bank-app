@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,9 +9,11 @@ import Deposit from "../Transactions/Deposit";
 import Withdraw from "../Transactions/Withdraw";
 import CloseAccount from "./CloseAccount";
 import LineChart from "./LineChart"
+import { UserContext } from "../../UserContext";
 
 const Account = () => {
-  const { accountID, userID } = useParams();
+  const { userID } = useContext(UserContext) 
+  const { accountID } = useParams();
   const [account, setAccount] = useState([]);
   const [type, setType] = useState("");
   const [balance, setBalance] = useState();
@@ -41,7 +43,7 @@ const Account = () => {
   // Fetch account data
   useEffect(() => {
     api
-      .get(`/api/v1/user/${userID}/${accountID}`)
+      .get(`/api/v1/account/${accountID}`)
       .then((response) => {
         setAccount(response.data);
       })

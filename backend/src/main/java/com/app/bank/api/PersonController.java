@@ -18,7 +18,6 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,14 +33,14 @@ import com.app.bank.service.PersonService;
 @RestController
 public class PersonController {
 
-    private record PersonResponse(String userID, List<Account> accountList, int numOfAccounts) {
-    }
-
     @Autowired
     private PersonService personService;
 
     @Autowired
     private AccountService accountService;
+
+    private record PersonResponse(String userID, List<Account> accountList, int numOfAccounts) {
+    }
 
     private final AuthenticationManager authenticationManager;
 
@@ -71,14 +70,6 @@ public class PersonController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @GetMapping(path = "/{userID}")
-    public ResponseEntity<PersonResponse> getUser(@PathVariable String userID) {
-        Optional<Person> user = personService.getUser(userID);
-        return user.map(this::toPersonResponse)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    }
-
     @PostMapping("/register")
     public ResponseEntity<String> createAccount(@RequestBody Person user, HttpServletRequest request) {
         if (!personService.validateUser(user)) {
@@ -90,12 +81,11 @@ public class PersonController {
         try {
             personService.newUser(user);
             Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
             storeAuthentication(authentication, request);
             return ResponseEntity.ok("Account created successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while creating the account.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while creating the account.");
         }
     }
 
@@ -114,9 +104,13 @@ public class PersonController {
         }
     }
 
-    @DeleteMapping(path = "/{userID}")
-    public ResponseEntity<String> delete(@PathVariable String userID) {
+    @DeleteMapping
+    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal Object principal) {
+        if (!(principal instanceof UserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
+            String userID = userDetails.getUsername();
             personService.deleteUser(userID);
             accountService.deleteUserAccounts(userID);
             return ResponseEntity.ok("Account deleted successfully");
@@ -128,6 +122,6 @@ public class PersonController {
         }
     }
 
-
+    
 
 }

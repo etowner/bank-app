@@ -56,9 +56,9 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
- 
+  const userID = user.userID; // Extract userID from user object for easier access
   return (
-    <UserContext.Provider value={{ user, setUser, login, register, getUser, error }}>
+    <UserContext.Provider value={{ user, userID, setUser, getUser,login, register, error }}>
       {children}
     </UserContext.Provider>
   );

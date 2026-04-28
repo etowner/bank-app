@@ -12,7 +12,7 @@ function App() {
         <Routes>
           <Route path="/" element={<FrontPage />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/:userID/:accountID" element={<Account />} />
+          <Route path="/:accountID" element={<Account />} />
         </Routes>
       </UserContextProvider>
     </div>

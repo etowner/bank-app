@@ -21,7 +21,7 @@ export default function Deposit(props) {
     const depositAmount = parseFloat(amount);
     setLoading(true);
     api
-      .put(`/api/v1/user/${userID}/${accountID}/deposit`, depositAmount, {
+      .put(`/api/v1/account/${accountID}/deposit`, depositAmount, {
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {

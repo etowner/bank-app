@@ -32,14 +32,14 @@ export default function ProfileManage({ userID, password, ...props }) {
   const handleYes = (event) => {
     event.preventDefault();
     api
-      .delete(`/api/v1/user/${userID}/deleteAll`)
+      .delete(`/api/v1/account/deleteAll`)
       .catch((error) => {
         console.error(error);
         setShowD(false);
       });
 
     api
-      .delete(`/api/v1/user/${userID}`)
+      .delete(`/api/v1/user`)
       .catch((error) => {
         console.error(error);
         setShowD(false);

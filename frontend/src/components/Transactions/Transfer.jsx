@@ -26,7 +26,7 @@ export default function Transfer() {
 
     api
       .put(
-        `/api/v1/user/${userID}/${accountID1}/${accountID2}`,
+        `/api/v1/account/${accountID1}/${accountID2}`,
         transferAmmount,
         { headers: { "Content-Type": "application/json" } }
       )

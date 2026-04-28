@@ -52,6 +52,7 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         .authorizeHttpRequests(auth -> auth
+            // Allow preflight CORS requests without authentication
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             // Allow unauthenticated access to login and register endpoints
             .requestMatchers("/api/v1/user/login").permitAll()
@@ -80,11 +81,4 @@ public class SecurityConfig {
         return new ProviderManager(provider);
     }
 
-    // Catches and logs authentication events, including failures, for better debugging and monitoring.
-    // @Bean
-    // public AuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-    //     DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
-    //     authenticationEventPublisher.setDefaultAuthenticationFailureEvent(AbstractAuthenticationFailureEvent.class);
-    //     return authenticationEventPublisher;
-    // }
 }

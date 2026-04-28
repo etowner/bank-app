@@ -3,6 +3,7 @@ package com.app.bank.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.lang.Exception;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -30,10 +31,13 @@ public class AccountService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public List<Account> getAccounts() {
-        return accountRepository.findAll();
+    public void verifyOwnership(int accountID, String userID) throws Exception {
+        Account account = getAccount(accountID).get();
+        if (!account.getUserID().equals(userID)) {
+            throw new Exception("You do not own this account.");
+        }
     }
-
+    
     public List<Account> getUserAccounts(String userID) {
         if (!personService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
