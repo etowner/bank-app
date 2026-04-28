@@ -20,7 +20,7 @@ const Account = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/Home/${userID}`);
+    navigate(`/home`);
   };
 
   function CustomToggle({ children, eventKey }) {

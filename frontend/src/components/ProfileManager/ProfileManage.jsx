@@ -20,20 +20,19 @@ export default function ProfileManage({ userID, password, ...props }) {
 
   const navigate = useNavigate();
 
-  const handleLogOut = async() => {
-    try {
-      await api.post('/logout');
+  const handleLogOut = (event) => {
+    event.preventDefault();
+    api.post('/logout').then(() => {
       navigate('/');
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
+    }).catch((err) => { 
+      console.error("Logout error:", err); 
+    });
   };
 
   const handleYes = (event) => {
     event.preventDefault();
     api
       .delete(`/api/v1/user/${userID}/deleteAll`)
-      .then((response) => {})
       .catch((error) => {
         console.error(error);
         setShowD(false);
@@ -41,7 +40,6 @@ export default function ProfileManage({ userID, password, ...props }) {
 
     api
       .delete(`/api/v1/user/${userID}`)
-      .then((response) => {})
       .catch((error) => {
         console.error(error);
         setShowD(false);
@@ -52,7 +50,7 @@ export default function ProfileManage({ userID, password, ...props }) {
 
   return (
     <>
-      <a href="#link" onClick={handleShow}>
+      <a href="#profile" onClick={handleShow}>
         {userID}
       </a>
       <Offcanvas show={show} onHide={handleClose} placement="end">

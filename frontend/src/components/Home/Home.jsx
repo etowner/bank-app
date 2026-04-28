@@ -54,7 +54,6 @@ const Home = () => {
         }
       });
     }
-    // console.log("Deconstruct user:", user);
   }, [user]);
 
   return (
