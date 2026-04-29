@@ -12,7 +12,6 @@ import { UserContext } from "../../UserContext";
 
 const Home = () => {
   const { user, userID, getUser } = useContext(UserContext)
-  //const { userID } = useParams(); // This is the userID from the URL
   const [password, setPassword] = useState();
   const [accList, setAccList] = useState([]);
   const [error, setError] = useState();

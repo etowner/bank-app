@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
-import { useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
 
 export default function Transfer() {
-  const { userID, getUser } = useContext(UserContext)
+  const { getUser } = useContext(UserContext)
   const [amount, setAmount] = useState(0);
   const [accountID1, setAccountID1] = useState(0);
   const [accountID2, setAccountID2] = useState(0);

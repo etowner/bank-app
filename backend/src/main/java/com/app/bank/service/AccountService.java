@@ -33,6 +33,9 @@ public class AccountService {
     private MongoTemplate mongoTemplate;
 
     public void verifyOwnership(int accountID, String userID) throws Exception {
+        if(!getAccount(accountID).isPresent()){
+            throw new ResourceNotFoundException("Account not found.");
+        }
         Account account = getAccount(accountID).get();
         if (!account.getUserID().equals(userID)) {
             throw new AccessDeniedException("You do not own this account.");

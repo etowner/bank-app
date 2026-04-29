@@ -13,7 +13,6 @@ export const UserContextProvider = ({ children }) => {
   const getUser = async () => {
     try {
       const response = (await api.get(`/api/v1/user`));
-      // console.log("getUser response:", response.data);
       setUser(response.data);
     } catch (error) {
       console.error(error);
@@ -45,8 +44,7 @@ export const UserContextProvider = ({ children }) => {
     } catch (err) {
       setError("Either the username or password was incorrect.");
       console.error("Login error:", err);
-      console.log(err.response.headers);
-      console.log("Error details:", err.message);
+      console.error("Error details:", err.response ? err.response.data : err.message);
       return; 
     }
 
@@ -55,10 +53,6 @@ export const UserContextProvider = ({ children }) => {
       navigate(`/home`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
-      console.log(err.response.data);
-      console.log(err.response.status);
-      console.log(err.response.headers);
-      console.log(error.request);
       console.error("Error fetching user after login:", err.message);
     }
   };
