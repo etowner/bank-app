@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, test } from 'vitest';
-import App from '../App';
+import FrontPage from '../components/FrontPage/FrontPage';
+import { UserContext } from '../UserContext';
 
-describe('App routing', () => {
-  test('renders the front page on the root route', () => {
+describe('FrontPage', () => {
+  test('renders the bank application welcome header and account box', () => {
     render(
-      <MemoryRouter initialEntries={['/']}>
-        <App />
-      </MemoryRouter>
+      <UserContext.Provider value={{ user: {}, login: () => {}, register: () => {}, error: null }}>
+        <FrontPage />
+      </UserContext.Provider>
     );
 
     expect(screen.getByRole('heading', { name: /bank application/i })).toBeInTheDocument();

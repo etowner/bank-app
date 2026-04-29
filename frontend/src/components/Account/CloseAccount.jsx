@@ -13,14 +13,11 @@ export default function DeleteAccount() {
   const closeAcc = (event) => {
     event.preventDefault();
     api
-      .delete(`/api/v1/user/${userID}/${accountID}/close`)
-      .then((response) => {
-        console.log(response.data);
-      })
+      .delete(`/api/v1/account/${accountID}/close`)
       .catch((error) => {
         console.error(error);
       });
-    navigate(`/Home/${userID}`);
+    navigate(`/home`);
   };
 
   return (

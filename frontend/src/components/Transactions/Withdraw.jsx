@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { Button, Form, Row, Col, Alert } from "react-bootstrap";
+import { UserContext } from "../../UserContext";
 
 export default function Withdraw(props) {
   const [amount, setAmount] = useState(0);
   const { accountID } = useParams();
-  const { userID } = useParams();
+  const { userID } = useContext(UserContext);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +26,7 @@ export default function Withdraw(props) {
     const withdrawAmount = parseFloat(amount);
     setLoading(true);
     api
-      .put(`/api/v1/user/${userID}/${accountID}/withdraw`, withdrawAmount, {
+      .put(`/api/v1/account/${accountID}/withdraw`, withdrawAmount, {
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {

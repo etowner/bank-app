@@ -11,8 +11,7 @@ import PieChart from "./PieChart";
 import { UserContext } from "../../UserContext";
 
 const Home = () => {
-  const { user, getUser } = useContext(UserContext)
-  const { userID } = useParams(); // This is the userID from the URL
+  const { user, userID, getUser } = useContext(UserContext)
   const [password, setPassword] = useState();
   const [accList, setAccList] = useState([]);
   const [error, setError] = useState();
@@ -24,17 +23,21 @@ const Home = () => {
       return;
     }
     try {
-      const response = await api.post(`/api/v1/user/${userID}/${type}`);
-      console.log(response.data);
+      const response = await api.post(`/api/v1/account/${type}`);
+      // console.log("Opened account:", response.data);
     } catch (error) {
       console.error(error);
     }
 
-    getUser(userID); 
+    getUser(); 
   };
 
   useEffect(() => {
-    getUser(userID);
+    getUser();
+    // if (!user?.userID) {
+    //   getUser(userID);
+    // }
+    // console.log("Home useEffect user:", user);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userID]);
   
@@ -50,7 +53,6 @@ const Home = () => {
         }
       });
     }
-    // console.log("Deconstruct user:", user);
   }, [user]);
 
   return (

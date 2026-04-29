@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.app.bank.exception.BadRequestException;
@@ -16,6 +17,9 @@ public class PersonService {
 
     @Autowired
     private PersonRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<Person> getAllUsers() {
         return userRepository.findAll();
@@ -36,7 +40,8 @@ public class PersonService {
         if (checkforUser(user.getUserID())) {
             throw new BadRequestException("A user with this userID already exists.");
         }
-        userRepository.insert(user);
+        Person encodedUser = new Person(user.getUserID(), passwordEncoder.encode(user.getPassword()));
+        userRepository.insert(encodedUser);
     }
 
     public boolean checkforUser(Person user) {
@@ -55,7 +60,7 @@ public class PersonService {
             return false;
         }
         Optional<Person> existingUser = userRepository.getUserByUserID(user.getUserID());
-        return existingUser.filter(person -> person.getPassword().equals(user.getPassword())).isPresent();
+        return existingUser.filter(person -> passwordEncoder.matches(user.getPassword(), person.getPassword())).isPresent();
     }
 
     public Optional<Person> getUser(String userID) {
@@ -73,8 +78,6 @@ public class PersonService {
         userRepository.delete(user.get());
     }
 
-    public void deleteAllUsers() {
-        userRepository.deleteAll();
-    }
+    
 
 }

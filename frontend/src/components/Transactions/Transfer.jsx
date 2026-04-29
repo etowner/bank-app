@@ -1,11 +1,9 @@
 import React, { useState, useContext } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
-import { useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
 
 export default function Transfer() {
-  const { userID } = useParams();
   const { getUser } = useContext(UserContext)
   const [amount, setAmount] = useState(0);
   const [accountID1, setAccountID1] = useState(0);
@@ -26,15 +24,15 @@ export default function Transfer() {
 
     api
       .put(
-        `/api/v1/user/${userID}/${accountID1}/${accountID2}`,
+        `/api/v1/account/${accountID1}/${accountID2}`,
         transferAmmount,
         { headers: { "Content-Type": "application/json" } }
       )
       .then((response) => {
-        console.log(response.data); // response.data is a string
+        console.log(response.data); 
         setAmount(0);
         setError(null);
-        getUser(userID);
+        getUser();
         setLoading(false);
       })
       .catch((error) => {

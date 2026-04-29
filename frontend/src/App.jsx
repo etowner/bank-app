@@ -11,8 +11,8 @@ function App() {
       <UserContextProvider>
         <Routes>
           <Route path="/" element={<FrontPage />} />
-          <Route path="/home/:userID" element={<Home />} />
-          <Route path="/:userID/:accountID" element={<Account />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/:accountID" element={<Account />} />
         </Routes>
       </UserContextProvider>
     </div>

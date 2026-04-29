@@ -3,11 +3,13 @@ package com.app.bank.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.lang.Exception;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.app.bank.exception.BadRequestException;
@@ -30,10 +32,16 @@ public class AccountService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public List<Account> getAccounts() {
-        return accountRepository.findAll();
+    public void verifyOwnership(int accountID, String userID) throws Exception {
+        if(!getAccount(accountID).isPresent()){
+            throw new ResourceNotFoundException("Account not found.");
+        }
+        Account account = getAccount(accountID).get();
+        if (!account.getUserID().equals(userID)) {
+            throw new AccessDeniedException("You do not own this account.");
+        }
     }
-
+    
     public List<Account> getUserAccounts(String userID) {
         if (!personService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
@@ -127,8 +135,6 @@ public class AccountService {
         accountRepository.save(account2);
     }
 
-    public void deleteAll() {
-        accountRepository.deleteAll();
-    }
+    
 
 }

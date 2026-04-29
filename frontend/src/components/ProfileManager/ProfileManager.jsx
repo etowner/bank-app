@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button, Modal, Offcanvas, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
+import { UserContext } from "../../UserContext";
 
 export default function ProfileManage({ userID, password, ...props }) {
+  const { user } = useContext(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -20,22 +22,24 @@ export default function ProfileManage({ userID, password, ...props }) {
 
   const handleLogOut = (event) => {
     event.preventDefault();
-    navigate("/");
+    api.post('/logout').then(() => {
+      navigate('/');
+    }).catch((err) => { 
+      console.error("Logout error:", err); 
+    });
   };
 
   const handleYes = (event) => {
     event.preventDefault();
     api
-      .delete(`/api/v1/user/${userID}/deleteAll`)
-      .then((response) => {})
+      .delete(`/api/v1/account/closeAll`)
       .catch((error) => {
         console.error(error);
         setShowD(false);
       });
 
     api
-      .delete(`/api/v1/user/${userID}`)
-      .then((response) => {})
+      .delete(`/api/v1/user`)
       .catch((error) => {
         console.error(error);
         setShowD(false);
@@ -46,7 +50,7 @@ export default function ProfileManage({ userID, password, ...props }) {
 
   return (
     <>
-      <a href="#link" onClick={handleShow}>
+      <a href="#profile" onClick={handleShow}>
         {userID}
       </a>
       <Offcanvas show={show} onHide={handleClose} placement="end">
