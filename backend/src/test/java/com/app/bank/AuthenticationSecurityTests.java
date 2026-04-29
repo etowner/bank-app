@@ -1,6 +1,5 @@
 package com.app.bank;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,15 +65,15 @@ public class AuthenticationSecurityTests {
 
     @Test
     public void protectedEndpoint_rejectsUnauthenticatedRequests() throws Exception {
-        mvc.perform(get("/api/v1/user/testUser").contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/api/v1/user").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     public void protectedEndpoint_allowsAuthenticatedRequests() throws Exception {
-        when(personService.getUser(any(String.class))).thenReturn(java.util.Optional.of(new Person("testUser", "testPass")));
+        when(personService.getUser("testUser")).thenReturn(java.util.Optional.of(new Person("testUser", "testPass")));
 
-        mvc.perform(get("/api/v1/user/testUser")
+        mvc.perform(get("/api/v1/user")
             .with(user("testUser").roles("USER"))
             .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
