@@ -110,8 +110,8 @@ public class PersonController {
         }
         try {
             String userID = userDetails.getUsername();
-            personService.deleteUser(userID);
             accountService.deleteUserAccounts(userID);
+            personService.deleteUser(userID);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (Exception e) {
             if (e instanceof com.app.bank.exception.ResourceNotFoundException) {
