@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import ProfileManage from '../components/ProfileManager/ProfileManage';
+import ProfileManager from '../components/ProfileManager/ProfileManager';
 import { UserContext } from '../UserContext';
 import api from '../api/axiosConfig';
 
@@ -23,7 +23,7 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-describe('ProfileManage', () => {
+describe('ProfileManager', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -38,7 +38,7 @@ describe('ProfileManage', () => {
 
     render(
       <UserContext.Provider value={{ user: { userID: 'demo' } }}>
-        <ProfileManage userID="demo" password="secret" />
+        <ProfileManager userID="demo" password="secret" />
       </UserContext.Provider>
     );
 
@@ -63,7 +63,7 @@ describe('ProfileManage', () => {
 
     render(
       <UserContext.Provider value={{ user: { userID: 'demo' } }}>
-        <ProfileManage userID="demo" password="secret" />
+        <ProfileManager userID="demo" password="secret" />
       </UserContext.Provider>
     );
 
