@@ -5,8 +5,7 @@ import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
 
 export default function Transfer() {
-  const { userID } = useParams();
-  const { getUser } = useContext(UserContext)
+  const { userID, getUser } = useContext(UserContext)
   const [amount, setAmount] = useState(0);
   const [accountID1, setAccountID1] = useState(0);
   const [accountID2, setAccountID2] = useState(0);
@@ -31,10 +30,10 @@ export default function Transfer() {
         { headers: { "Content-Type": "application/json" } }
       )
       .then((response) => {
-        console.log(response.data); // response.data is a string
+        console.log(response.data); 
         setAmount(0);
         setError(null);
-        getUser(userID);
+        getUser();
         setLoading(false);
       })
       .catch((error) => {

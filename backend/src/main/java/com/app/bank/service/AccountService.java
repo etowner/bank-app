@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.app.bank.exception.BadRequestException;
@@ -34,7 +35,7 @@ public class AccountService {
     public void verifyOwnership(int accountID, String userID) throws Exception {
         Account account = getAccount(accountID).get();
         if (!account.getUserID().equals(userID)) {
-            throw new Exception("You do not own this account.");
+            throw new AccessDeniedException("You do not own this account.");
         }
     }
     

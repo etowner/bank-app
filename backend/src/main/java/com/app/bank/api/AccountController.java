@@ -118,7 +118,7 @@ public class AccountController {
 
     @DeleteMapping(path = "{accountID}/close")
     public ResponseEntity<String> deleteAccount(@PathVariable("accountID") int accountID,
-          @RequestBody float amount, @AuthenticationPrincipal UserDetails userDetails) {
+           @AuthenticationPrincipal UserDetails userDetails) {
         try {
             accountServices.verifyOwnership(accountID, userDetails.getUsername());
             accountServices.deleteAccount(accountID);
@@ -131,13 +131,9 @@ public class AccountController {
     }
 
     @DeleteMapping(path = "/closeAll")
-    public ResponseEntity<String> deleteAllUserAccounts(@PathVariable("userID") String userID,
-          @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<String> deleteAllUserAccounts(@AuthenticationPrincipal UserDetails userDetails) {
         try {
-            if (!userID.equals(userDetails.getUsername())) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized.");
-            }
-            accountServices.deleteUserAccounts(userID);
+            accountServices.deleteUserAccounts(userDetails.getUsername());
             return ResponseEntity.ok("Accounts closed successfully");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User accounts not found.");
