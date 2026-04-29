@@ -28,7 +28,7 @@ import com.app.bank.model.Account;
 import com.app.bank.service.AccountService;
 import com.app.bank.service.PersonService;
 
-@CrossOrigin("*")
+
 @RequestMapping("api/v1/user")
 @RestController
 public class PersonController {

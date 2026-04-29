@@ -32,7 +32,7 @@ export default function ProfileManage({ userID, password, ...props }) {
   const handleYes = (event) => {
     event.preventDefault();
     api
-      .delete(`/api/v1/account/deleteAll`)
+      .delete(`/api/v1/account/closeAll`)
       .catch((error) => {
         console.error(error);
         setShowD(false);

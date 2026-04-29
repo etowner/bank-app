@@ -2,7 +2,7 @@ import React from "react";
 import { Navbar } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
-import ProfileManage from "../ProfileManager/ProfileManage";
+import ProfileManager from "../ProfileManager/ProfileManager";
 
 const Header = ({ userID, password }) => {
   return (
@@ -16,7 +16,7 @@ const Header = ({ userID, password }) => {
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
               Signed in as:
-              <ProfileManage userID={userID} password={password} />
+              <ProfileManager userID={userID} password={password} />
             </Navbar.Text>
           </Navbar.Collapse>
         </Container>

@@ -23,8 +23,7 @@ import com.app.bank.model.Account;
 import com.app.bank.service.AccountService;
 
 
-@CrossOrigin("*")
-@RequestMapping("api/v1/account/")
+@RequestMapping("api/v1/account")
 @RestController
 public class AccountController {
     
