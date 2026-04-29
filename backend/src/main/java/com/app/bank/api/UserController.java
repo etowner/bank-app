@@ -22,28 +22,28 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.bank.model.Person;
+import com.app.bank.model.User;
 import com.app.bank.model.Account;
 import com.app.bank.service.AccountService;
-import com.app.bank.service.PersonService;
+import com.app.bank.service.UserService;
 
 
 @RequestMapping("api/v1/user")
 @RestController
-public class PersonController {
+public class UserController {
 
     @Autowired
-    private PersonService personService;
+    private UserService UserService;
 
     @Autowired
     private AccountService accountService;
 
-    private record PersonResponse(String userID, List<Account> accountList, int numOfAccounts) {
+    private record UserResponse(String userID, List<Account> accountList, int numOfAccounts) {
     }
 
     private final AuthenticationManager authenticationManager;
 
-    public PersonController(AuthenticationManager authenticationManager) {
+    public UserController(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
@@ -54,31 +54,31 @@ public class PersonController {
         request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
     }
 
-    private PersonResponse toPersonResponse(Person person) {
-        return new PersonResponse(person.getUserID(), person.getAccountList(), person.getNumOfAccounts());
+    private UserResponse toUserResponse(User User) {
+        return new UserResponse(User.getUserID(), User.getAccountList(), User.getNumOfAccounts());
     }
 
     @GetMapping
-    public ResponseEntity<PersonResponse> getCurrentUser(@AuthenticationPrincipal Object principal) {
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal Object principal) {
         if (!(principal instanceof UserDetails userDetails)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Person> user = personService.getUser(userDetails.getUsername());
-        return user.map(this::toPersonResponse)
+        Optional<User> user = UserService.getUser(userDetails.getUsername());
+        return user.map(this::toUserResponse)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> createAccount(@RequestBody Person user, HttpServletRequest request) {
-        if (!personService.validateUser(user)) {
+    public ResponseEntity<String> createAccount(@RequestBody User user, HttpServletRequest request) {
+        if (!UserService.validateUser(user)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
-        if (personService.checkforUser(user)) {
+        if (UserService.checkforUser(user)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Account already exists.");
         }
         try {
-            personService.newUser(user);
+            UserService.newUser(user);
             Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
             storeAuthentication(authentication, request);
@@ -89,8 +89,8 @@ public class PersonController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> logIn(@RequestBody Person user, HttpServletRequest request) {
-        if (!personService.validateUser(user)) {
+    public ResponseEntity<String> logIn(@RequestBody User user, HttpServletRequest request) {
+        if (!UserService.validateUser(user)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
         try {
@@ -111,7 +111,7 @@ public class PersonController {
         try {
             String userID = userDetails.getUsername();
             accountService.deleteUserAccounts(userID);
-            personService.deleteUser(userID);
+            UserService.deleteUser(userID);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (Exception e) {
             if (e instanceof com.app.bank.exception.ResourceNotFoundException) {
