@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.bank.model.User;
+import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.service.AccountService;
 import com.app.bank.service.UserService;
@@ -38,9 +39,6 @@ public class UserController {
     @Autowired
     private AccountService accountService;
 
-    private record UserResponse(String userID, List<Account> accountList, int numOfAccounts) {
-    }
-
     private final AuthenticationManager authenticationManager;
 
     public UserController(AuthenticationManager authenticationManager) {
@@ -54,6 +52,9 @@ public class UserController {
         request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
     }
 
+    private record UserResponse(String userID, List<Account> accountList, int numOfAccounts) {
+    }
+
     private UserResponse toUserResponse(User User) {
         return new UserResponse(User.getUserID(), User.getAccountList(), User.getNumOfAccounts());
     }
@@ -64,19 +65,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Optional<User> user = UserService.getUser(userDetails.getUsername());
-        return user.map(this::toUserResponse)
-                .map(ResponseEntity::ok)
+        return user.map(this::toUserResponse).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> createAccount(@RequestBody User user, HttpServletRequest request) {
-        if (!UserService.validateUser(user)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
-        }
-        if (UserService.checkforUser(user)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Account already exists.");
-        }
         try {
             UserService.newUser(user);
             Authentication authentication = authenticationManager
@@ -95,7 +89,7 @@ public class UserController {
         }
         try {
             Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
             storeAuthentication(authentication, request);
             return ResponseEntity.ok("Logged in");
         } catch (AuthenticationException ex) {
@@ -113,10 +107,9 @@ public class UserController {
             accountService.deleteUserAccounts(userID);
             UserService.deleteUser(userID);
             return ResponseEntity.ok("Account deleted successfully");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            if (e instanceof com.app.bank.exception.ResourceNotFoundException) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
-            }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred");
         }
     }
