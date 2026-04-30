@@ -34,11 +34,12 @@ public class AccountService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public void verifyOwnership(int accountID, String userID) throws Exception {
+    public Account verifyOwnership(int accountID, String userID) throws Exception {
         Account account = getAccount(accountID).orElseThrow(() -> new ResourceNotFoundException("Account not found."));
         if (!account.getUserID().equals(userID)) {
             throw new AccessDeniedException("You do not own this account.");
         }
+        return account;
     }
     
     public List<Account> getUserAccounts(String userID) {

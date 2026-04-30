@@ -39,10 +39,8 @@ public class AccountController {
     public ResponseEntity<Account> getUserAccount(@PathVariable("accountID") int accountID, 
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            accountServices.verifyOwnership(accountID, userDetails.getUsername());
-            return accountServices.getAccount(accountID)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            Account account = accountServices.verifyOwnership(accountID, userDetails.getUsername());
+            return ResponseEntity.ok(account);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -67,11 +65,9 @@ public class AccountController {
     public ResponseEntity<?> deposit(@PathVariable("accountID") int accountID, @RequestBody double amount,
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            accountServices.verifyOwnership(accountID, userDetails.getUsername());
+            Account account = accountServices.verifyOwnership(accountID, userDetails.getUsername());
             accountServices.depositAmount(accountID, amount);
-            return accountServices.getAccount(accountID)
-                    .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            return ResponseEntity.ok(account);
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid deposit request.");
         }  catch (Exception e) {
@@ -83,11 +79,9 @@ public class AccountController {
     public ResponseEntity<?> withdraw(@PathVariable("accountID") int accountID,
             @RequestBody double amount, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            accountServices.verifyOwnership(accountID, userDetails.getUsername());
+            Account account = accountServices.verifyOwnership(accountID, userDetails.getUsername());
             accountServices.withdrawAmount(accountID, amount);
-            return accountServices.getAccount(accountID)
-                    .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            return ResponseEntity.ok(account);
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid withdrawal request.");
         } catch (Exception e) {
@@ -100,7 +94,7 @@ public class AccountController {
             @PathVariable("accountID2") int accountID2,
             @RequestBody double amount, @AuthenticationPrincipal UserDetails userDetails) {
         if (amount <= 0) {
-            return ResponseEntity.badRequest().body("Invalid amount.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid amount.");
         }
         try {
             accountServices.verifyOwnership(accountID1, userDetails.getUsername());
