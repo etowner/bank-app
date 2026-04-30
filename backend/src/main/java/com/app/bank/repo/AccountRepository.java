@@ -12,10 +12,10 @@ import com.app.bank.model.Account;
 @Repository
 public interface AccountRepository extends MongoRepository<Account, ObjectId> {
 
-    Optional<Account> getAccountByAccountID(int accountID);
+    Optional<Account> findByAccountID(int accountID);
 
-    List<Account> getAccountsByUserID(String userID);
+    List<Account> findByUserID(String userID);
 
-    void deleteAllAccountsByUserID(String userID);
+    void deleteAllByUserID(String userID);
 
 }

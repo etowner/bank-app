@@ -54,7 +54,7 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account type is required.");
         }
         try {
-            accountServices.newAccount(new Account(userDetails.getUsername(), type));
+            accountServices.newAccount(new Account(userDetails.getUsername(), 0, type));
             return ResponseEntity.ok("Account opened successfully.");
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid account request.");
@@ -64,7 +64,7 @@ public class AccountController {
     }
 
     @PutMapping(path = "{accountID}/deposit")
-    public ResponseEntity<?> deposit(@PathVariable("accountID") int accountID, @RequestBody float amount,
+    public ResponseEntity<?> deposit(@PathVariable("accountID") int accountID, @RequestBody double amount,
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
             accountServices.verifyOwnership(accountID, userDetails.getUsername());
@@ -81,7 +81,7 @@ public class AccountController {
 
     @PutMapping(path = "{accountID}/withdraw")
     public ResponseEntity<?> withdraw(@PathVariable("accountID") int accountID,
-            @RequestBody float amount, @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestBody double amount, @AuthenticationPrincipal UserDetails userDetails) {
         try {
             accountServices.verifyOwnership(accountID, userDetails.getUsername());
             accountServices.withdrawAmount(accountID, amount);
@@ -98,7 +98,7 @@ public class AccountController {
     @PutMapping(path = "{accountID1}/{accountID2}")
     public ResponseEntity<String> transfer(@PathVariable("accountID1") int accountID1,
             @PathVariable("accountID2") int accountID2,
-            @RequestBody float amount, @AuthenticationPrincipal UserDetails userDetails) {
+            @RequestBody double amount, @AuthenticationPrincipal UserDetails userDetails) {
         if (amount <= 0) {
             return ResponseEntity.badRequest().body("Invalid amount.");
         }

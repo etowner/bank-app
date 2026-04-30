@@ -1,8 +1,6 @@
 package com.app.bank.service;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -41,18 +39,18 @@ public class AccountServiceTests {
 
     @BeforeEach
     public void setUp() {
-        validAccount = new Account("testUser", "Checking"); 
+        validAccount = new Account("testUser", 0, "Checking"); 
     }
 
     @Test
     public void newAccount_shouldThrowBadRequest_whenUserIdIsNull() {
-        Account account = new Account(null, "Checking");
+        Account account = new Account(null, 0, "Checking");
         assertThrows(BadRequestException.class, () -> accountService.newAccount(account));
     }
 
     @Test
     public void newAccount_shouldThrowBadRequest_whenTypeIsBlank() {
-        Account account = new Account("testUser", "");
+        Account account = new Account("testUser", 0, "");
         assertThrows(BadRequestException.class, () -> accountService.newAccount(account));
     }
 
@@ -62,28 +60,15 @@ public class AccountServiceTests {
         assertThrows(ResourceNotFoundException.class, () -> accountService.newAccount(validAccount));
     }
 
-
-    @Test
-    public void isAccount_shouldReturnFalse_whenAccountDoesNotExist() {
-        when(accountRepository.getAccountByAccountID(anyInt())).thenReturn(Optional.empty());
-        assertFalse(accountService.isAccount(1234));    
-    }
-
-    @Test
-    public void isAccount_shouldReturnTrue_whenAccountExists() {
-        when(accountRepository.getAccountByAccountID(anyInt())).thenReturn(Optional.of(validAccount));
-        assertTrue(accountService.isAccount(1234));
-    }
-
     @Test
     public void deposit_shouldThrowResourceNotFound_whenAccountDoesNotExist() {
-        when(accountRepository.getAccountByAccountID(anyInt())).thenReturn(Optional.empty());
+        when(accountRepository.findByAccountID(anyInt())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> accountService.deleteAccount(1234));
     }
 
     @Test
     public void deposit_shouldThrowBadRequest_whenAmountIsInvalid() {
-        float invalidAmount = -50.0f;
+        double invalidAmount = -50.0f;
         assertThrows(BadRequestException.class, () -> {
             accountService.depositAmount(1234, invalidAmount);
         });
@@ -91,21 +76,21 @@ public class AccountServiceTests {
     
     @Test
     public void withdraw_shouldThrowBadRequest_whenAmountIsInvalid() {
-        float invalidAmount = -50.0f;
+        double invalidAmount = -50.0f;
         assertThrows(BadRequestException.class, () -> {
             accountService.withdrawAmount(1234, invalidAmount);
         });
     }
     @Test
     public void withdraw_shouldThrowResourceNotFound_whenAccountDoesNotExist() {
-        when(accountRepository.getAccountByAccountID(anyInt())).thenReturn(Optional.empty());
+        when(accountRepository.findByAccountID(anyInt())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> accountService.deleteAccount(1234));
     }
 
     @Test
     public void withdraw_shouldThrowBadRequest_whenInsufficientFunds() {
-        float amount = 1000.0f;
-        when(accountRepository.getAccountByAccountID(anyInt())).thenReturn(Optional.of(validAccount));
+        double amount = 1000.0f;
+        when(accountRepository.findByAccountID(anyInt())).thenReturn(Optional.of(validAccount));
         assertThrows(BadRequestException.class, () -> {
             accountService.withdrawAmount(1234, amount);
         });
@@ -113,7 +98,7 @@ public class AccountServiceTests {
 
     @Test
     public void transfer_shouldThrowBadRequest_whenAmountIsInvalid() {
-        float invalidAmount = -50.0f;
+        double invalidAmount = -50.0f;
         assertThrows(BadRequestException.class, () -> {
             accountService.transfer(1234, 5678, invalidAmount);
         });
@@ -121,7 +106,7 @@ public class AccountServiceTests {
 
     @Test
     public void transfer_shouldThrowResourceNotFound_whenSourceAccountDoesNotExist() {
-        when(accountRepository.getAccountByAccountID(1234)).thenReturn(Optional.empty());
+        when(accountRepository.findByAccountID(1234)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> {
             accountService.transfer(1234, 5678, 100.0f);
         });
@@ -129,8 +114,8 @@ public class AccountServiceTests {
 
     @Test
     public void transfer_shouldThrowResourceNotFound_whenDestinationAccountDoesNotExist() {
-        when(accountRepository.getAccountByAccountID(1234)).thenReturn(Optional.of(validAccount));
-        when(accountRepository.getAccountByAccountID(5678)).thenReturn(Optional.empty());
+        when(accountRepository.findByAccountID(1234)).thenReturn(Optional.of(validAccount));
+        when(accountRepository.findByAccountID(5678)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> {
             accountService.transfer(1234, 5678, 100.0f);
         });
@@ -138,7 +123,7 @@ public class AccountServiceTests {
 
     @Test
     public void deleteAccount_shouldSucceed_whenAccountExists() {
-        when(accountRepository.getAccountByAccountID(anyInt())).thenReturn(Optional.of(validAccount));
+        when(accountRepository.findByAccountID(anyInt())).thenReturn(Optional.of(validAccount));
         accountService.deleteAccount(1234); 
     }
 

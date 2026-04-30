@@ -1,20 +1,28 @@
 package com.app.bank.model;
 
-public class Transaction {
-    private String type;
-    private float amount;
+import java.time.LocalDateTime;
 
-    public Transaction(String type, float amount) {
+public class Transaction {
+    private TransactionType type;
+    private double amount;
+    private LocalDateTime timestamp;
+
+    public Transaction(TransactionType type, double amount) {
         this.type = type;
         this.amount = amount;
+        this.timestamp = LocalDateTime.now();
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public float getAmount() {
+    public double getAmount() {
         return amount;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 
     @Override
