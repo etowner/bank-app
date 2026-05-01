@@ -14,7 +14,7 @@ export default function PieChart({ accounts }) {
     datasets: [
       {
         label: "%",
-        data: accounts.map((account) => (account.balance / totalBalance) * 100),
+        data: percentages,
         backgroundColor: [
           "rgba(40, 44, 52, 1)",
           "rgba(239, 196, 92, 1)",

@@ -12,14 +12,8 @@ export const UserContextProvider = ({ children }) => {
 
   const getUser = async () => {
     setError(null);
-    try {
-      const response = (await api.get(`/api/v1/user`));
-      setUser(response.data);
-    } catch (error) {
-      // setError("Failed to fetch user data. Please try again.");
-      // console.error(error);
-      console.error("Error getting user:", error.response ? error.response.data : error.message);
-    }
+    const response = (await api.get(`/api/v1/user`));
+    setUser(response.data);
   };
 
   const register = async (userID, password) => {
@@ -29,7 +23,7 @@ export const UserContextProvider = ({ children }) => {
     } catch (err) {
       setError("Either the username or password was invalid.");
       //console.error("Registration error:", err);
-      console.error("Registration error:", err.response ? err.response.data : err.message);
+      console.error("Registration error:", err.response ? err.response : err.message);
       return; 
     }
 
@@ -38,7 +32,7 @@ export const UserContextProvider = ({ children }) => {
       navigate(`/home`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
-      console.error("Error fetching user after registration:", err);
+      console.error("Error fetching user after registration:", err.response ? err.response : err.message);
     }
   };
 
@@ -48,8 +42,7 @@ export const UserContextProvider = ({ children }) => {
       await api.post(`/api/v1/user/login`, { userID, password });
     } catch (err) {
       setError("Either the username or password was incorrect.");
-      //console.error("Login error:", err);
-      console.error("Login error:", err.response ? err.response.data : err.message);
+      console.error("Login error:", err.response ? err.response : err.message);
       return; 
     }
 
@@ -58,7 +51,7 @@ export const UserContextProvider = ({ children }) => {
       navigate(`/home`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
-      console.error("Error fetching user after login:", err.message);
+      console.error("Error fetching user after login:", err.response ? err.response : err.message);
     }
   };
 

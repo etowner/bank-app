@@ -100,7 +100,7 @@ public class UserController {
             storeAuthentication(authentication, request);
             return ResponseEntity.ok("Logged in");
         } catch (AuthenticationException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect UserID or password.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
         }
     }
 

@@ -1,8 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { Button, Form, Row, Col, Alert } from "react-bootstrap";
-import { UserContext } from "../../UserContext";
 
 export default function Withdraw({ balance, updateAccount }) {
   const [amount, setAmount] = useState(0);

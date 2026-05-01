@@ -5,7 +5,7 @@ import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
 
 export default function ProfileManage() {
-  const { userID, logout } = useContext(UserContext);
+  const { userID, logout, setUser } = useContext(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
