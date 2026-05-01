@@ -11,38 +11,39 @@ export default function Transfer() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleTransferClick = (event) => {
+  const handleTransferClick = async (event) => {
     event.preventDefault();
-
     if (isNaN(amount) || amount <= 0) {
       setError("Invalid transfer amount. Please enter a valid amount.");
       return;
     }
-
-    const transferAmmount = parseFloat(amount);
+    if (accountID1 === accountID2) {
+      setError("Source and destination accounts must be different.");
+      return;
+    }
+    if (!accountID1 || !accountID2) {
+      setError("Please enter both account IDs.");
+      return;
+    }
     setLoading(true);
-
-    api
-      .put(
-        `/api/v1/account/${accountID1}/${accountID2}`,
-        transferAmmount,
-        { headers: { "Content-Type": "application/json" } }
-      )
-      .then((response) => {
-        console.log(response.data); 
+    try {
+        await api.put(
+            `/api/v1/account/${accountID1}/${accountID2}`,
+            parseFloat(amount),
+            { headers: { "Content-Type": "application/json" } }
+        );
         setAmount(0);
+        setAccountID1(0);
+        setAccountID2(0);
         setError(null);
-        getUser();
-        setLoading(false);
-      })
-      .catch((error) => {
+        await getUser();
+    } catch (error) {
+        setError("Transfer failed. Please try again.");
         console.error(error);
-        setError("Transfer failed");
+    } finally {
         setLoading(false);
-      });
-    
-    
-  };
+    }
+};
 
   return (
     <div>

@@ -4,33 +4,20 @@ import "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
 export default function LineChart({ accountID, transHistory }) {
-  const [labels, setLabels] = useState([]);
-  const [amounts, setAmounts] = useState([]);
-
-  useEffect(() => {
-    const transactionLabels = [];
-    const transactionAmounts = [];
-
-    Object.entries(transHistory).forEach(([key, value]) => {
-      transactionLabels.push(key);
-      transactionAmounts.push(value.amount);
-    });
-
-    setLabels(transactionLabels);
-    setAmounts(transactionAmounts);
-  }, [transHistory]);
+  const transactionLabels = Object.values(transHistory).map(t => 
+    new Date(t.timestamp).toLocaleDateString()
+  );
+  const transactionAmounts = Object.values(transHistory).map(t => t.amount);
 
   const data = {
-    labels: labels,
-    datasets: [
-      {
-        label: accountID,
-        data: amounts,
-        borderColor: "rgb(112, 128, 144)",
-        backgroundColor: "rgba(112, 128, 144, 0.5)",
-      },
-    ],
-  };
+    labels: transactionLabels,
+    datasets: [{
+      label: accountID,
+      data: transactionAmounts,
+      borderColor: "rgb(112, 128, 144)",
+      backgroundColor: "rgba(112, 128, 144, 0.5)",
+    }]
+};
 
   const options = {
     responsive: true,

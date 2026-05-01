@@ -4,7 +4,7 @@ import { Nav } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import ProfileManager from "../ProfileManager/ProfileManager";
 
-const Header = ({ userID, password }) => {
+const Header = () => {
   return (
     <div id="#home" style={{ background: "#ffffff" }}>
       <Navbar bg="dark" variant="dark" className="mb-5">
@@ -16,7 +16,7 @@ const Header = ({ userID, password }) => {
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
               Signed in as:
-              <ProfileManager userID={userID} password={password} />
+              <ProfileManager/>
             </Navbar.Text>
           </Navbar.Collapse>
         </Container>
