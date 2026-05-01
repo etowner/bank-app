@@ -7,13 +7,13 @@ const AuthForm = ({ onSubmit, userID, password, onUserIDChange, onPasswordChange
         <Form.Group as={Row} className="mb-3 justify-content-md-center">
             <Form.Label column sm={6}>Enter userID:</Form.Label>
             <Col>
-                <Form.Control value={userID} onChange={onUserIDChange} />
+                <Form.Control autoComplete="on" value={userID} onChange={onUserIDChange} />
             </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3 justify-content-md-center">
             <Form.Label column>Enter password:</Form.Label>
             <Col sm={6}>
-                <Form.Control type="password" value={password} onChange={onPasswordChange} />
+                <Form.Control autoComplete="on" type="password" value={password} onChange={onPasswordChange} />
             </Col>
         </Form.Group>
         <Button variant="light" onClick={onSubmit} size="lg" className="mb-3">
