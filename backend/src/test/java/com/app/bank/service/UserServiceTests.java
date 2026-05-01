@@ -57,13 +57,13 @@ public class UserServiceTests {
 
     @Test
     public void newUser_shouldThrowBadRequest_whenUserAlreadyExists() {
-        when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.of(validUser));
+        when(userRepository.findByUserID(anyString())).thenReturn(Optional.of(validUser));
         assertThrows(BadRequestException.class, () -> userService.newUser(validUser));
     }
 
     @Test
     public void newUser_shouldInsertUser_whenValid() {
-        when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByUserID(anyString())).thenReturn(Optional.empty());
         when(passwordEncoder.encode("testPass")).thenReturn("encodedPass");
 
         userService.newUser(validUser);
@@ -73,7 +73,7 @@ public class UserServiceTests {
 
     @Test
     public void getUser_shouldReturnOptional_whenPresent() {
-        when(userRepository.getUserByUserID("testUser")).thenReturn(Optional.of(validUser));
+        when(userRepository.findByUserID("testUser")).thenReturn(Optional.of(validUser));
 
         Optional<User> result = userService.getUser("testUser");
 
@@ -82,14 +82,14 @@ public class UserServiceTests {
 
     @Test
     public void deleteUser_shouldThrowNotFound_whenMissing() {
-        when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByUserID(anyString())).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser("missingUser"));
     }
 
     @Test
     public void checkforUserPassword_shouldReturnFalse_whenUserDoesNotExist() {
-        when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
+        when(userRepository.findByUserID(anyString())).thenReturn(Optional.empty());
 
         User request = new User("missingUser", "password");
         assertFalse(userService.checkforUserPassword(request));
@@ -97,7 +97,7 @@ public class UserServiceTests {
 
     @Test
     public void checkforUserPassword_shouldReturnTrue_whenPasswordMatches() {
-        when(userRepository.getUserByUserID(validUser.getUserID())).thenReturn(Optional.of(validUser));
+        when(userRepository.findByUserID(validUser.getUserID())).thenReturn(Optional.of(validUser));
         when(passwordEncoder.matches("testPass", "testPass")).thenReturn(true);
 
         assertTrue(userService.checkforUserPassword(validUser));

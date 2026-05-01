@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,11 +15,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Document(collection = "Users")
+@CompoundIndex(name = "userID_idx", def = "{'userID': 1}", unique = true)
 public class User implements UserDetails {
 
     @Id
     ObjectId id;
-
+    
+    @Indexed(unique = true)
     private String userID;
     private String password;
 
