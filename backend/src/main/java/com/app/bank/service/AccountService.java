@@ -29,7 +29,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     @Autowired
-    private UserService UserService;
+    private UserService userService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -43,7 +43,7 @@ public class AccountService {
     }
     
     public List<Account> getUserAccounts(String userID) {
-        if (!UserService.checkforUser(userID)) {
+        if (!userService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
         }
         return accountRepository.findByUserID(userID);
@@ -64,7 +64,7 @@ public class AccountService {
         if (!validateAccount(account)) {
             throw new BadRequestException("Account userID and type are required.");
         }
-        if (!UserService.checkforUser(account.getUserID())) {
+        if (!userService.checkforUser(account.getUserID())) {
             throw new ResourceNotFoundException("User not found.");
         }
         try {
@@ -89,7 +89,7 @@ public class AccountService {
     }
 
     public void deleteUserAccounts(String userID) {
-        if (!UserService.checkforUser(userID)) {
+        if (!userService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
         }
         accountRepository.deleteAllByUserID(userID);
