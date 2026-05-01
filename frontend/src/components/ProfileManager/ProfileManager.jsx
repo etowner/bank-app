@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
 
-export default function ProfileManage({ userID, password, ...props }) {
-  const { user } = useContext(UserContext);
+export default function ProfileManage() {
+  const { userID, logout } = useContext(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -22,31 +22,21 @@ export default function ProfileManage({ userID, password, ...props }) {
 
   const handleLogOut = (event) => {
     event.preventDefault();
-    api.post('/logout').then(() => {
-      navigate('/');
-    }).catch((err) => { 
-      console.error("Logout error:", err); 
-    });
+    logout();
   };
 
-  const handleYes = (event) => {
+  const handleYes = async (event) => {
     event.preventDefault();
-    api
-      .delete(`/api/v1/account/closeAll`)
-      .catch((error) => {
+    try {
+        await api.delete(`/api/v1/account/closeAll`);
+        await api.delete(`/api/v1/user`);
+        setUser(null);
+        navigate("/");
+    } catch (error) {
         console.error(error);
         setShowD(false);
-      });
-
-    api
-      .delete(`/api/v1/user`)
-      .catch((error) => {
-        console.error(error);
-        setShowD(false);
-      });
-
-    navigate("/");
-  };
+    }
+};
 
   return (
     <>
@@ -60,7 +50,7 @@ export default function ProfileManage({ userID, password, ...props }) {
         <Offcanvas.Body>
           <ListGroup>
             <ListGroup.Item>
-              User: {userID} {password}
+              User: {userID}
             </ListGroup.Item>
 
             {/* Delete Account */}

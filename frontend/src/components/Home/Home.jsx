@@ -11,11 +11,9 @@ import PieChart from "./PieChart";
 import { UserContext } from "../../UserContext";
 
 const Home = () => {
-  const { user, userID, getUser } = useContext(UserContext)
-  const [password, setPassword] = useState();
+  const { user, userID, getUser } = useContext(UserContext);
   const [accList, setAccList] = useState([]);
   const [error, setError] = useState();
-
 
   const openAcc = async (type) => {
     if( accList.length >= 3){
@@ -33,31 +31,18 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getUser();
-    // if (!user?.userID) {
-    //   getUser(userID);
-    // }
-    // console.log("Home useEffect user:", user);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userID]);
-  
-
+    if (!user) getUser();
+  }, []);
 
   useEffect(() => {
     if (user) {
-      Object.entries(user).forEach(([key, value]) => {
-        if (key === "password") {
-          setPassword(value);
-        } else if (key === "accountList") {
-          setAccList(value);
-        }
-      });
+      setAccList(user.accountList ?? []);
     }
   }, [user]);
 
   return (
     <div className="Home">
-      <Header userID={userID} password={password} />
+      <Header />
       <Container>
         <Row className="mb-5">
           <h2>Welcome {userID}</h2>

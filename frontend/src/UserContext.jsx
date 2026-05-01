@@ -5,28 +5,24 @@ import api from "./api/axiosConfig";
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const getUser = async () => {
-    try {
-      const response = (await api.get(`/api/v1/user`));
-      setUser(response.data);
-    } catch (error) {
-      console.error(error);
-      console.error("Error getUser details:", error.response ?  error.response.data : error.message);
-    }
+    const response = (await api.get(`/api/v1/user`));
+    setUser(response.data);
   };
 
   const register = async (userID, password) => {
+    setError(null);
     try {
       await api.post(`/api/v1/user/register`, { userID, password });
     } catch (err) {
       setError("Either the username or password was invalid.");
       console.error("Registration error:", err);
-      console.error("Error register details:", err.response ? err.response.data : err.message);
+      console.error("Error details:", err.response ? err.response.data : err.message);
       return; 
     }
 
@@ -40,12 +36,13 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const login = async (userID, password) => {
+    setError(null);
     try {
       await api.post(`/api/v1/user/login`, { userID, password });
     } catch (err) {
       setError("Either the username or password was incorrect.");
       console.error("Login error:", err);
-      console.error("Error login details:", err.response ? err.response.data : err.message);
+      console.error("Error details:", err.response ? err.response.data : err.message);
       return; 
     }
 
@@ -58,9 +55,15 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
-  const userID = user.userID; // Extract userID from user object for easier access
+  const logout = async() => {
+    await api.post('/logout');
+    setUser(null);
+    navigate('/');
+  };
+
+  const userID = user?.userID; // Extract userID from user object for easier access
   return (
-    <UserContext.Provider value={{ user, userID, setUser, getUser,login, register, error }}>
+    <UserContext.Provider value={{ user, userID, setUser, getUser,login, register, error, setError, logout }}>
       {children}
     </UserContext.Provider>
   );
