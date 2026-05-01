@@ -32,7 +32,7 @@ public class AccountServiceTests {
     private AccountService accountService;
 
     @Mock
-    private PersonService personService;
+    private UserService UserService;
 
     @Mock
     private MongoTemplate mongoTemplate;
@@ -58,7 +58,7 @@ public class AccountServiceTests {
 
     @Test
     public void newAccount_shouldThrowResourceNotFound_whenUserDoesNotExist() {
-        when(personService.checkforUser(anyString())).thenReturn(false);
+        when(UserService.checkforUser(anyString())).thenReturn(false);
         assertThrows(ResourceNotFoundException.class, () -> accountService.newAccount(validAccount));
     }
 

@@ -7,11 +7,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.app.bank.api.AccountController;
-import com.app.bank.api.PersonController;
-import com.app.bank.model.Person;
+import com.app.bank.api.UserController;
+import com.app.bank.model.User;
 import com.app.bank.service.AccountService;
 import com.app.bank.service.DatabaseUserDetailsService;
-import com.app.bank.service.PersonService;
+import com.app.bank.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest({ PersonController.class, AccountController.class })
+@WebMvcTest({ UserController.class, AccountController.class })
 @Import(SecurityConfig.class)
 public class AuthenticationSecurityTests {
 
@@ -30,7 +30,7 @@ public class AuthenticationSecurityTests {
     private MockMvc mvc;
 
     @MockitoBean
-    private PersonService personService;
+    private UserService UserService;
 
     @MockitoBean
     private AccountService accountService;
@@ -45,7 +45,7 @@ public class AuthenticationSecurityTests {
 
     @Test
     public void loginEndpoint_allowsUnauthenticatedRequests() throws Exception {
-        Person loginPayload = new Person("", "");
+        User loginPayload = new User("", "");
 
         mvc.perform(post("/api/v1/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -55,7 +55,7 @@ public class AuthenticationSecurityTests {
 
     @Test
     public void registerEndpoint_allowsUnauthenticatedRequests() throws Exception {
-        Person registerPayload = new Person("", "");
+        User registerPayload = new User("", "");
 
         mvc.perform(post("/api/v1/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +71,7 @@ public class AuthenticationSecurityTests {
 
     @Test
     public void protectedEndpoint_allowsAuthenticatedRequests() throws Exception {
-        when(personService.getUser("testUser")).thenReturn(java.util.Optional.of(new Person("testUser", "testPass")));
+        when(UserService.getUser("testUser")).thenReturn(java.util.Optional.of(new User("testUser", "testPass")));
 
         mvc.perform(get("/api/v1/user")
             .with(user("testUser").roles("USER"))

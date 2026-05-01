@@ -12,8 +12,8 @@ import java.util.Optional;
 
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
-import com.app.bank.model.Person;
-import com.app.bank.repo.PersonRepository;
+import com.app.bank.model.User;
+import com.app.bank.repo.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,41 +24,41 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
-public class PersonServiceTests {
+public class UserServiceTests {
 
     @Mock
-    private PersonRepository userRepository;
+    private UserRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private PersonService personService;
+    private UserService userService;
 
-    private Person validUser;
+    private User validUser;
 
     @BeforeEach
     public void setUp() {
-        validUser = new Person("testUser", "testPass");
+        validUser = new User("testUser", "testPass");
     }
 
     @Test
     public void newUser_shouldThrowBadRequest_whenUserIdIsNull() {
-        Person user = new Person(null, "password");
+        User user = new User(null, "password");
 
-        assertThrows(BadRequestException.class, () -> personService.newUser(user));
+        assertThrows(BadRequestException.class, () -> userService.newUser(user));
     }
 
     @Test
     public void newUser_shouldThrowBadRequest_whenPasswordIsBlank() {
-        Person user = new Person("testUser", "");
-        assertThrows(BadRequestException.class, () -> personService.newUser(user));
+        User user = new User("testUser", "");
+        assertThrows(BadRequestException.class, () -> userService.newUser(user));
     }
 
     @Test
     public void newUser_shouldThrowBadRequest_whenUserAlreadyExists() {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.of(validUser));
-        assertThrows(BadRequestException.class, () -> personService.newUser(validUser));
+        assertThrows(BadRequestException.class, () -> userService.newUser(validUser));
     }
 
     @Test
@@ -66,16 +66,16 @@ public class PersonServiceTests {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
         when(passwordEncoder.encode("testPass")).thenReturn("encodedPass");
 
-        personService.newUser(validUser);
+        userService.newUser(validUser);
 
-        verify(userRepository).insert(any(Person.class));
+        verify(userRepository).insert(any(User.class));
     }
 
     @Test
     public void getUser_shouldReturnOptional_whenPresent() {
         when(userRepository.getUserByUserID("testUser")).thenReturn(Optional.of(validUser));
 
-        Optional<Person> result = personService.getUser("testUser");
+        Optional<User> result = userService.getUser("testUser");
 
         assertTrue(result.isPresent());
     }
@@ -84,15 +84,15 @@ public class PersonServiceTests {
     public void deleteUser_shouldThrowNotFound_whenMissing() {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> personService.deleteUser("missingUser"));
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser("missingUser"));
     }
 
     @Test
     public void checkforUserPassword_shouldReturnFalse_whenUserDoesNotExist() {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
 
-        Person request = new Person("missingUser", "password");
-        assertFalse(personService.checkforUserPassword(request));
+        User request = new User("missingUser", "password");
+        assertFalse(userService.checkforUserPassword(request));
     }
 
     @Test
@@ -100,6 +100,6 @@ public class PersonServiceTests {
         when(userRepository.getUserByUserID(validUser.getUserID())).thenReturn(Optional.of(validUser));
         when(passwordEncoder.matches("testPass", "testPass")).thenReturn(true);
 
-        assertTrue(personService.checkforUserPassword(validUser));
+        assertTrue(userService.checkforUserPassword(validUser));
     }
 }

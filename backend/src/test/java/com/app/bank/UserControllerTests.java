@@ -12,11 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 
-import com.app.bank.api.PersonController;
+import com.app.bank.api.UserController;
 import com.app.bank.exception.ResourceNotFoundException;
-import com.app.bank.model.Person;
+import com.app.bank.model.User;
 import com.app.bank.service.AccountService;
-import com.app.bank.service.PersonService;
+import com.app.bank.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
@@ -29,14 +29,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(PersonController.class)
-public class PersonControllerTests {
+@WebMvcTest(UserController.class)
+public class UserControllerTests {
 
     @Autowired
     private MockMvc mvc;
 
     @MockitoBean
-    private PersonService personService;
+    private UserService userService;
     
     @MockitoBean
     private AccountService accountService;
@@ -48,8 +48,8 @@ public class PersonControllerTests {
 
     @Test
     public void getUser_returnsUser_whenFound() throws Exception {
-        Person user = new Person("testUser", "testPass");
-        when(personService.getUser("testUser")).thenReturn(Optional.of(user));
+        User user = new User("testUser", "testPass");
+        when(userService.getUser("testUser")).thenReturn(Optional.of(user));
 
         mvc.perform(get("/api/v1/user/testUser").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -60,7 +60,7 @@ public class PersonControllerTests {
 
     @Test
     public void register_returnsBadRequest_whenPayloadMissingFields() throws Exception {
-        Person user = new Person("", "password");
+        User user = new User("", "password");
         mvc.perform(post("/api/v1/user/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
@@ -69,7 +69,7 @@ public class PersonControllerTests {
 
     @Test
     public void login_returnsBadRequest_whenPayloadMissingFields() throws Exception {
-        Person user = new Person("testUser", "");
+        User user = new User("testUser", "");
         mvc.perform(post("/api/v1/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
@@ -78,8 +78,8 @@ public class PersonControllerTests {
 
    @Test
     public void login_returnsUnauthorized_whenUserNotFound() throws Exception {
-        Person user = new Person("testUser", "wrongPass");
-        when(personService.validateUser(any(Person.class))).thenReturn(true);
+        User user = new User("testUser", "wrongPass");
+        when(userService.validateUser(any(User.class))).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -91,8 +91,8 @@ public class PersonControllerTests {
 
     @Test
     public void login_returnsUnauthorized_whenPasswordIncorrect() throws Exception {
-        Person user = new Person("testUser", "wrongPass");
-        when(personService.validateUser(any(Person.class))).thenReturn(true);
+        User user = new User("testUser", "wrongPass");
+        when(userService.validateUser(any(User.class))).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -105,8 +105,8 @@ public class PersonControllerTests {
 
     @Test
     public void login_returnsOk_whenCredentialsValid() throws Exception {
-        Person user = new Person("testUser", "testPass");
-        when(personService.validateUser(any(Person.class))).thenReturn(true);
+        User user = new User("testUser", "testPass");
+        when(userService.validateUser(any(User.class))).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenReturn(new UsernamePasswordAuthenticationToken("testUser", null));
 
@@ -118,7 +118,7 @@ public class PersonControllerTests {
 
     @Test
     public void deleteUser_returnsNotFound_whenUserMissing() throws Exception {
-        doThrow(new ResourceNotFoundException("User not found.")).when(personService).deleteUser("missingUser");
+        doThrow(new ResourceNotFoundException("User not found.")).when(userService).deleteUser("missingUser");
 
         mvc.perform(delete("/api/v1/user/missingUser").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());

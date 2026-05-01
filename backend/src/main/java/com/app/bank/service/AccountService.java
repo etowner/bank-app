@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
-import com.app.bank.model.Person;
+import com.app.bank.model.User;
 import com.app.bank.repo.AccountRepository;
 
 @Service
@@ -27,7 +27,7 @@ public class AccountService {
     private AccountRepository accountRepository;
 
     @Autowired
-    private PersonService personService;
+    private UserService userService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -43,7 +43,7 @@ public class AccountService {
     }
     
     public List<Account> getUserAccounts(String userID) {
-        if (!personService.checkforUser(userID)) {
+        if (!userService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
         }
         return accountRepository.getAccountsByUserID(userID);
@@ -62,7 +62,7 @@ public class AccountService {
                 || account.getType() == null || account.getType().isBlank()) {
             throw new BadRequestException("Account userID and type are required.");
         }
-        if (!personService.checkforUser(account.getUserID())) {
+        if (!userService.checkforUser(account.getUserID())) {
             throw new ResourceNotFoundException("User not found.");
         }
         int possAID = random.nextInt(4000, 6000);
@@ -72,7 +72,7 @@ public class AccountService {
         account.setAccountID(possAID);
         accountRepository.insert(account);
         String userID = account.getUserID();
-        mongoTemplate.update(Person.class)
+        mongoTemplate.update(User.class)
                 .matching(Criteria.where("userID").is(userID))
                 .apply(new Update().push("accounts").value(account))
                 .first();
@@ -87,7 +87,7 @@ public class AccountService {
     }
 
     public void deleteUserAccounts(String userID) {
-        if (!personService.checkforUser(userID)) {
+        if (!userService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
         }
         accountRepository.deleteAllAccountsByUserID(userID);

@@ -17,7 +17,7 @@ import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.service.AccountService;
-import com.app.bank.service.PersonService;
+import com.app.bank.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class AccountControllerTests {
     private AccountService accountService;
 
     @MockitoBean
-    private PersonService personService;
+    private UserService UserService;
 
     private Account validAccount;
 

@@ -9,23 +9,23 @@ import org.springframework.stereotype.Service;
 
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
-import com.app.bank.model.Person;
-import com.app.bank.repo.PersonRepository;
+import com.app.bank.model.User;
+import com.app.bank.repo.UserRepository;
 
 @Service
-public class PersonService {
+public class UserService {
 
     @Autowired
-    private PersonRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<Person> getAllUsers() {
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public boolean validateUser(Person user){
+    public boolean validateUser(User user){
         if (user == null || user.getUserID() == null || user.getUserID().isBlank()
                 || user.getPassword() == null || user.getPassword().isBlank()) {
             return false;
@@ -33,18 +33,18 @@ public class PersonService {
         return true;
     }
 
-    public void newUser(Person user) {
+    public void newUser(User user) {
         if (!validateUser(user)) {
             throw new BadRequestException("UserID and password are required.");
         }
         if (checkforUser(user.getUserID())) {
             throw new BadRequestException("A user with this userID already exists.");
         }
-        Person encodedUser = new Person(user.getUserID(), passwordEncoder.encode(user.getPassword()));
+        User encodedUser = new User(user.getUserID(), passwordEncoder.encode(user.getPassword()));
         userRepository.insert(encodedUser);
     }
 
-    public boolean checkforUser(Person user) {
+    public boolean checkforUser(User user) {
         return user != null && checkforUser(user.getUserID());
     }
 
@@ -55,15 +55,15 @@ public class PersonService {
         return userRepository.getUserByUserID(userID).isPresent();
     }
 
-    public boolean checkforUserPassword(Person user) {
+    public boolean checkforUserPassword(User user) {
          if (!validateUser(user)){
             return false;
         }
-        Optional<Person> existingUser = userRepository.getUserByUserID(user.getUserID());
-        return existingUser.filter(person -> passwordEncoder.matches(user.getPassword(), person.getPassword())).isPresent();
+        Optional<User> existingUser = userRepository.getUserByUserID(user.getUserID());
+        return existingUser.filter(User -> passwordEncoder.matches(user.getPassword(), User.getPassword())).isPresent();
     }
 
-    public Optional<Person> getUser(String userID) {
+    public Optional<User> getUser(String userID) {
         if (userID == null || userID.isBlank()) {
             return Optional.empty();
         }
@@ -71,7 +71,7 @@ public class PersonService {
     }
 
     public void deleteUser(String userID) {
-        Optional<Person> user = getUser(userID);
+        Optional<User> user = getUser(userID);
         if (user.isEmpty()) {
             throw new ResourceNotFoundException("User not found.");
         }
