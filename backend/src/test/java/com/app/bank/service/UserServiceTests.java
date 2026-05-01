@@ -33,7 +33,7 @@ public class UserServiceTests {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserService UserService;
+    private UserService userService;
 
     private User validUser;
 
@@ -46,19 +46,19 @@ public class UserServiceTests {
     public void newUser_shouldThrowBadRequest_whenUserIdIsNull() {
         User user = new User(null, "password");
 
-        assertThrows(BadRequestException.class, () -> UserService.newUser(user));
+        assertThrows(BadRequestException.class, () -> userService.newUser(user));
     }
 
     @Test
     public void newUser_shouldThrowBadRequest_whenPasswordIsBlank() {
         User user = new User("testUser", "");
-        assertThrows(BadRequestException.class, () -> UserService.newUser(user));
+        assertThrows(BadRequestException.class, () -> userService.newUser(user));
     }
 
     @Test
     public void newUser_shouldThrowBadRequest_whenUserAlreadyExists() {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.of(validUser));
-        assertThrows(BadRequestException.class, () -> UserService.newUser(validUser));
+        assertThrows(BadRequestException.class, () -> userService.newUser(validUser));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class UserServiceTests {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
         when(passwordEncoder.encode("testPass")).thenReturn("encodedPass");
 
-        UserService.newUser(validUser);
+        userService.newUser(validUser);
 
         verify(userRepository).insert(any(User.class));
     }
@@ -75,7 +75,7 @@ public class UserServiceTests {
     public void getUser_shouldReturnOptional_whenPresent() {
         when(userRepository.getUserByUserID("testUser")).thenReturn(Optional.of(validUser));
 
-        Optional<User> result = UserService.getUser("testUser");
+        Optional<User> result = userService.getUser("testUser");
 
         assertTrue(result.isPresent());
     }
@@ -84,7 +84,7 @@ public class UserServiceTests {
     public void deleteUser_shouldThrowNotFound_whenMissing() {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> UserService.deleteUser("missingUser"));
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser("missingUser"));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class UserServiceTests {
         when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.empty());
 
         User request = new User("missingUser", "password");
-        assertFalse(UserService.checkforUserPassword(request));
+        assertFalse(userService.checkforUserPassword(request));
     }
 
     @Test
@@ -100,6 +100,6 @@ public class UserServiceTests {
         when(userRepository.getUserByUserID(validUser.getUserID())).thenReturn(Optional.of(validUser));
         when(passwordEncoder.matches("testPass", "testPass")).thenReturn(true);
 
-        assertTrue(UserService.checkforUserPassword(validUser));
+        assertTrue(userService.checkforUserPassword(validUser));
     }
 }
