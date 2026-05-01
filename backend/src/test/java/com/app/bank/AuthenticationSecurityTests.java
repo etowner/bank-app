@@ -30,7 +30,7 @@ public class AuthenticationSecurityTests {
     private MockMvc mvc;
 
     @MockitoBean
-    private UserService UserService;
+    private UserService userService;
 
     @MockitoBean
     private AccountService accountService;
@@ -71,7 +71,7 @@ public class AuthenticationSecurityTests {
 
     @Test
     public void protectedEndpoint_allowsAuthenticatedRequests() throws Exception {
-        when(UserService.getUser("testUser")).thenReturn(java.util.Optional.of(new User("testUser", "testPass")));
+        when(userService.getUser("testUser")).thenReturn(java.util.Optional.of(new User("testUser", "testPass")));
 
         mvc.perform(get("/api/v1/user")
             .with(user("testUser").roles("USER"))

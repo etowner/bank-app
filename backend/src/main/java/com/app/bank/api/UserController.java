@@ -34,7 +34,7 @@ import com.app.bank.service.UserService;
 public class UserController {
 
     @Autowired
-    private UserService UserService;
+    private UserService userService;
 
     @Autowired
     private AccountService accountService;
@@ -64,7 +64,7 @@ public class UserController {
         if (!(principal instanceof UserDetails userDetails)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<User> user = UserService.getUser(userDetails.getUsername());
+        Optional<User> user = userService.getUser(userDetails.getUsername());
         return user.map(this::toUserResponse).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
@@ -72,7 +72,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<String> createAccount(@RequestBody User user, HttpServletRequest request) {
         try {
-            UserService.newUser(user);
+            userService.newUser(user);
             Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
             storeAuthentication(authentication, request);
@@ -84,7 +84,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> logIn(@RequestBody User user, HttpServletRequest request) {
-        if (!UserService.validateUser(user)) {
+        if (!userService.validateUser(user)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
         }
         try {
@@ -105,7 +105,7 @@ public class UserController {
         try {
             String userID = userDetails.getUsername();
             accountService.deleteUserAccounts(userID);
-            UserService.deleteUser(userID);
+            userService.deleteUser(userID);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
