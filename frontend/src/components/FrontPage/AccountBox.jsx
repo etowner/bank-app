@@ -2,6 +2,27 @@ import React, { useState, useContext } from "react";
 import { UserContext } from "../../UserContext";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
 
+const AuthForm = ({ onSubmit, userID, password, onUserIDChange, onPasswordChange, error }) => (
+    <Form>
+        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+            <Form.Label column sm={6}>Enter userID:</Form.Label>
+            <Col>
+                <Form.Control value={userID} onChange={onUserIDChange} />
+            </Col>
+        </Form.Group>
+        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+            <Form.Label column>Enter password:</Form.Label>
+            <Col sm={6}>
+                <Form.Control type="password" value={password} onChange={onPasswordChange} />
+            </Col>
+        </Form.Group>
+        <Button variant="light" onClick={onSubmit} size="lg" className="mb-3">
+            Submit
+        </Button>
+        {error && <Alert variant="danger">{error}</Alert>}
+    </Form>
+);
+
 const AccountBox = () => {
   const { login, register, error, setError } = useContext(UserContext);
   const [userID, setUserID] = useState("");
@@ -31,46 +52,14 @@ const AccountBox = () => {
       <Card.Body>
         <Tabs activeKey={activeTab} onSelect={handleTabSwitch} className="mb-3" fill>
           <Tab eventKey="create" title="Create Account">
-            <Form>
-              <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                <Form.Label column sm={6}>Enter userID:</Form.Label>
-                <Col>
-                  <Form.Control value={userID} onChange={(e) => setUserID(e.target.value)} />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                <Form.Label column>Enter password:</Form.Label>
-                <Col sm={6}>
-                  <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </Col>
-              </Form.Group>
-              <Button variant="light" onClick={handleCreate} size="lg" className="mb-3">
-                Submit
-              </Button>
-              {error && <Alert className="justify-center" variant="danger">{error}</Alert>}
-            </Form>
+            <AuthForm onSubmit={handleCreate} userID={userID} 
+            password={password} onUserIDChange={(e) => setUserID(e.target.value)}
+            onPasswordChange={(e) => setPassword(e.target.value)} error={error} />
           </Tab>
           <Tab eventKey="log" title="Log In">
-            <Form>
-              <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                <Form.Label column sm={6}>Enter userID:</Form.Label>
-                <Col>
-                  <Form.Control value={userID} onChange={(e) => setUserID(e.target.value)} />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} className="mb-3 justify-content-md-center">
-                <Form.Label column>Enter password:</Form.Label>
-                <Col sm={6}>
-                  <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </Col>
-              </Form.Group>
-              <Button variant="light" size="lg" onClick={handleLog} className="mb-3">
-                Submit
-              </Button>
-              {error && <Alert className="justify-center" variant="danger">{error}</Alert>}
-            </Form>
+            <AuthForm onSubmit={handleLog} userID={userID} 
+            password={password} onUserIDChange={(e) => setUserID(e.target.value)}
+            onPasswordChange={(e) => setPassword(e.target.value)} error={error} />
           </Tab>
         </Tabs>
       </Card.Body>
