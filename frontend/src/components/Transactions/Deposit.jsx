@@ -4,40 +4,34 @@ import api from "../../api/axiosConfig";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 import { UserContext } from "../../UserContext";
 
-export default function Deposit(props) {
+export default function Deposit({ updateAccount }) {
   const [amount, setAmount] = useState(0);
   const { accountID } = useParams();
-  const { userID } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleDepositClick = (event) => {
+  const handleDepositClick = async (event) => {
     event.preventDefault();
-
     if (isNaN(amount) || amount <= 0) {
       setError("Invalid deposit amount. Please enter a valid amount.");
       return;
     }
-
-    const depositAmount = parseFloat(amount);
     setLoading(true);
-    api
-      .put(`/api/v1/account/${accountID}/deposit`, depositAmount, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((response) => {
-        console.log("Deposit successful");
-        setAmount(0);
-        setError(null);
-        props.updateAccount(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        console.error("Error details:", error.response ? error.response.data : error.message);
-        setError("Deposit failed. Please try again later.");
-        setLoading(false);
-      });
+    try {
+      const response = await api.put(
+        `/api/v1/account/${accountID}/deposit`,
+        parseFloat(amount),
+        { headers: { "Content-Type": "application/json" } },
+      );
+      setAmount(0);
+      setError(null);
+      updateAccount(response.data);
+    } catch (error) {
+      setError("Deposit failed. Please try again later.");
+      console.error(error);
+    } finally {
+      setLoading(false); 
+    }
   };
 
   return (
