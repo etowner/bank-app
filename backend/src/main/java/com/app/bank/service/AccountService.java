@@ -11,12 +11,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.model.User;
 import com.app.bank.repo.AccountRepository;
+import com.mongodb.DuplicateKeyException;
 
 @Service
 public class AccountService {
@@ -33,10 +35,7 @@ public class AccountService {
     private MongoTemplate mongoTemplate;
 
     public void verifyOwnership(int accountID, String userID) throws Exception {
-        if(!getAccount(accountID).isPresent()){
-            throw new ResourceNotFoundException("Account not found.");
-        }
-        Account account = getAccount(accountID).get();
+        Account account = getAccount(accountID).orElseThrow(() -> new ResourceNotFoundException("Account not found."));
         if (!account.getUserID().equals(userID)) {
             throw new AccessDeniedException("You do not own this account.");
         }
@@ -46,36 +45,38 @@ public class AccountService {
         if (!userService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
         }
-        return accountRepository.getAccountsByUserID(userID);
+        return accountRepository.findByUserID(userID);
     }
 
     public Optional<Account> getAccount(int accountID) {
-        return accountRepository.getAccountByAccountID(accountID);
+        return accountRepository.findByAccountID(accountID);
     }
 
-    public Boolean isAccount(int accountID) {
-        return accountRepository.getAccountByAccountID(accountID).isPresent();
+    private boolean validateAccount(Account account) {
+        return account != null
+            && account.getUserID() != null && !account.getUserID().isBlank()
+            && account.getType() != null && !account.getType().isBlank();
     }
-
+    
+    @Transactional
     public void newAccount(Account account) {
-        if (account == null || account.getUserID() == null || account.getUserID().isBlank()
-                || account.getType() == null || account.getType().isBlank()) {
+        if (!validateAccount(account)) {
             throw new BadRequestException("Account userID and type are required.");
         }
         if (!userService.checkforUser(account.getUserID())) {
             throw new ResourceNotFoundException("User not found.");
         }
-        int possAID = random.nextInt(4000, 6000);
-        while (Boolean.TRUE.equals(isAccount(possAID))) {
-            possAID = random.nextInt(4000, 6000);
-        }
-        account.setAccountID(possAID);
-        accountRepository.insert(account);
-        String userID = account.getUserID();
-        mongoTemplate.update(User.class)
-                .matching(Criteria.where("userID").is(userID))
+        try {
+            int possAID = random.nextInt(1000, 9000);
+            account = new Account(account.getUserID(), possAID, account.getType());
+            accountRepository.insert(account);
+            mongoTemplate.update(User.class)
+                .matching(Criteria.where("userID").is(account.getUserID()))
                 .apply(new Update().push("accounts").value(account))
                 .first();
+        } catch (DuplicateKeyException e) {
+            throw new BadRequestException("Account creation failed, please try again.");
+        }
     }
 
     public void deleteAccount(int accountID) {
@@ -90,25 +91,24 @@ public class AccountService {
         if (!userService.checkforUser(userID)) {
             throw new ResourceNotFoundException("User not found.");
         }
-        accountRepository.deleteAllAccountsByUserID(userID);
+        accountRepository.deleteAllByUserID(userID);
     }
 
-    public void depositAmount(int accountID, float amount) {
+    public void depositAmount(int accountID, double amount) {
         if (amount <= 0) {
             throw new BadRequestException("Deposit amount must be greater than zero.");
         }
         Account account = getAccount(accountID)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
+            .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
         account.deposit(amount);
         accountRepository.save(account);
     }
 
-    public boolean withdrawAmount(int accountID, float amount) {
+    public boolean withdrawAmount(int accountID, double amount) {
         if (amount <= 0) {
             throw new BadRequestException("Withdrawal amount must be greater than zero.");
         }
-        Account account = getAccount(accountID)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found."));
+        Account account = getAccount(accountID).orElseThrow(() -> new ResourceNotFoundException("Account not found."));
         if (!account.withdraw(amount)) {
             throw new BadRequestException("Insufficient funds.");
         }
@@ -116,7 +116,8 @@ public class AccountService {
         return true;
     }
 
-    public void transfer(int accountID1, int accountID2, float amount) {
+    @Transactional
+    public void transfer(int accountID1, int accountID2, double amount) {
         if (accountID1 == accountID2) {
             throw new BadRequestException("Source and destination accounts must be different.");
         }
@@ -124,15 +125,16 @@ public class AccountService {
             throw new BadRequestException("Transfer amount must be greater than zero.");
         }
         Account account1 = getAccount(accountID1)
-                .orElseThrow(() -> new ResourceNotFoundException("Source account not found."));
+            .orElseThrow(() -> new ResourceNotFoundException("Source account not found."));
         Account account2 = getAccount(accountID2)
-                .orElseThrow(() -> new ResourceNotFoundException("Destination account not found."));
+            .orElseThrow(() -> new ResourceNotFoundException("Destination account not found."));
         if (!account1.withdraw(amount)) {
             throw new BadRequestException("Insufficient funds in the source account.");
         }
         account2.deposit(amount);
         accountRepository.save(account1);
         accountRepository.save(account2);
+       
     }
 
     

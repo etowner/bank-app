@@ -42,7 +42,7 @@ public class AccountControllerTests {
 
     @BeforeEach
     public void setUp() {
-        validAccount = new Account("testUser", "Checking");
+        validAccount = new Account("testUser", 0, "Checking");
     }
 
     @Test
