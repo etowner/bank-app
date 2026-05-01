@@ -12,8 +12,12 @@ export const UserContextProvider = ({ children }) => {
 
   const getUser = async () => {
     setError(null);
-    const response = (await api.get(`/api/v1/user`));
-    setUser(response.data);
+    try {
+      const response = (await api.get(`/api/v1/user`));
+      setUser(response.data);
+    } catch (err) {
+      console.error("Error getting user:", err.response ? err.response : err.request ? err.request : err.message);
+    }
   };
 
   const register = async (userID, password) => {
