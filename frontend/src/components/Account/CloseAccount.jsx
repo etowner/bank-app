@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Modal, Alert } from "react-bootstrap";
 import api from "../../api/axiosConfig";
 
 export default function DeleteAccount() {
@@ -8,16 +8,18 @@ export default function DeleteAccount() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const navigate = useNavigate();
-  const { accountID, userID } = useParams();
+  const { accountID } = useParams();
+  const [error, setError] = useState(null);
 
-  const closeAcc = (event) => {
+  const closeAcc = async(event) => {
     event.preventDefault();
-    api
-      .delete(`/api/v1/account/${accountID}/close`)
-      .catch((error) => {
-        console.error(error);
-      });
-    navigate(`/home`);
+    try {
+      await api.delete(`/api/v1/account/${accountID}/close`);
+      navigate(`/home`);
+    } catch (error) {
+      setError("Failed to close account. Please try again.");
+      console.error(error);
+    }
   };
 
   return (
@@ -34,6 +36,7 @@ export default function DeleteAccount() {
         <Modal.Body style={{ textAlign: "center" }}>
           Are you sure you want to delete this account? This cannot be undone!
         </Modal.Body>
+        {error && <Alert variant="danger">{error}</Alert>}
         <Modal.Footer>
           <Button variant="secondary" onClick={closeAcc}>
             Yes

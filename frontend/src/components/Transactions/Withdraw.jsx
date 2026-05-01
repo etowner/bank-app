@@ -1,45 +1,41 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { Button, Form, Row, Col, Alert } from "react-bootstrap";
-import { UserContext } from "../../UserContext";
 
-export default function Withdraw(props) {
+export default function Withdraw({ balance, updateAccount }) {
   const [amount, setAmount] = useState(0);
   const { accountID } = useParams();
-  const { userID } = useContext(UserContext);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleWithdrawClick = (event) => {
+  const handleWithdrawClick = async (event) => {
     event.preventDefault();
-
     if (isNaN(amount) || amount <= 0) {
-      setError("Invalid withdrawal amount. Please enter a valid amount.");
-      return;
+        setError("Invalid withdrawal amount. Please enter a valid amount.");
+        return;
     }
-    if (props.balance - amount < 0) {
-      setError("Insufficient funds.");
-      return;
+    if (balance - amount < 0) {
+        setError("Insufficient funds.");
+        return;
     }
-
-    const withdrawAmount = parseFloat(amount);
     setLoading(true);
-    api
-      .put(`/api/v1/account/${accountID}/withdraw`, withdrawAmount, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((response) => {
+    try {
+        const response = await api.put(
+            `/api/v1/account/${accountID}/withdraw`,
+            parseFloat(amount),
+            { headers: { "Content-Type": "application/json" } }
+        );
         setError(null);
         setAmount(0);
-        props.updateAccount(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
+        updateAccount(response.data);
+    } catch (error) {
+        setError("Withdrawal failed. Please try again.");
         console.error(error);
+    } finally {
         setLoading(false);
-      });
-  };
+    }
+};
 
   return (
     <div>
