@@ -3,9 +3,11 @@ import { UserContext } from "../../UserContext";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
 
 const AccountBox = () => {
-  const { login, register, error } = useContext(UserContext);
+  const { login, register, error, setError } = useContext(UserContext);
   const [userID, setUserID] = useState("");
   const [password, setPassword] = useState("");
+  const [activeTab, setActiveTab] = useState("create");
+
 
   const handleCreate = (event) => {
     event.preventDefault();
@@ -17,10 +19,17 @@ const AccountBox = () => {
     login(userID, password);
   };
 
+  const handleTabSwitch = (tab) => {
+    setActiveTab(tab);
+    // setUserID("");
+    // setPassword("");
+    setError(null);
+  };
+
   return (
     <Card style={{ width: "35rem" }} bg="secondary" text="light">
       <Card.Body>
-        <Tabs defaultActiveKey="create" className="mb-3" fill>
+        <Tabs activeKey={activeTab} onSelect={handleTabSwitch} className="mb-3" fill>
           <Tab eventKey="create" title="Create Account">
             <Form>
               <Form.Group as={Row} className="mb-3 justify-content-md-center">
