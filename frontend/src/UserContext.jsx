@@ -23,7 +23,7 @@ export const UserContextProvider = ({ children }) => {
     } catch (err) {
       setError("Either the username or password was invalid.");
       //console.error("Registration error:", err);
-      console.error("Registration error:", err.response ? err.response : err.message);
+      console.error("Registration error:",  err.response ? err.response : err.request ? err.request : err.message);
       return; 
     }
 
@@ -32,7 +32,7 @@ export const UserContextProvider = ({ children }) => {
       navigate(`/home`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
-      console.error("Error fetching user after registration:", err.response ? err.response : err.message);
+      console.error("Error fetching user after registration:", err.response ? err.response : err.request ? err.request : err.message);
     }
   };
 
@@ -42,7 +42,7 @@ export const UserContextProvider = ({ children }) => {
       await api.post(`/api/v1/user/login`, { userID, password });
     } catch (err) {
       setError("Either the username or password was incorrect.");
-      console.error("Login error:", err.response ? err.response : err.message);
+      console.error("Login error:", err.response ? err.response : err.request ? err.request : err.message);
       return; 
     }
 
@@ -51,7 +51,7 @@ export const UserContextProvider = ({ children }) => {
       navigate(`/home`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
-      console.error("Error fetching user after login:", err.response ? err.response : err.message);
+      console.error("Error fetching user after login:", err.response ? err.response : err.request ? err.request : err.message );
     }
   };
 
