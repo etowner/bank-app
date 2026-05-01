@@ -34,6 +34,7 @@ export default function Deposit(props) {
       })
       .catch((error) => {
         console.error(error);
+        console.error("Error details:", error.response ? error.response.data : error.message);
         setError("Deposit failed. Please try again later.");
         setLoading(false);
       });
