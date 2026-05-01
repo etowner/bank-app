@@ -17,7 +17,7 @@ import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.User;
 import com.app.bank.service.AccountService;
 import com.app.bank.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class UserControllerTests {
     private MockMvc mvc;
 
     @MockitoBean
-    private UserService UserService;
+    private UserService userService;
     
     @MockitoBean
     private AccountService accountService;
@@ -49,7 +49,7 @@ public class UserControllerTests {
     @Test
     public void getUser_returnsUser_whenFound() throws Exception {
         User user = new User("testUser", "testPass");
-        when(UserService.getUser("testUser")).thenReturn(Optional.of(user));
+        when(userService.getUser("testUser")).thenReturn(Optional.of(user));
 
         mvc.perform(get("/api/v1/user/testUser").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -79,7 +79,7 @@ public class UserControllerTests {
    @Test
     public void login_returnsUnauthorized_whenUserNotFound() throws Exception {
         User user = new User("testUser", "wrongPass");
-        when(UserService.validateUser(any(User.class))).thenReturn(true);
+        when(userService.validateUser(any(User.class))).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -92,7 +92,7 @@ public class UserControllerTests {
     @Test
     public void login_returnsUnauthorized_whenPasswordIncorrect() throws Exception {
         User user = new User("testUser", "wrongPass");
-        when(UserService.validateUser(any(User.class))).thenReturn(true);
+        when(userService.validateUser(any(User.class))).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenThrow(new BadCredentialsException("Bad credentials"));
 
@@ -106,7 +106,7 @@ public class UserControllerTests {
     @Test
     public void login_returnsOk_whenCredentialsValid() throws Exception {
         User user = new User("testUser", "testPass");
-        when(UserService.validateUser(any(User.class))).thenReturn(true);
+        when(userService.validateUser(any(User.class))).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
             .thenReturn(new UsernamePasswordAuthenticationToken("testUser", null));
 
@@ -118,7 +118,7 @@ public class UserControllerTests {
 
     @Test
     public void deleteUser_returnsNotFound_whenUserMissing() throws Exception {
-        doThrow(new ResourceNotFoundException("User not found.")).when(UserService).deleteUser("missingUser");
+        doThrow(new ResourceNotFoundException("User not found.")).when(userService).deleteUser("missingUser");
 
         mvc.perform(delete("/api/v1/user/missingUser").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
