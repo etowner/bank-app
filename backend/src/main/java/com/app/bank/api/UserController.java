@@ -65,12 +65,19 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Optional<User> user = userService.getUser(userDetails.getUsername());
-        return user.map(this::toUserResponse).map(ResponseEntity::ok)
+        return user.map(this::toUserResponse)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> createAccount(@RequestBody User user, HttpServletRequest request) {
+        if (!userService.validateUser(user)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
+        }
+        if (userService.checkforUser(user)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Account already exists.");
+        }
         try {
             userService.newUser(user);
             Authentication authentication = authenticationManager

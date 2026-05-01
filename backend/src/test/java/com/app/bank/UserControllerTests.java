@@ -17,7 +17,7 @@ import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.User;
 import com.app.bank.service.AccountService;
 import com.app.bank.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
