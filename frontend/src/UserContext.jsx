@@ -16,6 +16,7 @@ export const UserContextProvider = ({ children }) => {
       setUser(response.data);
     } catch (error) {
       console.error(error);
+      console.error("Error getUser details:", error.response ?  error.response.data : error.message);
     }
   };
 
@@ -25,7 +26,7 @@ export const UserContextProvider = ({ children }) => {
     } catch (err) {
       setError("Either the username or password was invalid.");
       console.error("Registration error:", err);
-      console.error("Error details:", err.response ? err.response.data : err.message);
+      console.error("Error register details:", err.response ? err.response.data : err.message);
       return; 
     }
 
@@ -44,7 +45,7 @@ export const UserContextProvider = ({ children }) => {
     } catch (err) {
       setError("Either the username or password was incorrect.");
       console.error("Login error:", err);
-      console.error("Error details:", err.response ? err.response.data : err.message);
+      console.error("Error login details:", err.response ? err.response.data : err.message);
       return; 
     }
 
