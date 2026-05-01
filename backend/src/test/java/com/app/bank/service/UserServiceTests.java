@@ -57,7 +57,7 @@ public class UserServiceTests {
 
     @Test
     public void newUser_shouldThrowBadRequest_whenUserAlreadyExists() {
-        when(userRepository.getUserByUserID(anyString())).thenReturn(Optional.of(validUser));
+        when(userRepository.findByUserID(anyString())).thenReturn(Optional.of(validUser));
         assertThrows(BadRequestException.class, () -> userService.newUser(validUser));
     }
 
