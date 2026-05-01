@@ -16,7 +16,7 @@ export default function Withdraw({ balance, updateAccount }) {
         setError("Invalid withdrawal amount. Please enter a valid amount.");
         return;
     }
-    if (props.balance - amount < 0) {
+    if (balance - amount < 0) {
         setError("Insufficient funds.");
         return;
     }
@@ -29,7 +29,7 @@ export default function Withdraw({ balance, updateAccount }) {
         );
         setError(null);
         setAmount(0);
-        props.updateAccount(response.data);
+        updateAccount(response.data);
     } catch (error) {
         setError("Withdrawal failed. Please try again.");
         console.error(error);

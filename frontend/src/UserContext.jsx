@@ -11,8 +11,15 @@ export const UserContextProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const getUser = async () => {
-    const response = (await api.get(`/api/v1/user`));
-    setUser(response.data);
+    setError(null);
+    try {
+      const response = (await api.get(`/api/v1/user`));
+      setUser(response.data);
+    } catch (error) {
+      // setError("Failed to fetch user data. Please try again.");
+      // console.error(error);
+      console.error("Error getting user:", error.response ? error.response.data : error.message);
+    }
   };
 
   const register = async (userID, password) => {
@@ -21,8 +28,8 @@ export const UserContextProvider = ({ children }) => {
       await api.post(`/api/v1/user/register`, { userID, password });
     } catch (err) {
       setError("Either the username or password was invalid.");
-      console.error("Registration error:", err);
-      console.error("Error details:", err.response ? err.response.data : err.message);
+      //console.error("Registration error:", err);
+      console.error("Registration error:", err.response ? err.response.data : err.message);
       return; 
     }
 
@@ -41,8 +48,8 @@ export const UserContextProvider = ({ children }) => {
       await api.post(`/api/v1/user/login`, { userID, password });
     } catch (err) {
       setError("Either the username or password was incorrect.");
-      console.error("Login error:", err);
-      console.error("Error details:", err.response ? err.response.data : err.message);
+      //console.error("Login error:", err);
+      console.error("Login error:", err.response ? err.response.data : err.message);
       return; 
     }
 

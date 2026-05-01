@@ -9,6 +9,7 @@ export default function DeleteAccount() {
   const handleShow = () => setShow(true);
   const navigate = useNavigate();
   const { accountID } = useParams();
+  const [error, setError] = useState(null);
 
   const closeAcc = async(event) => {
     event.preventDefault();
