@@ -33,7 +33,7 @@ export const UserContextProvider = ({ children }) => {
 
     try {
       await getUser();
-      navigate(`/home`);
+      navigate(`/dash`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
       console.error("Error fetching user after registration:", err.response ? err.response : err.request ? err.request : err.message);
@@ -52,7 +52,7 @@ export const UserContextProvider = ({ children }) => {
 
     try {
       await getUser();
-      navigate(`/home`);
+      navigate(`/dash`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
       console.error("Error fetching user after login:", err.response ? err.response : err.request ? err.request : err.message );

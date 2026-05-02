@@ -30,7 +30,7 @@ const Account = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/home`);
+    navigate(`/dash`);
   };
 
   const updateAccount = (updatedAccount) => {
@@ -46,6 +46,7 @@ const Account = () => {
       })
       .catch((error) => {
         console.error(error);
+        console.error("Account get error:", error.response ? error.response : error.request ? error.request : error.message);
       });
   }, [accountID, userID]);
 
