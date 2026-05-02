@@ -6,11 +6,11 @@ export default function PieChart({ accounts }) {
   const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
 
   const percentages = accounts.map(account => 
-    totalBalance > 0 ? (account.balance / totalBalance) * 100 : 0
+    totalBalance > 0 ? Math.round((account.balance / totalBalance) * 100) : 0
   );
 
   const data = {
-    labels: accounts.map((account) => `${account.type} - ${account.accountID}`),
+    labels: accounts.map((account) => `${account.accountID}`),
     datasets: [
       {
         label: "%",

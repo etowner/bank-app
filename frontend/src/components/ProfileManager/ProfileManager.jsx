@@ -1,8 +1,9 @@
 import { useState, useContext } from "react";
-import { Button, Modal, Offcanvas, ListGroup } from "react-bootstrap";
+import { Button, Modal, Offcanvas, ListGroup, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
+
 
 export default function ProfileManage() {
   const { userID, logout, setUser } = useContext(UserContext);
@@ -40,12 +41,20 @@ export default function ProfileManage() {
 
   return (
     <>
-      <a href="#profile" onClick={handleShow}>
-        {userID}
-      </a>
+      <Button variant="dark" onClick={handleShow} style={{width: "120px"}}>
+        <div style={{
+          width: "26px", height: "26px", borderRadius: "50%",
+          background: "rgba(201,168,76,0.2)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "10px", color: "#c9a84c", fontWeight: "500"
+        }}>
+          {userID} 
+        </div>
+         
+      </Button>
       <Offcanvas show={show} onHide={handleClose} placement="end">
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Profile</Offcanvas.Title>
+          <Offcanvas.Title style={{ color: "white" }}>Profile</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <ListGroup>

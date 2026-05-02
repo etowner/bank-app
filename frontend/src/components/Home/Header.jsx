@@ -2,6 +2,7 @@ import React from "react";
 import { Navbar } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
+import { Link } from "react-router-dom";
 import ProfileManager from "../ProfileManager/ProfileManager";
 
 const Header = () => {
@@ -9,9 +10,11 @@ const Header = () => {
     <div id="#home" style={{ background: "#ffffff" }}>
       <Navbar bg="dark" variant="dark" className="mb-5">
         <Container>
-          <Navbar.Brand> Bank App</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/home"> Bank App</Navbar.Brand>
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto"></Nav>
+            <Nav className="me-auto">
+              <Nav.Link as={Link} to="/dash" style={{ color: "rgba(255,255,255,0.5)"}}>Dashboard</Nav.Link>
+            </Nav>
           </Navbar.Collapse>
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
