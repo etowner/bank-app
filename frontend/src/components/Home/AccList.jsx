@@ -6,7 +6,7 @@ export default function AccList({ userID, accList }) {
   const navigate = useNavigate();
 
   function handleAccount(accountID) {
-    navigate(`/${accountID}`);
+    navigate(`/account/${accountID}`);
   }
 
   return (

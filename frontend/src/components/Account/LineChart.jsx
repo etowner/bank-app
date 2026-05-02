@@ -4,10 +4,14 @@ import "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
 export default function LineChart({ accountID, transHistory }) {
-  const transactionLabels = Object.values(transHistory).map(t => 
-    new Date(t.timestamp).toLocaleDateString()
-  );
-  const transactionAmounts = Object.values(transHistory).map(t => t.amount);
+  let transactionLabels = [];
+  let transactionAmounts = [];
+  if (transHistory && Object.keys(transHistory).length > 0) {
+     transactionLabels = Object.values(transHistory).map(t => 
+      new Date(t.timestamp).toLocaleDateString()
+    );
+     transactionAmounts = Object.values(transHistory).map(t => t.amount);
+  }
 
   const data = {
     labels: transactionLabels,
@@ -17,7 +21,7 @@ export default function LineChart({ accountID, transHistory }) {
       borderColor: "rgb(112, 128, 144)",
       backgroundColor: "rgba(112, 128, 144, 0.5)",
     }]
-};
+  };
 
   const options = {
     responsive: true,
