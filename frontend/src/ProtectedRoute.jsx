@@ -3,7 +3,10 @@ import { Navigate } from "react-router-dom";
 import { UserContext } from "./UserContext";
 
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(UserContext);
+  const { user, loading } = useContext(UserContext);
+
+  if (loading) return <div>Loading...</div>;
+  
   return user ? children : <Navigate to="/" />;
 };
 

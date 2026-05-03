@@ -14,13 +14,19 @@ function App() {
         <Routes>
           <Route path="/" element={<FrontPage />} />
           <Route path="/home" element={
-            <Home />
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
           } />
           <Route path="/account/:accountID" element={
-            <Account />
+            <ProtectedRoute>
+              <Account />
+            </ProtectedRoute>
           } />
           <Route path="/dash" element={
-            <MainPage />
+              <ProtectedRoute>
+                <MainPage />
+            </ProtectedRoute>
             } />
         </Routes>
       </UserContextProvider>
