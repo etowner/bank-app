@@ -13,7 +13,7 @@ import "../styles/MainPage.css";
 import ProfileManager from "../components/ProfileManager/ProfileManager";
 import MainHeader from "./MainHeader";
 import DashList from "./DashList";
-import Summary from "./Metrics";
+import Metrics from "./Metrics";
 import DashOpen from "./DashOpen";
 import DashTransfer from "./DashTransfer";
 
@@ -40,17 +40,17 @@ export default function MainPage() {
 
   useEffect(() => {
     getUser();
-    console.log("userID:", user.userID);
-    console.log("user:", user);
+    console.log("userID:", userID);
+    console.log("user:", user?.accountList);
     
-    setAccList(user.accountList);
+    // setAccList(user.accountList);
     }, []);
     
-    // useEffect(() => {
-    //   if (user) {
-    //     setAccList(user.accountList ?? []);
-    //   }
-    // }, [user.accountList]);
+    useEffect(() => {
+      if (user) {
+        setAccList(user.accountList ?? []);
+      }
+    }, [user?.accountList]);
   
 
   return (
