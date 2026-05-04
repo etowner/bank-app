@@ -3,7 +3,6 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-backend/src/main/java/com/app/bank/admin.java
 backend/src/main/resources/application.properties
 
 ### STS ###
@@ -61,5 +60,6 @@ yarn-error.log*
 plan.md
 
 
-
-frontend/src/tests/
+backend/src/main/resources/application.properties.dev
+frontend/src/tests
+backend/src/test
