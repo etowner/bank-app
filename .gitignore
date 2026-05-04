@@ -59,7 +59,7 @@ yarn-error.log*
 .vscode/
 plan.md
 
-backend/src/main/java/com/app/bank/admin.java
+
 backend/src/main/resources/application.properties.dev
 frontend/src/tests
 backend/src/test
