@@ -91,7 +91,7 @@ Create application.properties file (`backend/src/main/resources/application.prop
 ```properties
 # MongoDB
 spring.data.mongodb.database=myapp
-spring.data.mongodb.uri=mongodb://localhost:27017/myapp
+spring.mongodb.uri=mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/${MONGO_DATABASE}
 
 # Logging
 logging.level.root=INFO
