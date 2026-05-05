@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 backend/src/main/resources/application.properties
+backend/src/main/java/com/app/bank/MongoConfig.java
 
 ### STS ###
 .apt_generated
