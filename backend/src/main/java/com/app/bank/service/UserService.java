@@ -1,16 +1,14 @@
 package com.app.bank.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.User;
 import com.app.bank.repo.UserRepository;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
