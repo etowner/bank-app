@@ -9,6 +9,20 @@ A full-stack banking web application built with **Spring Boot**, **React and Vit
 ![Node.js](https://img.shields.io/badge/Node.js-22.x-green)
 ![Axios](https://img.shields.io/badge/HTTP%20Client-Axios-ff69b4)
 
+## 📋 Table of Contents
+ 
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+  - [Clone Repository](#clone-repository)
+  - [Create .env](#create-env-bank_appenv)
+  - [Option 1: Docker Compose (Recommended)](#option-1-docker-compose-recommended)
+  - [Option 2: Local Development](#option-2-local-development)
+- [Project Structure](#project-structure)
+- [Usage](#-usage)
+- [Contributing](#-contributing)
+
 ## ✨ Features
 
 | Feature | Description |
@@ -21,11 +35,11 @@ A full-stack banking web application built with **Spring Boot**, **React and Vit
 | 👤 **Profile Management** | Update profile settings or delete your account |
 | 📱 **Responsive Design**  | Optimized for both desktop and mobile devices |
 
-## 🛠 Tech Stacks
+## 🛠 Tech Stack
 
 | Layer       | Technology                  | Version  |
 | ----------- | --------------------------- | -------- |
-| Frontend    | React/Vite                  | 19.x/7.x |
+| Frontend    | React + Vite                | 19.x/7.x |
 | UI Library  | Bootstrap + React-Bootstrap | 5.x/2.x  |
 | Charts      | Chart.js/react-chartjs-2    | -/5.x    |
 | Routing     | React Router                | 7.x      |
@@ -41,7 +55,7 @@ A full-stack banking web application built with **Spring Boot**, **React and Vit
 - [MongoDB Atlas](https://www.mongodb.com/try)
 - [Docker](https://www.docker.com/) & [Docker Compose](https://docs.docker.com/compose/) (for containerized setup)
 
-***Note**: As this app utilizes MongoDB Atlas, you will also need to have access to your own cluster.
+**Note**: As this app utilizes MongoDB Atlas, you will also need to have access to your own cluster.
 
 ## ⚡ Quick Start
 
@@ -73,7 +87,7 @@ docker compose up --build
 
 Once running, the app is available at:
 
-- **Frontend:** <http://localhost:3000>
+- **Frontend:** <http://localhost:5173>
 - **Backend API:** <http://localhost:8080>
 
 ### Option 2: Local Development
@@ -90,18 +104,26 @@ Create application.properties file (`backend/src/main/resources/application.prop
 
 ```properties
 # MongoDB
-spring.data.mongodb.database=myapp
-spring.mongodb.uri=mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/${MONGO_DATABASE}
+spring.application.name=your_app_name
 
-# Logging
+spring.mongodb.uri=mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/${MONGO_DATABASE}
+spring.mongodb.database=${MONGO_DATABASE}
+# Alternative URI (uncomment if needed)
+# spring.mongodb.uri=${MONGODB_URI}
+
+# Logging (optional)
 logging.level.root=INFO
 ```
 
 Build and run the Spring Boot backend:
 
+**VS Code:** Open the project and click the Run button in the Spring Boot Dashboard.
+
+**Terminal:**
+
 ```bash
 mvn clean install
-mvn spring-boot:run
+export $(cat .env | xargs) && ./mvnw spring-boot:run
 ```
 
 The backend will start at `http://localhost:8080`.
@@ -121,9 +143,10 @@ The frontend will start on **<http://localhost:5173>** and proxy API requests to
 ```text
 bank_app/
 ├── backend/              # Spring Boot application
-│   ├── src/
-│   │   ├── main/java/    # Application source code
-│   │   └── resources/    # Configuration files
+│   ├── src/main/
+│   │   ├── java/         # Application source code
+│   │   └── resources/    # Application properties and static files
+│   ├── .env
 │   └── pom.xml           # Maven dependencies
 ├── frontend/             # React + Vite application
 |   ├── public/
@@ -147,7 +170,6 @@ bank_app/
 5. **Transactions** — Perform deposits and withdrawals
 6. **Transfers** — Move funds between your accounts
 7. **Profile** — Manage your settings or log out
-
 
 ## 🤝 Contributing
 
