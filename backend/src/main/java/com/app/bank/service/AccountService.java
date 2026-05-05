@@ -1,24 +1,21 @@
 package com.app.bank.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.lang.Exception;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.model.User;
 import com.app.bank.repo.AccountRepository;
 import com.mongodb.DuplicateKeyException;
+import java.lang.Exception;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AccountService {
@@ -58,7 +55,6 @@ public class AccountService {
             && account.getType() != null && !account.getType().isBlank();
     }
     
-    @Transactional
     public void newAccount(Account account) {
         if (!validateAccount(account)) {
             throw new BadRequestException("Account userID and type are required.");
@@ -116,7 +112,6 @@ public class AccountService {
         return true;
     }
 
-    @Transactional
     public void transfer(int accountID1, int accountID2, double amount) {
         if (accountID1 == accountID2) {
             throw new BadRequestException("Source and destination accounts must be different.");

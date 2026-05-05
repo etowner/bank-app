@@ -1,8 +1,12 @@
 package com.app.bank.api;
 
-import java.util.*;
-
+import com.app.bank.exception.ResourceNotFoundException;
+import com.app.bank.model.Account;
+import com.app.bank.model.User;
+import com.app.bank.service.AccountService;
+import com.app.bank.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.app.bank.model.User;
-import com.app.bank.exception.ResourceNotFoundException;
-import com.app.bank.model.Account;
-import com.app.bank.service.AccountService;
-import com.app.bank.service.UserService;
-
 
 @RequestMapping("api/v1/user")
 @RestController

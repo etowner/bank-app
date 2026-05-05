@@ -6,6 +6,9 @@ target/
 backend/src/main/resources/application.properties
 backend/src/main/java/com/app/bank/MongoConfig.java
 
+#Cache
+.cache/
+
 ### STS ###
 .apt_generated
 .classpath
