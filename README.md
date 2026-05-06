@@ -66,7 +66,7 @@ git clone https://github.com/etowner/bank_app.git
 cd bank_app
 ```
 
-### Create .env (`bank_app/.env`)
+### Create .env (`bank_app/backend/.env`)
 
 ```text
 MONGO_DATABASE=your_mongo_database
@@ -136,7 +136,7 @@ npm install
 npm start
 ```
 
-The frontend will start on **<http://localhost:5173>** and proxy API requests to the backend.
+The frontend will start on **<http://localhost:5173>** and use Axios for API requests at `http://localhost:8080`.
 
 ## Project Structure
 
@@ -145,11 +145,11 @@ bank_app/
 ├── backend/              # Spring Boot application
 │   ├── src/main/
 │   │   ├── java/         # Application source code
-│   │   └── resources/    # Application properties and static files
+│   │   └── resources/    # Application properties
 │   ├── .env
 │   └── pom.xml           # Maven dependencies
 ├── frontend/             # React + Vite application
-|   ├── public/
+│   ├── public/
 │   ├── src/
 │   │   ├── api/ 
 │   │   ├── components/   # React components
