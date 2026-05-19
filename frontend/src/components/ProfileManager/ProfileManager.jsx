@@ -52,6 +52,9 @@ export default function ProfileManage() {
             <ListGroup.Item>
               User: {userID}
             </ListGroup.Item>
+            <ListGroup.Item>
+             Change password
+            </ListGroup.Item>
 
             {/* Delete Account */}
             <ListGroup.Item action onClick={handleShowD}>

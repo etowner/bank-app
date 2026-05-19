@@ -7,6 +7,7 @@ import com.app.bank.repo.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,7 @@ public class UserService {
             throw new BadRequestException("A user with this userID already exists.");
         }
         // Create new User with encoded password and save to repository
-        User encodedUser = new User(user.getUserID(), passwordEncoder.encode(user.getPassword())); 
+        User encodedUser = new User(user.getUserID(), passwordEncoder.encode(user.getPassword()), user.getEmail()); 
         userRepository.insert(encodedUser);
     }
 
@@ -67,6 +68,22 @@ public class UserService {
     public Optional<User> getUser(String userID) {
         if (userID == null || userID.isBlank()) return Optional.empty();
         return userRepository.findWithAccountsByUserID(userID);
+    }
+
+    // Retrieves a User by email with all accounts
+    public Optional<User> getUserByEmail(String email) {
+        if (email == null || email.isBlank()) return Optional.empty();
+        return userRepository.findByEmail(email);
+    }
+
+    public void changePassword(String userID, String currentPassword, String newPassword) {
+        User user = userRepository.findByUserID(userID).orElseThrow();
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     public void deleteUser(String userID) {

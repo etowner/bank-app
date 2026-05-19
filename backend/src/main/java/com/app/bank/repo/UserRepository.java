@@ -13,5 +13,7 @@ public interface UserRepository extends MongoRepository<User, ObjectId> {
     @Query(fields = "{'userID': 1, 'password': 1}")
     Optional<User> findByUserID(String userID);
 
+    Optional<User> findByEmail(String email);
+
     Optional<User> findWithAccountsByUserID(String userID);
 }
