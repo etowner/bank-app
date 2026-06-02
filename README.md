@@ -171,12 +171,3 @@ bank_app/
 6. **Transfers** — Move funds between your accounts
 7. **Profile** — Manage your settings or log out
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin feature/your-feature-name`
-5. Open a Pull Request
-
-Please ensure all tests pass and code follows existing style conventions before submitting a PR.
