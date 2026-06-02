@@ -1,5 +1,6 @@
 package com.app.bank.api;
 
+import com.app.bank.dto.PasswordVerificationRequest;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.model.User;
@@ -23,11 +24,10 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PutMapping;
-
 
 @RequestMapping("api/v1/user")
 @RestController
@@ -104,24 +104,52 @@ public class UserController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<String> putMethodName(@AuthenticationPrincipal Object principal, @RequestBody String password) {
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(@AuthenticationPrincipal Object principal, @RequestBody PasswordVerificationRequest request) {
         if (!(principal instanceof UserDetails userDetails)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        if (request.getCurrentPassword() == null || request.getNewValue() == null || 
+            request.getCurrentPassword().isBlank() || request.getNewValue().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password and new password are required.");
+        }
         try {
-            userService.changePassword(userDetails.getUsername(), userDetails.getPassword(), password);
-           
+            userService.changePassword(userDetails.getUsername(), request.getCurrentPassword(), request.getNewValue());
             return ResponseEntity.ok("Password updated successfully");
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Current password is incorrect");
-        }catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("An error occurred while updating the password.");
+        }
+    }
+
+    @PutMapping("/change-userid")
+    public ResponseEntity<String> changeUserID(@AuthenticationPrincipal Object principal, @RequestBody PasswordVerificationRequest request) {
+        if (!(principal instanceof UserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (request.getCurrentPassword() == null || request.getNewValue() == null || 
+            request.getCurrentPassword().isBlank() || request.getNewValue().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password and new userID are required.");
+        }
+        try {
+            String currentUserID = userDetails.getUsername();
+            userService.changeUserID(currentUserID, request.getCurrentPassword(), request.getNewValue());
+            return ResponseEntity.ok("UserID updated successfully. Please log in again with your new userID.");
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("Current password is incorrect");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(e.getMessage());
         }
     }
 

@@ -3,12 +3,17 @@ import { Button, Modal, Offcanvas, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
+import ChangePassword from "./ChangePassword";
+import ChangeUserID from "./ChangeUserID";
 
-export default function ProfileManage() {
+export default function ProfileManager() {
   const { userID, logout, setUser } = useContext(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showChangeUserID, setShowChangeUserID] = useState(false);
 
   const [showM, setShowM] = useState(false);
   const handleCloseM = () => setShowM(false);
@@ -36,7 +41,31 @@ export default function ProfileManage() {
         console.error(error);
         setShowD(false);
     }
-};
+  };
+
+  const handleForgotPassword = () => {
+    console.log("Forgot password feature - Coming soon");
+    // Placeholder for future forgot password functionality
+  };
+
+  const handlePasswordChangeClose = () => {
+    setShowChangePassword(false);
+  };
+
+  const handlePasswordChangeSuccess = () => {
+    setShowChangePassword(false);
+    handleClose();
+  };
+
+  const handleUserIDChangeClose = () => {
+    setShowChangeUserID(false);
+  };
+
+  const handleUserIDChangeSuccess = () => {
+    setShowChangeUserID(false);
+    handleClose();
+    logout();
+  };
 
   return (
     <>
@@ -50,10 +79,38 @@ export default function ProfileManage() {
         <Offcanvas.Body>
           <ListGroup>
             <ListGroup.Item>
-              User: {userID}
+              <strong>UserID:</strong> {userID}
             </ListGroup.Item>
-            <ListGroup.Item>
-             Change password
+
+            {/* Change UserID */}
+            <ListGroup.Item action onClick={() => setShowChangeUserID(true)}>
+              Change UserID
+            </ListGroup.Item>
+            <Modal show={showChangeUserID} onHide={handleUserIDChangeClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Change UserID</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <ChangeUserID onClose={handleUserIDChangeClose} onSuccess={handleUserIDChangeSuccess} />
+              </Modal.Body>
+            </Modal>
+
+            {/* Change Password */}
+            <ListGroup.Item action onClick={() => setShowChangePassword(true)}>
+              Change Password
+            </ListGroup.Item>
+            <Modal show={showChangePassword} onHide={handlePasswordChangeClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Change Password</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <ChangePassword onClose={handlePasswordChangeClose} onSuccess={handlePasswordChangeSuccess} />
+              </Modal.Body>
+            </Modal>
+
+            {/* Forgot Password */}
+            <ListGroup.Item action onClick={handleForgotPassword}>
+              Forgot Password?
             </ListGroup.Item>
 
             {/* Delete Account */}
@@ -62,7 +119,6 @@ export default function ProfileManage() {
             </ListGroup.Item>
             <Modal show={showD} onHide={handleCloseD}>
               <Modal.Header closeButton>
-                {" "}
                 <Modal.Title style={{ textAlign: "center" }}>
                   Delete Account
                 </Modal.Title>

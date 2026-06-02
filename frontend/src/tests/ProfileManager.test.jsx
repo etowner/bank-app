@@ -9,6 +9,7 @@ vi.mock('../api/axiosConfig', () => ({
   default: {
     post: vi.fn(),
     delete: vi.fn(),
+    put: vi.fn(),
   },
 }));
 
@@ -32,48 +33,78 @@ describe('ProfileManager', () => {
     navigateMock.mockReset();
   });
 
-  test('opens the profile panel and logs out', async () => {
+  test('opens the profile panel and shows userID', async () => {
     const user = userEvent.setup();
-    vi.mocked(api.post).mockResolvedValueOnce({});
+    const mockLogout = vi.fn();
 
     render(
-      <UserContext.Provider value={{ user: { userID: 'demo' } }}>
-        <ProfileManager userID="demo" password="secret" />
+      <UserContext.Provider value={{ userID: 'demo', logout: mockLogout }}>
+        <ProfileManager />
       </UserContext.Provider>
     );
 
     await user.click(screen.getByRole('link', { name: 'demo' }));
-    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(await screen.findByRole('region', { hidden: false })).toBeInTheDocument();
     expect(screen.getByText('Profile')).toBeInTheDocument();
-    expect(screen.getByText(/user: demo secret/i)).toBeInTheDocument();
+    expect(screen.getByText(/UserID: demo/i)).toBeInTheDocument();
+  });
 
+  test('opens the profile panel and logs out', async () => {
+    const user = userEvent.setup();
+    const mockLogout = vi.fn();
+    vi.mocked(api.post).mockResolvedValueOnce({});
+
+    render(
+      <UserContext.Provider value={{ userID: 'demo', logout: mockLogout }}>
+        <ProfileManager />
+      </UserContext.Provider>
+    );
+
+    await user.click(screen.getByRole('link', { name: 'demo' }));
+    expect(await screen.findByRole('region', { hidden: false })).toBeInTheDocument();
+    
     await user.click(screen.getByRole('button', { name: 'Log Out' }));
 
-    const logoutModalButton = await screen.findByText('Are you sure you want to log out?')
-      .then(el => el.closest('.modal-content').querySelector('button.btn-primary'));
-    await user.click(logoutModalButton);
+    const logoutModal = await screen.findByText('Are you sure you want to log out?');
+    const logoutButton = logoutModal.closest('.modal').querySelector('button.btn-primary');
+    await user.click(logoutButton);
 
-    expect(api.post).toHaveBeenCalledWith('/logout');
-    expect(navigateMock).toHaveBeenCalledWith('/');
+    expect(mockLogout).toHaveBeenCalled();
   });
 
   test('deletes the account and its related data', async () => {
     const user = userEvent.setup();
+    const mockSetUser = vi.fn();
+    const mockLogout = vi.fn();
     vi.mocked(api.delete).mockResolvedValue({});
 
     render(
-      <UserContext.Provider value={{ user: { userID: 'demo' } }}>
-        <ProfileManager userID="demo" password="secret" />
+      <UserContext.Provider value={{ userID: 'demo', setUser: mockSetUser, logout: mockLogout }}>
+        <ProfileManager />
       </UserContext.Provider>
     );
 
     await user.click(screen.getByRole('link', { name: 'demo' }));
-    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(await screen.findByRole('region', { hidden: false })).toBeInTheDocument();
+    
     await user.click(screen.getByRole('button', { name: 'Delete Account' }));
     await user.click(screen.getByRole('button', { name: /yes/i }));
 
-    expect(api.delete).toHaveBeenCalledWith('/api/v1/user/demo/deleteAll');
-    expect(api.delete).toHaveBeenCalledWith('/api/v1/user/demo');
+    expect(api.delete).toHaveBeenCalledWith('/api/v1/account/closeAll');
+    expect(api.delete).toHaveBeenCalledWith('/api/v1/user');
     expect(navigateMock).toHaveBeenCalledWith('/');
+  });
+
+  test('shows Forgot Password button as placeholder', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <UserContext.Provider value={{ userID: 'demo', logout: vi.fn() }}>
+        <ProfileManager />
+      </UserContext.Provider>
+    );
+
+    await user.click(screen.getByRole('link', { name: 'demo' }));
+    expect(screen.getByText(/Forgot Password/i)).toBeInTheDocument();
   });
 });

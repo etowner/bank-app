@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import api from "../../api/axiosConfig";
 
-export default function ChangePassword({ onClose, onSuccess }) {
+export default function ChangeUserID({ onClose, onSuccess }) {
   const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [newUserID, setNewUserID] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChangePassword = async (e) => {
+  const handleChangeUserID = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -20,44 +19,40 @@ export default function ChangePassword({ onClose, onSuccess }) {
       return;
     }
 
-    if (!newPassword || !confirmPassword) {
-      setError("Please enter and confirm your new password");
+    if (!newUserID) {
+      setError("Please enter a new userID");
       return;
     }
 
-    if (newPassword !== confirmPassword) {
-      setError("New passwords do not match");
+    if (newUserID.length < 3) {
+      setError("UserID must be at least 3 characters");
       return;
     }
 
-    if (newPassword === currentPassword) {
-      setError("New password cannot be the same as current password");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError("New password must be at least 6 characters");
+    if (!/^[a-zA-Z0-9_-]+$/.test(newUserID)) {
+      setError("UserID can only contain letters, numbers, underscores, and hyphens");
       return;
     }
 
     setLoading(true);
     try {
-      await api.put(`/api/v1/user/change-password`, {
+      await api.put(`/api/v1/user/change-userid`, {
         currentPassword,
-        newValue: newPassword
+        newValue: newUserID
       });
-      setSuccess("Password changed successfully!");
+      setSuccess("UserID changed successfully! Please log in again with your new userID.");
       setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
+      setNewUserID("");
       setTimeout(() => {
         if (onSuccess) onSuccess();
-      }, 1500);
+      }, 2000);
     } catch (err) {
       if (err.response?.status === 401) {
         setError("Current password is incorrect");
+      } else if (err.response?.status === 400) {
+        setError(err.response?.data || "Invalid new userID or userID already exists");
       } else {
-        setError(err.response?.data || "Failed to change password");
+        setError(err.response?.data || "Failed to change userID");
       }
     } finally {
       setLoading(false);
@@ -69,7 +64,7 @@ export default function ChangePassword({ onClose, onSuccess }) {
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Form onSubmit={handleChangePassword}>
+      <Form onSubmit={handleChangeUserID}>
         <Form.Group className="mb-3" controlId="currentPassword">
           <Form.Label>Current Password</Form.Label>
           <Form.Control
@@ -81,26 +76,18 @@ export default function ChangePassword({ onClose, onSuccess }) {
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="newPassword">
-          <Form.Label>New Password</Form.Label>
+        <Form.Group className="mb-3" controlId="newUserID">
+          <Form.Label>New UserID</Form.Label>
           <Form.Control
-            type="password"
-            placeholder="Enter new password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            type="text"
+            placeholder="Enter new userID"
+            value={newUserID}
+            onChange={(e) => setNewUserID(e.target.value)}
             disabled={loading}
           />
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="confirmPassword">
-          <Form.Label>Confirm New Password</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Confirm new password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            disabled={loading}
-          />
+          <Form.Text className="text-muted">
+            3+ characters. Letters, numbers, underscores, and hyphens only.
+          </Form.Text>
         </Form.Group>
 
         <div className="d-flex gap-2">
@@ -112,10 +99,11 @@ export default function ChangePassword({ onClose, onSuccess }) {
             Cancel
           </Button>
           <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? "Changing..." : "Change Password"}
+            {loading ? "Changing..." : "Change UserID"}
           </Button>
         </div>
       </Form>
     </div>
   );
 }
+

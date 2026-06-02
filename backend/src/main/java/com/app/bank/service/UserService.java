@@ -86,6 +86,27 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void changeUserID(String currentUserID, String currentPassword, String newUserID) {
+        if (newUserID == null || newUserID.isBlank()) {
+            throw new BadRequestException("New userID cannot be blank.");
+        }
+        
+        User user = userRepository.findByUserID(currentUserID).orElseThrow(
+            () -> new ResourceNotFoundException("User not found.")
+        );
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+
+        if (checkforUser(newUserID)) {
+            throw new BadRequestException("UserID already exists.");
+        }
+
+        user.setUserID(newUserID);
+        userRepository.save(user);
+    }
+
     public void deleteUser(String userID) {
         Optional<User> user = getUser(userID);
         if (user.isEmpty()) throw new ResourceNotFoundException("User not found.");
