@@ -53,6 +53,7 @@ export default function ChangePassword({ onClose, onSuccess }) {
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 1500);
+      consol.log()
     } catch (err) {
       if (err.response?.status === 401) {
         setError("Current password is incorrect");

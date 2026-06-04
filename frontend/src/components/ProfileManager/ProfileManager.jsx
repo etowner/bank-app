@@ -7,7 +7,7 @@ import ChangePassword from "./ChangePassword";
 import ChangeUserID from "./ChangeUserID";
 
 export default function ProfileManager() {
-  const { userID, logout, setUser } = useContext(UserContext);
+  const { userID, logout, setUser, user } = useContext(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -55,6 +55,7 @@ export default function ProfileManager() {
   const handlePasswordChangeSuccess = () => {
     setShowChangePassword(false);
     handleClose();
+    console.log(user);
   };
 
   const handleUserIDChangeClose = () => {
@@ -64,6 +65,7 @@ export default function ProfileManager() {
   const handleUserIDChangeSuccess = () => {
     setShowChangeUserID(false);
     handleClose();
+    console.log(user);
     logout();
   };
 

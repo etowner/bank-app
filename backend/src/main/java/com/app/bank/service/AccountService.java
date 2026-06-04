@@ -141,7 +141,7 @@ public class AccountService {
         }
         List<Account> accounts = accountRepository.findByUserID(oldUserID);
         for (Account account : accounts) {
-            // account.setUserID(newUserID);
+            account.setUserID(newUserID);
             accountRepository.save(account);
         }
     }

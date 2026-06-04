@@ -33,6 +33,7 @@ const Home = () => {
 
   useEffect(() => {
     getUser();
+    console.log("User data:", user);
   }, []);
   
   useEffect(() => {

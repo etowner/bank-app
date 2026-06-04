@@ -39,6 +39,10 @@ public class Account {
         return type;
     }
 
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
     public int getAccountID() {
         return accountID;
     }
