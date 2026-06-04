@@ -53,7 +53,7 @@ public class UserService {
             throw new BadRequestException("A user with this userID already exists.");
         }
         // Create new User with encoded password and save to repository
-        User encodedUser = new User(user.getUserID(), passwordEncoder.encode(user.getPassword()), user.getEmail()); 
+        User encodedUser = new User(user.getUserID(), passwordEncoder.encode(user.getPassword())); 
         userRepository.insert(encodedUser);
     }
 
@@ -71,10 +71,10 @@ public class UserService {
     }
 
     // Retrieves a User by email with all accounts
-    public Optional<User> getUserByEmail(String email) {
-        if (email == null || email.isBlank()) return Optional.empty();
-        return userRepository.findByEmail(email);
-    }
+    // public Optional<User> getUserByEmail(String email) {
+    //     if (email == null || email.isBlank()) return Optional.empty();
+    //     return userRepository.findByEmail(email);
+    // }
 
     public void changePassword(String userID, String currentPassword, String newPassword) {
         User user = userRepository.findByUserID(userID).orElseThrow();

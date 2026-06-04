@@ -18,19 +18,20 @@ public class User implements UserDetails {
     @Id
     ObjectId id;
     
+    @Indexed(unique = true)
     private String userID;
     private String password;
 
-    @Indexed(unique = true)
-    private String email;
+   
+    // private String email;
 
     @DocumentReference
     private List<Account> accounts;
 
-    public User(String userID, String password, String email) {
+    public User(String userID, String password) {
         this.userID = userID;
         this.password = password;
-        this.email = email;
+        // this.email = email;
         accounts = new ArrayList<>();
     }
 
@@ -42,9 +43,9 @@ public class User implements UserDetails {
         this.userID = userID;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    // public String getEmail() {
+    //     return email;
+    // }
 
     public List<Account> getAccountList() {
         return accounts;
