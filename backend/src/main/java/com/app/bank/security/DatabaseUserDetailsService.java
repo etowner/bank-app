@@ -1,4 +1,4 @@
-package com.app.bank.service;
+package com.app.bank.security;
 
 import com.app.bank.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -132,6 +132,20 @@ public class AccountService {
        
     }
 
+    public void changeUserID(String oldUserID, String newUserID) {
+        if (!userService.checkforUser(oldUserID)) {
+            throw new ResourceNotFoundException("User not found.");
+        }
+        if (!userService.checkforUser(newUserID)) {
+            throw new ResourceNotFoundException("New user not found.");
+        }
+        List<Account> accounts = accountRepository.findByUserID(oldUserID);
+        for (Account account : accounts) {
+            // account.setUserID(newUserID);
+            accountRepository.save(account);
+        }
+    }
+
     
 
 }

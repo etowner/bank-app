@@ -1,6 +1,5 @@
-package com.app.bank;
+package com.app.bank.security;
 
-import com.app.bank.service.DatabaseUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
