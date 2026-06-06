@@ -3,7 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-backend/src/main/resources/application.properties
+**/application*.properties
 .cache/
 
 ### STS ###
@@ -58,9 +58,3 @@ yarn-error.log*
 
 ### VS Code ###
 .vscode/
-plan.md
-
-
-backend/src/main/resources/application.properties.dev
-frontend/src/tests
-backend/src/test
