@@ -32,12 +32,12 @@ public class AccountController {
         return ResponseEntity.ok(userAccounts);
     }
 
-    @GetMapping(path = "/{accountID}")
-    public ResponseEntity<Account> getUserAccount(@PathVariable("accountID") int accountID, 
+    @GetMapping(path = "/{accountNumber}")
+    public ResponseEntity<Account> getUserAccount(@PathVariable("accountNumber") int accountNumber, 
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            accountServices.verifyOwnership(accountID, userDetails.getUsername());
-            return accountServices.getAccount(accountID)
+            accountServices.verifyOwnership(accountNumber, userDetails.getUsername());
+            return accountServices.getAccount(accountNumber)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (Exception e) {
@@ -60,13 +60,13 @@ public class AccountController {
         }
     }
 
-    @PutMapping(path = "{accountID}/deposit")
-    public ResponseEntity<?> deposit(@PathVariable("accountID") int accountID, @RequestBody double amount,
+    @PutMapping(path = "{accountNumber}/deposit")
+    public ResponseEntity<?> deposit(@PathVariable("accountNumber") int accountNumber, @RequestBody double amount,
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            accountServices.verifyOwnership(accountID, userDetails.getUsername());
-            accountServices.depositAmount(accountID, amount);
-            return accountServices.getAccount(accountID)
+            accountServices.verifyOwnership(accountNumber, userDetails.getUsername());
+            accountServices.depositAmount(accountNumber, amount);
+            return accountServices.getAccount(accountNumber)
                     .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (BadRequestException e) {
@@ -76,13 +76,13 @@ public class AccountController {
         }
     }
 
-    @PutMapping(path = "{accountID}/withdraw")
-    public ResponseEntity<?> withdraw(@PathVariable("accountID") int accountID,
+    @PutMapping(path = "{accountNumber}/withdraw")
+    public ResponseEntity<?> withdraw(@PathVariable("accountNumber") int accountNumber,
             @RequestBody double amount, @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            accountServices.verifyOwnership(accountID, userDetails.getUsername());
-            accountServices.withdrawAmount(accountID, amount);
-            return accountServices.getAccount(accountID)
+            accountServices.verifyOwnership(accountNumber, userDetails.getUsername());
+            accountServices.withdrawAmount(accountNumber, amount);
+            return accountServices.getAccount(accountNumber)
                     .map(account -> new ResponseEntity<>(account, HttpStatus.OK))
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (BadRequestException e) {
@@ -92,17 +92,17 @@ public class AccountController {
         }
     }
 
-    @PutMapping(path = "{accountID1}/{accountID2}")
-    public ResponseEntity<String> transfer(@PathVariable("accountID1") int accountID1,
-            @PathVariable("accountID2") int accountID2,
+    @PutMapping(path = "{accountNumber1}/{accountNumber2}")
+    public ResponseEntity<String> transfer(@PathVariable("accountNumber1") int accountNumber1,
+            @PathVariable("accountNumber2") int accountNumber2,
             @RequestBody double amount, @AuthenticationPrincipal UserDetails userDetails) {
         if (amount <= 0) {
             return ResponseEntity.badRequest().body("Invalid amount.");
         }
         try {
-            accountServices.verifyOwnership(accountID1, userDetails.getUsername());
-            accountServices.verifyOwnership(accountID2, userDetails.getUsername());
-            accountServices.transfer(accountID1, accountID2, amount);
+            accountServices.verifyOwnership(accountNumber1, userDetails.getUsername());
+            accountServices.verifyOwnership(accountNumber2, userDetails.getUsername());
+            accountServices.transfer(accountNumber1, accountNumber2, amount);
             return ResponseEntity.ok("Transfer successful.");
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid transfer request.");
@@ -113,12 +113,12 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping(path = "{accountID}/close")
-    public ResponseEntity<String> deleteAccount(@PathVariable("accountID") int accountID,
+    @DeleteMapping(path = "{accountNumber}/close")
+    public ResponseEntity<String> deleteAccount(@PathVariable("accountNumber") int accountNumber,
            @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            accountServices.verifyOwnership(accountID, userDetails.getUsername());
-            accountServices.deleteAccount(accountID);
+            accountServices.verifyOwnership(accountNumber, userDetails.getUsername());
+            accountServices.deleteAccount(accountNumber);
             return ResponseEntity.ok("Account closed successfully.");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");

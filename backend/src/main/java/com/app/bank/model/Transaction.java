@@ -1,16 +1,38 @@
 package com.app.bank.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.bson.types.ObjectId;
+
+@Document(collection = "transactions")
 public class Transaction {
+    @Id
+    private ObjectId id;
+
+    private int accountNumber;
+    
     private TransactionType type;
     private double amount;
-    private LocalDateTime timestamp;
+    private Instant timestamp;
+    // private String description;
+    private String counterparty; // For transfers, the other account involved
 
-    public Transaction(TransactionType type, double amount) {
+    public Transaction(int accountNumber, TransactionType type, double amount, String counterparty) {
+        this.accountNumber = accountNumber;
         this.type = type;
         this.amount = amount;
-        this.timestamp = LocalDateTime.now();
+        this.counterparty = counterparty;
+        this.timestamp = Instant.now();
+    }
+
+    public String getId() {
+        return id.toHexString();
+    }
+
+    public int getAccountNumber() {
+        return accountNumber;
     }
 
     public TransactionType getType() {
@@ -21,12 +43,16 @@ public class Transaction {
         return amount;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
+    public String getCounterparty() {
+        return counterparty;
+    }   
+
     @Override
     public String toString() {
-        return type + " " + amount;
+        return type + " " + amount + " to " + counterparty;
     }
 }
