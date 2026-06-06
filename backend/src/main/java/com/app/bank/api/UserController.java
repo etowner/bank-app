@@ -1,13 +1,14 @@
 package com.app.bank.api;
 
-import com.app.bank.dto.PasswordVerificationRequest;
+import com.app.bank.dto.request.*;
 import com.app.bank.exception.ResourceNotFoundException;
-import com.app.bank.model.Account;
-import com.app.bank.model.User;
-import com.app.bank.service.AccountService;
+import com.app.bank.exception.BadRequestException;
+import com.app.bank.dto.response.UserResponse;
+import com.app.bank.security.UserPrincipal;
 import com.app.bank.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.*;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +20,15 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+
 
 @RequestMapping("api/v1/user")
 @RestController
@@ -35,9 +36,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private AccountService accountService;
 
     private final AuthenticationManager authenticationManager;
 
@@ -52,69 +50,43 @@ public class UserController {
         request.getSession(true).setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
     }
 
-    private record UserResponse(String userID, List<Account> accountList, int numOfAccounts) {
-    }
-
-    private UserResponse toUserResponse(User User) {
-        return new UserResponse(User.getUserID(), User.getAccountList(), User.getNumOfAccounts());
-    }
-
     @GetMapping
-    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal Object principal) {
-        if (!(principal instanceof UserDetails userDetails)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        Optional<User> user = userService.getUser(userDetails.getUsername());
-        return user.map(this::toUserResponse)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
+        UserResponse response = userService.getUser(principal.getUsername());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> createAccount(@RequestBody User user, HttpServletRequest request) {
-        if (!userService.validateUser(user)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
-        }
-        if (userService.checkforUser(user)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Account already exists.");
-        }
+    public ResponseEntity<String> createAccount(@Valid @RequestBody RegisterRequest user, HttpServletRequest request) {
         try {
-            userService.newUser(user);
+            userService.register(user);
             Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
             storeAuthentication(authentication, request);
             return ResponseEntity.ok("Account created successfully.");
+        } catch (BadRequestException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while creating the account.");
-        }
+        } 
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> logIn(@RequestBody User user, HttpServletRequest request) {
-        if (!userService.validateUser(user)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("UserID and password are required.");
-        }
+    public ResponseEntity<String> logIn(@Valid @RequestBody LoginRequest user, HttpServletRequest request) {
         try {
             Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(user.getUserID(), user.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
             storeAuthentication(authentication, request);
             return ResponseEntity.ok("Logged in");
         } catch (AuthenticationException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid userID or password.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
         }
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<String> changePassword(@AuthenticationPrincipal Object principal, @RequestBody PasswordVerificationRequest request) {
-        if (!(principal instanceof UserDetails userDetails)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        if (request.getCurrentPassword() == null || request.getNewValue() == null || 
-            request.getCurrentPassword().isBlank() || request.getNewValue().isBlank()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password and new password are required.");
-        }
+    public ResponseEntity<String> changePassword(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody ChangePasswordRequest request) {
         try {
-            userService.changePassword(userDetails.getUsername(), request.getCurrentPassword(), request.getNewValue());
+            userService.changePassword(principal.getUsername(), request.getCurrentPassword(), request.getNewPassword());
             return ResponseEntity.ok("Password updated successfully");
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -128,19 +100,12 @@ public class UserController {
         }
     }
 
-    @PutMapping("/change-userid")
-    public ResponseEntity<String> changeUserID(@AuthenticationPrincipal Object principal, @RequestBody PasswordVerificationRequest request) {
-        if (!(principal instanceof UserDetails userDetails)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        if (request.getCurrentPassword() == null || request.getNewValue() == null || 
-            request.getCurrentPassword().isBlank() || request.getNewValue().isBlank()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password and new userID are required.");
-        }
+    @PutMapping("/change-username")
+    public ResponseEntity<String> changeUsername(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody ChangeUsernameRequest request) {
         try {
-            String currentUserID = userDetails.getUsername();
-            userService.changeUserID(currentUserID, request.getCurrentPassword(), request.getNewValue());
-            return ResponseEntity.ok("UserID updated successfully. Please log in again with your new userID.");
+            String currentUsername = principal.getUsername();
+            userService.changeUsername(currentUsername, request.getCurrentPassword(), request.getNewUsername());
+            return ResponseEntity.ok("Username updated successfully. Please log in again with your new username.");
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body("Current password is incorrect");
@@ -154,14 +119,10 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal Object principal) {
-        if (!(principal instanceof UserDetails userDetails)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<String> deleteUser(@AuthenticationPrincipal UserPrincipal principal) {
         try {
-            String userID = userDetails.getUsername();
-            accountService.deleteUserAccounts(userID);
-            userService.deleteUser(userID);
+            String username = principal.getUsername();
+            userService.deleteUser(username);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -170,6 +131,5 @@ public class UserController {
         }
     }
 
-    
 
 }

@@ -50,23 +50,4 @@ public class Account {
         this.balance = balance;
     }
 
-    // public void addTrans(int transNum, Transaction trans) {
-    //     transHistory.put(transNum, trans);
-    // }
-
-    // public void deposit(double amount) {
-    //     balance += amount;
-    //     transNum++;
-    //     addTrans(transNum, new Transaction(TransactionType.DEPOSIT, amount));
-    // }
-
-    // public boolean withdraw(double amount) {
-    //     if (amount <= balance) {
-    //         balance -= amount;
-    //         transNum++;
-    //         addTrans(transNum, new Transaction(TransactionType.WITHDRAW, amount));
-    //         return true;
-    //     }
-    //     return false;
-    // }
 }
