@@ -15,7 +15,7 @@ function App() {
           <Route path="/home" element={
             <ProtectedRoute><Home /></ProtectedRoute>
           } />
-          <Route path="/account/:accountID" element={
+          <Route path="/account/:accountNumber" element={
             <ProtectedRoute><Account /></ProtectedRoute>
           } />
         </Routes>

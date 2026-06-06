@@ -10,7 +10,7 @@ export default function PieChart({ accounts }) {
   );
 
   const data = {
-    labels: accounts.map((account) => `${account.type} - ${account.accountID}`),
+    labels: accounts.map((account) => `${account.type} - ${account.accountNumber}`),
     datasets: [
       {
         label: "%",

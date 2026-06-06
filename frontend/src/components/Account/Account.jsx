@@ -23,8 +23,8 @@ function CustomToggle({ children, eventKey }) {
   }
 
 const Account = () => {
-  const { userID } = useContext(UserContext) 
-  const { accountID } = useParams();
+  const { username } = useContext(UserContext) 
+  const { accountNumber } = useParams();
   const [account, setAccount] = useState(null);
 
   const navigate = useNavigate();
@@ -40,14 +40,14 @@ const Account = () => {
   // Fetch account data
   useEffect(() => {
     api
-      .get(`/api/v1/account/${accountID}`)
+      .get(`/api/v1/account/${accountNumber}`)
       .then((response) => {
         setAccount(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, [accountID, userID]);
+  }, [accountNumber, username]);
 
   return (
     <div className="Home">
@@ -65,7 +65,7 @@ const Account = () => {
         {/* Account Info */}
         <Row className="mb-3">
           <h1>
-            {account?.type} {accountID}
+            {account?.type} {accountNumber}
           </h1>
         </Row>
         <Row className="mb-3">
@@ -136,7 +136,7 @@ const Account = () => {
         </Row>
         <Row className="mb-3">
           <Card>
-            <LineChart accountID={accountID} transHistory={account?.transHistory} />
+            <LineChart accountNumber={accountNumber} transHistory={account?.transHistory} />
           </Card>
         </Row>
         <Row className="md-5 justify-content-md-center">

@@ -20,10 +20,10 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
-  const register = async (userID, password) => {
+  const register = async (username, password) => {
     setError(null);
     try {
-      await api.post(`/api/v1/user/register`, { userID, password });
+      await api.post(`/api/v1/user/register`, { username, password });
     } catch (err) {
       setError("Either the username or password was invalid.");
       //console.error("Registration error:", err);
@@ -40,10 +40,10 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
-  const login = async (userID, password) => {
+  const login = async (username, password) => {
     setError(null);
     try {
-      await api.post(`/api/v1/user/login`, { userID, password });
+      await api.post(`/api/v1/user/login`, { username, password });
     } catch (err) {
       setError("Either the username or password was incorrect.");
       console.error("Login error:", err.response ? err.response : err.request ? err.request : err.message);
@@ -65,9 +65,9 @@ export const UserContextProvider = ({ children }) => {
     navigate('/');
   };
 
-  const userID = user?.userID; // Extract userID from user object for easier access
+  const username = user?.username; // Extract username from user object for easier access
   return (
-    <UserContext.Provider value={{ user, userID, setUser, getUser,login, register, error, setError, logout }}>
+    <UserContext.Provider value={{ user, username, setUser, getUser,login, register, error, setError, logout }}>
       {children}
     </UserContext.Provider>
   );

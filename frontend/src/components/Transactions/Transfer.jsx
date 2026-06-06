@@ -6,8 +6,8 @@ import { UserContext } from "../../UserContext";
 export default function Transfer() {
   const { getUser } = useContext(UserContext)
   const [amount, setAmount] = useState(0);
-  const [accountID1, setAccountID1] = useState(0);
-  const [accountID2, setAccountID2] = useState(0);
+  const [accountNumber1, setAccountNumber1] = useState(0);
+  const [accountNumber2, setAccountNumber2] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -17,24 +17,24 @@ export default function Transfer() {
       setError("Invalid transfer amount. Please enter a valid amount.");
       return;
     }
-    if (accountID1 === accountID2) {
+    if (accountNumber1 === accountNumber2) {
       setError("Source and destination accounts must be different.");
       return;
     }
-    if (!accountID1 || !accountID2) {
+    if (!accountNumber1 || !accountNumber2) {
       setError("Please enter both account IDs.");
       return;
     }
     setLoading(true);
     try {
         await api.put(
-            `/api/v1/account/${accountID1}/${accountID2}`,
+            `/api/v1/account/${accountNumber1}/${accountNumber2}`,
             parseFloat(amount),
             { headers: { "Content-Type": "application/json" } }
         );
         setAmount(0);
-        setAccountID1(0);
-        setAccountID2(0);
+        setAccountNumber1(0);
+        setAccountNumber2(0);
         setError(null);
         await getUser();
     } catch (error) {
@@ -59,8 +59,8 @@ export default function Transfer() {
             <Col sm={1}></Col>
             <Col sm={4}>
               <Form.Control
-                value={accountID1}
-                onChange={(e) => setAccountID1(e.target.value)}
+                value={accountNumber1}
+                onChange={(e) => setAccountNumber1(e.target.value)}
               />
             </Col>
           </Form.Group>
@@ -71,8 +71,8 @@ export default function Transfer() {
             <Col sm={1}></Col>
             <Col sm={4}>
               <Form.Control
-                value={accountID2}
-                onChange={(e) => setAccountID2(e.target.value)}
+                value={accountNumber2}
+                onChange={(e) => setAccountNumber2(e.target.value)}
               />
             </Col>
           </Form.Group>

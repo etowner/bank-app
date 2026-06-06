@@ -8,13 +8,13 @@ export default function DeleteAccount() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const navigate = useNavigate();
-  const { accountID } = useParams();
+  const { accountNumber } = useParams();
   const [error, setError] = useState(null);
 
   const closeAcc = async(event) => {
     event.preventDefault();
     try {
-      await api.delete(`/api/v1/account/${accountID}/close`);
+      await api.delete(`/api/v1/account/${accountNumber}/close`);
       navigate(`/home`);
     } catch (error) {
       setError("Failed to close account. Please try again.");

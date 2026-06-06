@@ -4,16 +4,16 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
 import ChangePassword from "./ChangePassword";
-import ChangeUserID from "./ChangeUserID";
+import ChangeUsername from "./ChangeUsername";
 
 export default function ProfileManager() {
-  const { userID, logout, setUser, user } = useContext(UserContext);
+  const { username, logout, setUser, user } = useContext(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [showChangeUserID, setShowChangeUserID] = useState(false);
+  const [showChangeUsername, setShowChangeUsername] = useState(false);
 
   const [showM, setShowM] = useState(false);
   const handleCloseM = () => setShowM(false);
@@ -58,12 +58,12 @@ export default function ProfileManager() {
     console.log(user);
   };
 
-  const handleUserIDChangeClose = () => {
-    setShowChangeUserID(false);
+  const handleUsernameChangeClose = () => {
+    setShowChangeUsername(false);
   };
 
-  const handleUserIDChangeSuccess = () => {
-    setShowChangeUserID(false);
+  const handleUsernameChangeSuccess = () => {
+    setShowChangeUsername(false);
     handleClose();
     console.log(user);
     logout();
@@ -72,7 +72,7 @@ export default function ProfileManager() {
   return (
     <>
       <a href="#profile" onClick={handleShow}>
-        {userID}
+        {username}
       </a>
       <Offcanvas show={show} onHide={handleClose} placement="end">
         <Offcanvas.Header closeButton>
@@ -81,19 +81,19 @@ export default function ProfileManager() {
         <Offcanvas.Body>
           <ListGroup>
             <ListGroup.Item>
-              <strong>UserID:</strong> {userID}
+              <strong>Username:</strong> {username}
             </ListGroup.Item>
 
-            {/* Change UserID */}
-            <ListGroup.Item action onClick={() => setShowChangeUserID(true)}>
-              Change UserID
+            {/* Change Username */}
+            <ListGroup.Item action onClick={() => setShowChangeUsername(true)}>
+              Change Username
             </ListGroup.Item>
-            <Modal show={showChangeUserID} onHide={handleUserIDChangeClose}>
+            <Modal show={showChangeUsername} onHide={handleUsernameChangeClose}>
               <Modal.Header closeButton>
-                <Modal.Title>Change UserID</Modal.Title>
+                <Modal.Title>Change Username</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                <ChangeUserID onClose={handleUserIDChangeClose} onSuccess={handleUserIDChangeSuccess} />
+                <ChangeUsername onClose={handleUsernameChangeClose} onSuccess={handleUsernameChangeSuccess} />
               </Modal.Body>
             </Modal>
 

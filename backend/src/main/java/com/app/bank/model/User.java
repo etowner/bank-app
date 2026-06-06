@@ -6,36 +6,33 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-@Document(collection = "Users")
+@Document(collection = "users")
 public class User {
 
     @Id
-    ObjectId id;
+    private ObjectId id;
     
     @Indexed(unique = true)
-    private String userID;
+    private String username;
     private String password;
 
     // private String email;
-
-    @DocumentReference
     private List<Account> accounts;
 
-    public User(String userID, String password) {
-        this.userID = userID;
+    public User(String username, String password) {
+        this.username = username;
         this.password = password;
         // this.email = email;
         accounts = new ArrayList<>();
     }
 
-    public String getUserID() {
-        return userID;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
      public String getPassword() {

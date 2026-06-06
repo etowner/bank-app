@@ -5,7 +5,7 @@ import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 
 export default function Deposit({ updateAccount }) {
   const [amount, setAmount] = useState(0);
-  const { accountID } = useParams();
+  const { accountNumber } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -18,7 +18,7 @@ export default function Deposit({ updateAccount }) {
     setLoading(true);
     try {
       const response = await api.put(
-        `/api/v1/account/${accountID}/deposit`,
+        `/api/v1/account/${accountNumber}/deposit`,
         parseFloat(amount),
         { headers: { "Content-Type": "application/json" } },
       );

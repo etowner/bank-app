@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import api from "../../api/axiosConfig";
 
-export default function ChangeUserID({ onClose, onSuccess }) {
+export default function ChangeUsername({ onClose, onSuccess }) {
   const [currentPassword, setCurrentPassword] = useState("");
-  const [newUserID, setNewUserID] = useState("");
+  const [newUsername, setNewUsername] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChangeUserID = async (e) => {
+  const handleChangeUsername = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -19,18 +19,18 @@ export default function ChangeUserID({ onClose, onSuccess }) {
       return;
     }
 
-    if (!newUserID) {
-      setError("Please enter a new userID");
+    if (!newUsername) {
+      setError("Please enter a new username");
       return;
     }
 
-    if (newUserID.length < 3) {
-      setError("UserID must be at least 3 characters");
+    if (newUsername.length < 3) {
+      setError("Username must be at least 3 characters");
       return;
     }
 
-    if (!/^[a-zA-Z0-9_-]+$/.test(newUserID)) {
-      setError("UserID can only contain letters, numbers, underscores, and hyphens");
+    if (!/^[a-zA-Z0-9_-]+$/.test(newUsername)) {
+      setError("Username can only contain letters, numbers, underscores, and hyphens");
       return;
     }
 
@@ -38,11 +38,11 @@ export default function ChangeUserID({ onClose, onSuccess }) {
     try {
       await api.put(`/api/v1/user/change-userid`, {
         currentPassword,
-        newValue: newUserID
+        newValue: newUsername
       });
-      setSuccess("UserID changed successfully! Please log in again with your new userID.");
+      setSuccess("Username changed successfully! Please log in again with your new username.");
       setCurrentPassword("");
-      setNewUserID("");
+      setNewUsername("");
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 2000);
@@ -50,9 +50,9 @@ export default function ChangeUserID({ onClose, onSuccess }) {
       if (err.response?.status === 401) {
         setError("Current password is incorrect");
       } else if (err.response?.status === 400) {
-        setError(err.response?.data || "Invalid new userID or userID already exists");
+        setError(err.response?.data || "Invalid new username or username already exists");
       } else {
-        setError(err.response?.data || "Failed to change userID");
+        setError(err.response?.data || "Failed to change username");
       }
     } finally {
       setLoading(false);
@@ -64,7 +64,7 @@ export default function ChangeUserID({ onClose, onSuccess }) {
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Form onSubmit={handleChangeUserID}>
+      <Form onSubmit={handleChangeUsername}>
         <Form.Group className="mb-3" controlId="currentPassword">
           <Form.Label>Current Password</Form.Label>
           <Form.Control
@@ -76,13 +76,13 @@ export default function ChangeUserID({ onClose, onSuccess }) {
           />
         </Form.Group>
 
-        <Form.Group className="mb-3" controlId="newUserID">
-          <Form.Label>New UserID</Form.Label>
+        <Form.Group className="mb-3" controlId="newUsername">
+          <Form.Label>New Username</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter new userID"
-            value={newUserID}
-            onChange={(e) => setNewUserID(e.target.value)}
+            placeholder="Enter new username"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
             disabled={loading}
           />
           <Form.Text className="text-muted">
@@ -99,7 +99,7 @@ export default function ChangeUserID({ onClose, onSuccess }) {
             Cancel
           </Button>
           <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? "Changing..." : "Change UserID"}
+            {loading ? "Changing..." : "Change Username"}
           </Button>
         </div>
       </Form>

@@ -11,7 +11,7 @@ import PieChart from "./PieChart";
 import { UserContext } from "../../UserContext";
 
 const Home = () => {
-  const { user, userID, getUser } = useContext(UserContext)
+  const { user, username, getUser } = useContext(UserContext)
   const [accList, setAccList] = useState([]);
   const [error, setError] = useState();
 
@@ -44,17 +44,17 @@ const Home = () => {
 
   return (
     <div className="Home">
-      <Header userID={userID} />
+      <Header username={username} />
       <Container>
         <Row className="mb-5">
-          <h2>Welcome {userID}</h2>
+          <h2>Welcome {username}</h2>
         </Row>
         <Row xs={1} md={2} lg={2} className="g-4">
           {/* Lists Accounts and provides open account options */}
           <Col key={1}>
             <Card border="dark">
-              <AccList userID={userID} accList={accList} />
-              <OpenAccount userID={userID} openAcc={openAcc} setError={setError} />
+              <AccList username={username} accList={accList} />
+              <OpenAccount username={username} openAcc={openAcc} setError={setError} />
               {error && <Alert className="" variant="danger">{error}</Alert>}
             </Card>
           </Col>

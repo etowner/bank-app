@@ -3,7 +3,7 @@ import React from "react";
 import "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
-export default function LineChart({ accountID, transHistory }) {
+export default function LineChart({ accountNumber, transHistory }) {
   let transactionLabels = [];
   let transactionAmounts = [];
   if (transHistory && Object.keys(transHistory).length > 0) {
@@ -16,7 +16,7 @@ export default function LineChart({ accountID, transHistory }) {
   const data = {
     labels: transactionLabels,
     datasets: [{
-      label: accountID,
+      label: accountNumber,
       data: transactionAmounts,
       borderColor: "rgb(112, 128, 144)",
       backgroundColor: "rgba(112, 128, 144, 0.5)",

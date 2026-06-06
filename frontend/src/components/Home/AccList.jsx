@@ -2,11 +2,11 @@ import React from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-export default function AccList({ userID, accList }) {
+export default function AccList({ username, accList }) {
   const navigate = useNavigate();
 
-  function handleAccount(accountID) {
-    navigate(`/account/${accountID}`);
+  function handleAccount(accountNumber) {
+    navigate(`/account/${accountNumber}`);
   }
 
   return (
@@ -18,16 +18,16 @@ export default function AccList({ userID, accList }) {
         {accList &&
           accList.map((account) => {
             return (
-              <h3 key={account.accountID}>
+              <h3 key={account.accountNumber}>
                 <Row className="mb-3">
                   <Col sm={6}>
-                    {account.type} - {account.accountID}
+                    {account.type} - {account.accountNumber}
                   </Col>
                   <Col sm={5} className="justify-content-end">
                     ${account.balance}
                     <Button
                       variant="link"
-                      onClick={() => handleAccount(account.accountID)}
+                      onClick={() => handleAccount(account.accountNumber)}
                     >
                       View
                     </Button>

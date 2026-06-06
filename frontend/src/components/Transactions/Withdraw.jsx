@@ -5,7 +5,7 @@ import { Button, Form, Row, Col, Alert } from "react-bootstrap";
 
 export default function Withdraw({ balance, updateAccount }) {
   const [amount, setAmount] = useState(0);
-  const { accountID } = useParams();
+  const { accountNumber } = useParams();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +22,7 @@ export default function Withdraw({ balance, updateAccount }) {
     setLoading(true);
     try {
         const response = await api.put(
-            `/api/v1/account/${accountID}/withdraw`,
+            `/api/v1/account/${accountNumber}/withdraw`,
             parseFloat(amount),
             { headers: { "Content-Type": "application/json" } }
         );

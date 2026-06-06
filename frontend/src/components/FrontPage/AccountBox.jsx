@@ -2,12 +2,12 @@ import React, { useState, useContext } from "react";
 import { UserContext } from "../../UserContext";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
 
-const AuthForm = ({ onSubmit, userID, password, onUserIDChange, onPasswordChange, error }) => (
+const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }) => (
     <Form>
         <Form.Group as={Row} className="mb-3 justify-content-md-center">
-            <Form.Label column sm={6}>Enter userID:</Form.Label>
+            <Form.Label column sm={6}>Enter username:</Form.Label>
             <Col>
-                <Form.Control autoComplete="on" value={userID} onChange={onUserIDChange} />
+                <Form.Control autoComplete="on" value={username} onChange={onUsernameChange} />
             </Col>
         </Form.Group>
         <Form.Group as={Row} className="mb-3 justify-content-md-center">
@@ -25,24 +25,24 @@ const AuthForm = ({ onSubmit, userID, password, onUserIDChange, onPasswordChange
 
 const AccountBox = () => {
   const { login, register, error, setError } = useContext(UserContext);
-  const [userID, setUserID] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [activeTab, setActiveTab] = useState("create");
 
 
   const handleCreate = (event) => {
     event.preventDefault();
-    register(userID, password);
+    register(username, password);
   };
 
   const handleLog = (event) => {
     event.preventDefault();
-    login(userID, password);
+    login(username, password);
   };
 
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
-    // setUserID("");
+    // setUsername("");
     // setPassword("");
     setError(null);
   };
@@ -52,13 +52,13 @@ const AccountBox = () => {
       <Card.Body>
         <Tabs activeKey={activeTab} onSelect={handleTabSwitch} className="mb-3" fill>
           <Tab eventKey="create" title="Create Account">
-            <AuthForm onSubmit={handleCreate} userID={userID} 
-            password={password} onUserIDChange={(e) => setUserID(e.target.value)}
+            <AuthForm onSubmit={handleCreate} username={username} 
+            password={password} onUsernameChange={(e) => setUsername(e.target.value)}
             onPasswordChange={(e) => setPassword(e.target.value)} error={error} />
           </Tab>
           <Tab eventKey="log" title="Log In">
-            <AuthForm onSubmit={handleLog} userID={userID} 
-            password={password} onUserIDChange={(e) => setUserID(e.target.value)}
+            <AuthForm onSubmit={handleLog} username={username} 
+            password={password} onUsernameChange={(e) => setUsername(e.target.value)}
             onPasswordChange={(e) => setPassword(e.target.value)} error={error} />
           </Tab>
         </Tabs>
