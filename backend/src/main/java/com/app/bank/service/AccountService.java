@@ -9,9 +9,7 @@ import com.app.bank.dto.request.*;
 import com.app.bank.dto.response.AccountResponse;
 import com.mongodb.DuplicateKeyException;
 
-import java.lang.Exception;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
