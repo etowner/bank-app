@@ -27,6 +27,10 @@ public class User {
         accounts = new ArrayList<>();
     }
 
+    public String getId() {
+        return id.toHexString();
+    }
+
     public String getUsername() {
         return username;
     }

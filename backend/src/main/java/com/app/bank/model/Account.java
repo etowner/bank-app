@@ -12,11 +12,11 @@ public class Account {
     
     @Indexed
     private String username;
-    private String type;
-
+    
     @Indexed(unique = true)
     private int accountNumber;
-
+    
+    private String type;
     private double balance;
 
     public Account(String username, int accountNumber, String type) {
@@ -26,20 +26,20 @@ public class Account {
         this.balance = 0;
     }
 
-    public String getUsername() {
-        return username;
+    public String getId() {
+        return id.toHexString();
     }
 
-    public String getType() {
-        return type;
+    public String getUsername() {
+        return username;
     }
 
     public int getAccountNumber() {
         return accountNumber;
     }
-    
-    public String getId() {
-        return id.toHexString();
+
+    public String getType() {
+        return type;
     }
 
     public double getBalance() {
