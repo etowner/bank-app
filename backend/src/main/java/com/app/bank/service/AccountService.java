@@ -121,11 +121,11 @@ public class AccountService {
 
     @Transactional // Ensure that both account updates succeed or fail together
     public void transfer(String username, TransferRequest request) {
-        int accountNumber1 = Integer.parseInt(request.getFromAccountNumber());
+        int accountNumber1 = request.getFromAccountNumber();
         verifyOwnership(accountNumber1, username);
         
         // Check if account exists, ownership not required for destination account
-        int accountNumber2 = Integer.parseInt(request.getToAccountNumber());
+        int accountNumber2 = request.getToAccountNumber();
         findAccount(accountNumber2); 
         
         double amount = request.getAmount();
@@ -142,9 +142,14 @@ public class AccountService {
         }
         
         account1.setBalance(newBalance1);
-        account2.setBalance(account2.getBalance() + amount);
         accountRepository.save(account1);
+
+        
+
+        account2.setBalance(account2.getBalance() + amount);
         accountRepository.save(account2);
+
+        throw new RuntimeException("Simulated failure");
     }
 
     ///---------------------------------------- User Account Methods -----------------------------------------
