@@ -9,7 +9,6 @@ import com.app.bank.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,12 +33,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 @RestController
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     private final AuthenticationManager authenticationManager;
 
-    public UserController(AuthenticationManager authenticationManager) {
+    public UserController(UserService userService, AuthenticationManager authenticationManager) {
+        this.userService = userService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -84,7 +83,8 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<String> changePassword(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<String> changePassword(@AuthenticationPrincipal UserPrincipal principal, 
+        @Valid @RequestBody ChangePasswordRequest request) {
         try {
             userService.changePassword(principal.getUsername(), request.getCurrentPassword(), request.getNewPassword());
             return ResponseEntity.ok("Password updated successfully");
@@ -101,10 +101,14 @@ public class UserController {
     }
 
     @PutMapping("/change-username")
-    public ResponseEntity<String> changeUsername(@AuthenticationPrincipal UserPrincipal principal, @Valid @RequestBody ChangeUsernameRequest request) {
+    public ResponseEntity<String> changeUsername(@AuthenticationPrincipal UserPrincipal principal, 
+        @Valid @RequestBody ChangeUsernameRequest request, HttpServletRequest HttpServletRequest) {
         try {
             String currentUsername = principal.getUsername();
             userService.changeUsername(currentUsername, request.getCurrentPassword(), request.getNewUsername());
+            Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getNewUsername(), request.getCurrentPassword()));
+            storeAuthentication(authentication, HttpServletRequest);
             return ResponseEntity.ok("Username updated successfully. Please log in again with your new username.");
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

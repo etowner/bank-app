@@ -14,12 +14,12 @@ public class Account {
     private String username;
     
     @Indexed(unique = true)
-    private int accountNumber;
+    private String accountNumber;
     
     private String type;
     private double balance;
 
-    public Account(String username, int accountNumber, String type) {
+    public Account(String username, String accountNumber, String type) {
         this.username = username;
         this.type = type;
         this.accountNumber = accountNumber;
@@ -34,7 +34,7 @@ public class Account {
         return username;
     }
 
-    public int getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 

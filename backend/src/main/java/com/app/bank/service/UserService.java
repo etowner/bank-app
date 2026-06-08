@@ -4,7 +4,6 @@ import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.User;
 import com.app.bank.repo.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,13 @@ import com.app.bank.dto.response.UserResponse;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     // ---------------------------------------- Helper Methods -----------------------------------------
     

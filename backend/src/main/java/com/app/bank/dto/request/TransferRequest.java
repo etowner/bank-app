@@ -5,11 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class TransferRequest {
+    
     @NotBlank(message = "Source account number is required")
-    private int fromAccountNumber;
+    private String fromAccountNumber;
 
     @NotBlank(message = "Destination account number is required")
-    private int toAccountNumber;
+    private String toAccountNumber;
 
     @NotNull(message = "Amount is required")
     @Positive(message = "Amount must be greater than zero")
@@ -17,25 +18,25 @@ public class TransferRequest {
 
     public TransferRequest() {}
 
-    public TransferRequest(int fromAccountNumber, int toAccountNumber, double amount) {
+    public TransferRequest(String fromAccountNumber, String toAccountNumber, double amount) {
         this.fromAccountNumber = fromAccountNumber;
         this.toAccountNumber = toAccountNumber;
         this.amount = amount;
     }
 
-    public int getFromAccountNumber() {
+    public String getFromAccountNumber() {
         return fromAccountNumber;
     }
 
-    public void setFromAccountNumber(int fromAccountNumber) {
+    public void setFromAccountNumber(String fromAccountNumber) {
         this.fromAccountNumber = fromAccountNumber;
     }
 
-    public int getToAccountNumber() {
+    public String getToAccountNumber() {
         return toAccountNumber;
     }
 
-    public void setToAccountNumber(int toAccountNumber) {
+    public void setToAccountNumber(String toAccountNumber) {
         this.toAccountNumber = toAccountNumber;
     }
 

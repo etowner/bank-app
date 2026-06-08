@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccountRepository extends MongoRepository<Account, ObjectId> {
 
-    Optional<Account> findByAccountNumber(int accountNumber);
+    Optional<Account> findByAccountNumber(String accountNumber);
 
     List<Account> findByUsername(String username);
 

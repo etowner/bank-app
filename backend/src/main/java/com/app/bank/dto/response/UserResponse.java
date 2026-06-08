@@ -4,6 +4,7 @@ import java.util.List;
 import com.app.bank.model.User;
 
 public class UserResponse {
+    
     private String username;
     private List<AccountResponse> accounts;
     private int numOfAccounts;

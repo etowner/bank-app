@@ -11,7 +11,7 @@ public class Transaction {
     @Id
     private ObjectId id;
 
-    private int accountNumber;
+    private String accountNumber;
     
     private TransactionType type;
     private double amount;
@@ -19,7 +19,7 @@ public class Transaction {
     // private String description;
     private String counterparty; // For transfers, the other account involved
 
-    public Transaction(int accountNumber, TransactionType type, double amount, String counterparty) {
+    public Transaction(String accountNumber, TransactionType type, double amount, String counterparty) {
         this.accountNumber = accountNumber;
         this.type = type;
         this.amount = amount;
@@ -31,7 +31,7 @@ public class Transaction {
         return id.toHexString();
     }
 
-    public int getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 

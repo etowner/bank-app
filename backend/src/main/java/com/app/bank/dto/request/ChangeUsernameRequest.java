@@ -3,6 +3,7 @@ package com.app.bank.dto.request;
 import jakarta.validation.constraints.NotBlank;
 
 public class ChangeUsernameRequest {
+    
     @NotBlank(message = "Current password is required")
     private String currentPassword;
 

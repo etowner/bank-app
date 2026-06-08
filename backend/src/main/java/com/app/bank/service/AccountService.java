@@ -10,8 +10,8 @@ import com.app.bank.dto.response.AccountResponse;
 import com.mongodb.DuplicateKeyException;
 
 import java.util.List;
-import java.util.Random;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
@@ -22,22 +22,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AccountService {
 
-    Random random = new Random();
+    private final AccountRepository accountRepository;
+    private final TransactionService transactionService;
+    private final UserService userService;
+    private final MongoTemplate mongoTemplate;
 
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private TransactionService transactionService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    public AccountService(AccountRepository accountRepository, TransactionService transactionService, UserService userService, MongoTemplate mongoTemplate) {
+        this.accountRepository = accountRepository;
+        this.transactionService = transactionService;
+        this.userService = userService;
+        this.mongoTemplate = mongoTemplate;
+    }
 
     // ---------------------------------------- Verify Methods -----------------------------------------
-    private void verifyOwnership(int accountNumber, String username) {
+    private void verifyOwnership(String accountNumber, String username) {
         Account account = getAccount(accountNumber);
         if (!account.getUsername().equals(username)) {
             throw new AccessDeniedException("You do not own this account.");
@@ -49,8 +47,12 @@ public class AccountService {
             && type != null && !type.isBlank();
     }
 
-    private Account findAccount(int accountNumber) {
+    private Account findAccount(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> new ResourceNotFoundException("Account not found."));
+    }
+
+    private String generateAccountNumber() {
+        return String.valueOf(ThreadLocalRandom.current().nextLong(1_000_000_000L, 10_000_000_000L));
     }
     
     // ---------------------------------------- Main Methods -----------------------------------------
@@ -64,8 +66,7 @@ public class AccountService {
         }
 
         try {
-            int possAID = random.nextInt(1000, 9000); // Need to update this
-            Account account = new Account(username, possAID, type);
+            Account account = new Account(username, generateAccountNumber(), type);
             accountRepository.insert(account);
             mongoTemplate.update(User.class)
                 .matching(Criteria.where("username").is(account.getUsername()))
@@ -76,23 +77,25 @@ public class AccountService {
         }
     }
 
-    private Account getAccount(int accountNumber) {
+    private Account getAccount(String accountNumber) {
         return findAccount(accountNumber);
     }
 
-    public AccountResponse getAccountResponse(int accountNumber) { 
+    public AccountResponse getAccountResponse(String accountNumber) { 
         Account account = getAccount(accountNumber);
         return new AccountResponse(account);
     }
 
-    public void deleteAccount(String username, int accountNumber) {
+    @Transactional
+    public void deleteAccount(String username, String accountNumber) {
         verifyOwnership(accountNumber, username);
         Account account = getAccount(accountNumber);
         accountRepository.delete(account);
+        transactionService.deleteAccountTransactions(accountNumber);
     }
 
     //---------------------------------------- Transaction Methods -----------------------------------------
-    public void depositAmount(String username, int accountNumber, double amount) {
+    public void depositAmount(String username, String accountNumber, double amount) {
         verifyOwnership(accountNumber, username);
         if (amount <= 0) {
             throw new BadRequestException("Deposit amount must be greater than zero.");
@@ -104,7 +107,7 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    public boolean withdrawAmount(String username, int accountNumber, double amount) {
+    public boolean withdrawAmount(String username, String accountNumber, double amount) {
         verifyOwnership(accountNumber, username);
         if (amount <= 0) {
             throw new BadRequestException("Withdrawal amount must be greater than zero.");
@@ -114,6 +117,7 @@ public class AccountService {
         if (newBalance < 0) {
             throw new BadRequestException("Insufficient funds.");
         }
+        account.setBalance(newBalance);
         transactionService.withdraw(accountNumber, amount);
         accountRepository.save(account);
         return true;
@@ -121,11 +125,11 @@ public class AccountService {
 
     @Transactional // Ensure that both account updates succeed or fail together
     public void transfer(String username, TransferRequest request) {
-        int accountNumber1 = request.getFromAccountNumber();
+        String accountNumber1 = request.getFromAccountNumber();
         verifyOwnership(accountNumber1, username);
         
         // Check if account exists, ownership not required for destination account
-        int accountNumber2 = request.getToAccountNumber();
+        String accountNumber2 = request.getToAccountNumber();
         findAccount(accountNumber2); 
         
         double amount = request.getAmount();
@@ -144,27 +148,30 @@ public class AccountService {
         account1.setBalance(newBalance1);
         accountRepository.save(account1);
 
-        
-
         account2.setBalance(account2.getBalance() + amount);
         accountRepository.save(account2);
+        transactionService.transfer(accountNumber1, accountNumber2, amount);
 
-        throw new RuntimeException("Simulated failure");
     }
 
     ///---------------------------------------- User Account Methods -----------------------------------------
 
-    public List<Account> getUserAccounts(String username) {
+   public List<AccountResponse> getUserAccounts(String username) {
         if (!userService.checkforUserName(username)) {
             throw new ResourceNotFoundException("User not found.");
         }
-        return accountRepository.findByUsername(username);
+        return accountRepository.findByUsername(username).stream().map(AccountResponse::new).toList();
     }
-
+    
+    @Transactional
     public void deleteUserAccounts(String username) {
         if (!userService.checkforUserName(username)) {
             throw new ResourceNotFoundException("User not found.");
         }
+        List<Account> accounts = accountRepository.findByUsername(username);
+        accounts.forEach(account -> 
+            transactionService.deleteAccountTransactions(account.getAccountNumber())
+        );
         accountRepository.deleteAllByUsername(username);
     }
     

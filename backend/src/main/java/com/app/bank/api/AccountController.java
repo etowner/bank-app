@@ -8,7 +8,6 @@ import com.app.bank.dto.response.AccountResponse;
 import com.app.bank.security.UserPrincipal;
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,11 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AccountController {
     
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @GetMapping(path = "/{accountNumber}")
-    public ResponseEntity<AccountResponse> getUserAccount(@PathVariable("accountNumber") int accountNumber, 
+    public ResponseEntity<AccountResponse> getUserAccount(@PathVariable("accountNumber") String accountNumber, 
             @AuthenticationPrincipal UserPrincipal principal) {
         try {
             return ResponseEntity.ok(accountService.getAccountResponse(accountNumber));
@@ -50,7 +52,7 @@ public class AccountController {
     }
 
     @PostMapping(path = "{accountNumber}/deposit")
-    public ResponseEntity<?> deposit(@PathVariable("accountNumber") int accountNumber, @RequestBody double amount,
+    public ResponseEntity<?> deposit(@PathVariable("accountNumber") String accountNumber, @RequestBody double amount,
             @AuthenticationPrincipal UserPrincipal principal) {
         try {
             accountService.depositAmount(principal.getUsername(), accountNumber, amount);
@@ -63,7 +65,7 @@ public class AccountController {
     }
 
     @PostMapping(path = "{accountNumber}/withdraw")
-    public ResponseEntity<?> withdraw(@PathVariable("accountNumber") int accountNumber,
+    public ResponseEntity<?> withdraw(@PathVariable("accountNumber") String accountNumber,
             @RequestBody double amount, @AuthenticationPrincipal UserPrincipal principal) {
         try {
             accountService.withdrawAmount(principal.getUsername(), accountNumber, amount);
@@ -91,7 +93,7 @@ public class AccountController {
     }
 
     @DeleteMapping(path = "{accountNumber}/close")
-    public ResponseEntity<String> deleteAccount(@PathVariable("accountNumber") int accountNumber,
+    public ResponseEntity<String> deleteAccount(@PathVariable("accountNumber") String accountNumber,
            @AuthenticationPrincipal UserPrincipal principal) {
         try {
             accountService.deleteAccount(principal.getUsername(), accountNumber);

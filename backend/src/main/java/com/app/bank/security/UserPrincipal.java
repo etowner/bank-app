@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 // Provides Spring Security the necessary user information for authentication and authorization processes.
 public class UserPrincipal implements UserDetails {
+    
     private final User user;
 
     public UserPrincipal(User user) {

@@ -26,7 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private DatabaseUserDetailsService userDetailsService;
+    private final DatabaseUserDetailsService userDetailsService;
     
     public SecurityConfig(DatabaseUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;

@@ -3,7 +3,8 @@ package com.app.bank.dto.response;
 import com.app.bank.model.Account;
 
 public class AccountResponse {
-    private int accountNumber;
+    
+    private String accountNumber;
     private String type;
     private double balance;
 
@@ -13,7 +14,7 @@ public class AccountResponse {
         this.balance = account.getBalance();
     }
 
-    public int getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 
