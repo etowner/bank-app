@@ -5,6 +5,7 @@ import java.time.Instant;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.bson.types.ObjectId;
+import java.math.BigDecimal;
 
 @Document(collection = "transactions")
 public class Transaction {
@@ -14,12 +15,12 @@ public class Transaction {
     private String accountNumber;
     
     private TransactionType type;
-    private double amount;
+    private BigDecimal amount;
     private Instant timestamp;
     // private String description;
     private String counterparty; // For transfers, the other account involved
 
-    public Transaction(String accountNumber, TransactionType type, double amount, String counterparty) {
+    public Transaction(String accountNumber, TransactionType type, BigDecimal amount, String counterparty) {
         this.accountNumber = accountNumber;
         this.type = type;
         this.amount = amount;
@@ -39,7 +40,7 @@ public class Transaction {
         return type;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 

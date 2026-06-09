@@ -21,9 +21,7 @@ export default function Withdraw({ balance, updateAccount }) {
     }
     setLoading(true);
     try {
-        const response = await api.put(
-            `/api/v1/account/${accountNumber}/withdraw`,
-            parseFloat(amount),
+        const response = await api.post(`/api/v1/account/${accountNumber}/withdraw`, parseFloat(amount),
             { headers: { "Content-Type": "application/json" } }
         );
         setError(null);

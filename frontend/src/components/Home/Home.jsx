@@ -22,7 +22,7 @@ const Home = () => {
       return;
     }
     try {
-      const response = await api.post(`/api/v1/account/${type}`);
+      const response = await api.post(`/api/v1/account/open/${type}`);
       // console.log("Opened account:", response.data);
     } catch (error) {
       console.error(error);
@@ -38,7 +38,7 @@ const Home = () => {
   
   useEffect(() => {
     if (user) {
-      setAccList(user.accountList ?? []);
+      setAccList(user.accounts ?? []);
     }
   }, [user.accountList]);
 

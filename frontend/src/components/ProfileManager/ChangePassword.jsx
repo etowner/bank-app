@@ -42,10 +42,7 @@ export default function ChangePassword({ onClose, onSuccess }) {
 
     setLoading(true);
     try {
-      await api.put(`/api/v1/user/change-password`, {
-        currentPassword,
-        newValue: newPassword
-      });
+      await api.put(`/api/v1/user/change-password`, { currentPassword, newPassword });
       setSuccess("Password changed successfully!");
       setCurrentPassword("");
       setNewPassword("");

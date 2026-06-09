@@ -6,8 +6,8 @@ import { UserContext } from "../../UserContext";
 export default function Transfer() {
   const { getUser } = useContext(UserContext)
   const [amount, setAmount] = useState(0);
-  const [accountNumber1, setAccountNumber1] = useState(0);
-  const [accountNumber2, setAccountNumber2] = useState(0);
+  const [accountNumber1, setAccountNumber1] = useState("");
+  const [accountNumber2, setAccountNumber2] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -27,9 +27,8 @@ export default function Transfer() {
     }
     setLoading(true);
     try {
-        await api.put(
-            `/api/v1/account/${accountNumber1}/${accountNumber2}`,
-            parseFloat(amount),
+        await api.post(
+            `/api/v1/account/transfer`, { accountNumber1, accountNumber2, amount: parseFloat(amount)},
             { headers: { "Content-Type": "application/json" } }
         );
         setAmount(0);

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TransactionRepository extends MongoRepository<Transaction, ObjectId> {
-    // Optional<Transaction> findByTransID(int transID);
 
     List<Transaction> findByAccountNumber(String accountNumber);
 

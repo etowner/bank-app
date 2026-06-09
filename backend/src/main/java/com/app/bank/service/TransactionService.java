@@ -2,20 +2,26 @@ package com.app.bank.service;
 
 import org.springframework.stereotype.Service;
 
+import com.app.bank.dto.response.TransactionResponse;
 import com.app.bank.model.Transaction;
 import com.app.bank.model.TransactionType;
 import com.app.bank.repo.TransactionRepository;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    private final AccountService accountService;
+
+    public TransactionService(TransactionRepository transactionRepository, AccountService accountService) {
         this.transactionRepository = transactionRepository;
+        this.accountService = accountService;
     }
     
-    public void newTransaction(String accountNumber, TransactionType type, double amount, String counterparty) {
+    public void newTransaction(String accountNumber, TransactionType type, BigDecimal amount, String counterparty) {
         try {
         Transaction transaction = new Transaction(accountNumber, type, amount, counterparty);
         transactionRepository.save(transaction);
@@ -24,17 +30,22 @@ public class TransactionService {
         }
     }
 
-    public void deposit(String accountNumber, double amount) {
+    public List<TransactionResponse> getAccountTransactions(String accountNumber, String username) {
+        accountService.verifyOwnership(accountNumber, username);
+        return transactionRepository.findByAccountNumber(accountNumber).stream().map(TransactionResponse::new).toList();
+    }
+
+    public void deposit(String accountNumber, BigDecimal amount) {
         newTransaction(accountNumber, TransactionType.DEPOSIT, amount, null);
     }
 
-    public void withdraw(String accountNumber, double amount) {
+    public void withdraw(String accountNumber, BigDecimal amount) {
         newTransaction(accountNumber, TransactionType.WITHDRAWAL, amount, null);
     }
 
-    public void transfer(String accountNumber1, String accountNumber2, double amount) {
-        newTransaction(accountNumber1, TransactionType.TRANSFER_OUT, amount, String.valueOf(accountNumber2));
-        newTransaction(accountNumber2, TransactionType.TRANSFER_IN, amount, String.valueOf(accountNumber1));
+    public void transfer(String accountNumber1, String accountNumber2, BigDecimal amount) {
+        newTransaction(accountNumber1, TransactionType.TRANSFER_TO, amount, String.valueOf(accountNumber2));
+        newTransaction(accountNumber2, TransactionType.TRANSFER_FROM, amount, String.valueOf(accountNumber1));
     }
 
     public void deleteAccountTransactions(String accountNumber) {

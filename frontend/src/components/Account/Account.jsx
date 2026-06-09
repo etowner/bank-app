@@ -26,6 +26,7 @@ const Account = () => {
   const { username } = useContext(UserContext) 
   const { accountNumber } = useParams();
   const [account, setAccount] = useState(null);
+  const [transactions, setTransactions] = useState([]);
 
   const navigate = useNavigate();
 
@@ -43,6 +44,14 @@ const Account = () => {
       .get(`/api/v1/account/${accountNumber}`)
       .then((response) => {
         setAccount(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    api
+      .get(`/api/v1/account/${accountNumber}/transactions`)
+      .then((response) => {
+        setTransactions(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -91,13 +100,13 @@ const Account = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {account?.transHistory &&
-                      Object.entries(account.transHistory).map(([key, value]) => (
+                    {transactions &&
+                      Object.entries(transactions).map(([key, value]) => (
                         <tr key={key}>
                           <td>{key}</td>
-                          <td>{value.type}</td>
+                          <td>{value.type} {value?.counterparty} </td>
                           <td>{value.amount}</td>
-                          <td>{new Date(value.timestamp).toLocaleString()}</td>
+                          <td>{value.timestamp}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -136,7 +145,7 @@ const Account = () => {
         </Row>
         <Row className="mb-3">
           <Card>
-            <LineChart accountNumber={accountNumber} transHistory={account?.transHistory} />
+            <LineChart accountNumber={accountNumber} transHistory={transactions} />
           </Card>
         </Row>
         <Row className="md-5 justify-content-md-center">

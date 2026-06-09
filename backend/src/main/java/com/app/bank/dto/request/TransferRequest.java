@@ -1,8 +1,9 @@
 package com.app.bank.dto.request;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import java.math.BigDecimal;
 
 public class TransferRequest {
     
@@ -13,12 +14,12 @@ public class TransferRequest {
     private String toAccountNumber;
 
     @NotNull(message = "Amount is required")
-    @Positive(message = "Amount must be greater than zero")
-    private double amount;
+    @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than zero")
+    private BigDecimal amount;
 
     public TransferRequest() {}
 
-    public TransferRequest(String fromAccountNumber, String toAccountNumber, double amount) {
+    public TransferRequest(String fromAccountNumber, String toAccountNumber, BigDecimal amount) {
         this.fromAccountNumber = fromAccountNumber;
         this.toAccountNumber = toAccountNumber;
         this.amount = amount;
@@ -40,11 +41,11 @@ public class TransferRequest {
         this.toAccountNumber = toAccountNumber;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 }

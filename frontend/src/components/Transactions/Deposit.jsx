@@ -11,13 +11,16 @@ export default function Deposit({ updateAccount }) {
 
   const handleDepositClick = async (event) => {
     event.preventDefault();
+    
     if (isNaN(amount) || amount <= 0) {
       setError("Invalid deposit amount. Please enter a valid amount.");
       return;
     }
+    
     setLoading(true);
+    
     try {
-      const response = await api.put(
+      const response = await api.post(
         `/api/v1/account/${accountNumber}/deposit`,
         parseFloat(amount),
         { headers: { "Content-Type": "application/json" } },

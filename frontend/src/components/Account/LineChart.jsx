@@ -3,14 +3,14 @@ import React from "react";
 import "chart.js/auto";
 import { Line } from "react-chartjs-2";
 
-export default function LineChart({ accountNumber, transHistory }) {
+export default function LineChart({ accountNumber, transactions }) {
   let transactionLabels = [];
   let transactionAmounts = [];
-  if (transHistory && Object.keys(transHistory).length > 0) {
-     transactionLabels = Object.values(transHistory).map(t => 
+  if (transactions && Object.keys(transactions).length > 0) {
+     transactionLabels = Object.values(transactions).map(t => 
       new Date(t.timestamp).toLocaleDateString()
     );
-     transactionAmounts = Object.values(transHistory).map(t => t.amount);
+     transactionAmounts = Object.values(transactions).map(t => t.amount);
   }
 
   const data = {

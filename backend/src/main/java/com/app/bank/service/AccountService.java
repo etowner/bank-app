@@ -11,7 +11,7 @@ import com.mongodb.DuplicateKeyException;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
+import java.math.BigDecimal;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
@@ -35,7 +35,7 @@ public class AccountService {
     }
 
     // ---------------------------------------- Verify Methods -----------------------------------------
-    private void verifyOwnership(String accountNumber, String username) {
+    public void verifyOwnership(String accountNumber, String username) {
         Account account = getAccount(accountNumber);
         if (!account.getUsername().equals(username)) {
             throw new AccessDeniedException("You do not own this account.");
@@ -95,32 +95,34 @@ public class AccountService {
     }
 
     //---------------------------------------- Transaction Methods -----------------------------------------
-    public void depositAmount(String username, String accountNumber, double amount) {
+    
+    public void depositAmount(String username, String accountNumber, BigDecimal amount) {
         verifyOwnership(accountNumber, username);
-        if (amount <= 0) {
+        
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new BadRequestException("Deposit amount must be greater than zero.");
         }
         Account account = getAccount(accountNumber);
 
-        account.setBalance(account.getBalance() + amount);
+        account.setBalance(account.getBalance().add(amount));
         transactionService.deposit(accountNumber, amount);
         accountRepository.save(account);
     }
 
-    public boolean withdrawAmount(String username, String accountNumber, double amount) {
+    public void withdrawAmount(String username, String accountNumber, BigDecimal amount) {
         verifyOwnership(accountNumber, username);
-        if (amount <= 0) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new BadRequestException("Withdrawal amount must be greater than zero.");
         }
         Account account = getAccount(accountNumber);
-        double newBalance = account.getBalance() - amount;
-        if (newBalance < 0) {
+        BigDecimal newBalance = account.getBalance().subtract(amount);
+        if (newBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new BadRequestException("Insufficient funds.");
         }
         account.setBalance(newBalance);
         transactionService.withdraw(accountNumber, amount);
         accountRepository.save(account);
-        return true;
+       
     }
 
     @Transactional // Ensure that both account updates succeed or fail together
@@ -132,23 +134,23 @@ public class AccountService {
         String accountNumber2 = request.getToAccountNumber();
         findAccount(accountNumber2); 
         
-        double amount = request.getAmount();
-        if (accountNumber1 == accountNumber2) {
+        BigDecimal amount = request.getAmount();
+        if (accountNumber1.equals(accountNumber2)) {
             throw new BadRequestException("Source and destination accounts must be different.");
         }
 
         Account account1 = getAccount(accountNumber1);
         Account account2 = getAccount(accountNumber2);
 
-        double newBalance1 = account1.getBalance() - amount;
-        if (newBalance1 < 0) {
+        BigDecimal newBalance1 = account1.getBalance().add(request.getAmount());
+        if (newBalance1.compareTo(BigDecimal.ZERO) < 0) {
             throw new BadRequestException("Insufficient funds in the source account.");
         }
         
         account1.setBalance(newBalance1);
         accountRepository.save(account1);
 
-        account2.setBalance(account2.getBalance() + amount);
+        account2.setBalance(account2.getBalance().add(amount));
         accountRepository.save(account2);
         transactionService.transfer(accountNumber1, accountNumber2, amount);
 
@@ -156,7 +158,7 @@ public class AccountService {
 
     ///---------------------------------------- User Account Methods -----------------------------------------
 
-   public List<AccountResponse> getUserAccounts(String username) {
+    public List<AccountResponse> getUserAccounts(String username) {
         if (!userService.checkforUserName(username)) {
             throw new ResourceNotFoundException("User not found.");
         }

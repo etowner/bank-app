@@ -1,5 +1,7 @@
 package com.app.bank.model;
 
+import java.math.BigDecimal;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -17,13 +19,13 @@ public class Account {
     private String accountNumber;
     
     private String type;
-    private double balance;
+    private BigDecimal balance;
 
     public Account(String username, String accountNumber, String type) {
         this.username = username;
         this.type = type;
         this.accountNumber = accountNumber;
-        this.balance = 0;
+        this.balance = BigDecimal.ZERO;
     }
 
     public String getId() {
@@ -42,11 +44,11 @@ public class Account {
         return type;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

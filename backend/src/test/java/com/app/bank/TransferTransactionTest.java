@@ -6,6 +6,7 @@ import com.app.bank.model.User;
 import com.app.bank.service.AccountService;
 import com.app.bank.repo.AccountRepository;
 import com.app.bank.repo.UserRepository;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,11 +40,11 @@ public class TransferTransactionTest {
         userRepository.insert(user);
 
         account1 = new Account("testuser", "4000", "CHECKING");
-        account1.setBalance(1000.0);
+        account1.setBalance(new BigDecimal("1000.0"));
         accountRepository.insert(account1);
 
         account2 = new Account("testuser", "5000", "SAVINGS");
-        account2.setBalance(500.0);
+        account2.setBalance(new BigDecimal("500.0"));
         accountRepository.insert(account2);
     }
 
@@ -56,13 +57,13 @@ public class TransferTransactionTest {
     @Test
     void transfer_shouldRollback_whenExceptionThrown() {
         assertThrows(RuntimeException.class, () -> {
-            accountService.transfer("testuser", new TransferRequest("4000", "5000", 200.0));
+            accountService.transfer("testuser", new TransferRequest("4000", "5000", new BigDecimal("200.50")));
         });
 
         Account updatedAccount1 = accountRepository.findByAccountNumber("4000").orElseThrow();
         Account updatedAccount2 = accountRepository.findByAccountNumber("5000").orElseThrow();
 
-        assertThat(updatedAccount1.getBalance()).isEqualTo(1000.0);
-        assertThat(updatedAccount2.getBalance()).isEqualTo(500.0);
+        assertThat(updatedAccount1.getBalance()).isEqualTo(BigDecimal.valueOf(1000.0));
+        assertThat(updatedAccount2.getBalance()).isEqualTo(BigDecimal.valueOf(1000.0));
     }
 }

@@ -36,10 +36,7 @@ export default function ChangeUsername({ onClose, onSuccess }) {
 
     setLoading(true);
     try {
-      await api.put(`/api/v1/user/change-userid`, {
-        currentPassword,
-        newValue: newUsername
-      });
+      await api.put(`/api/v1/user/change-username`, { currentPassword, newUsername });
       setSuccess("Username changed successfully! Please log in again with your new username.");
       setCurrentPassword("");
       setNewUsername("");

@@ -1,12 +1,13 @@
 package com.app.bank.dto.response;
 
 import com.app.bank.model.Account;
+import java.math.BigDecimal;
 
 public class AccountResponse {
     
     private String accountNumber;
     private String type;
-    private double balance;
+    private BigDecimal balance;
 
     public AccountResponse(Account account) {
         this.accountNumber = account.getAccountNumber();
@@ -22,12 +23,9 @@ public class AccountResponse {
         return type;
     }
 
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
 
 }
