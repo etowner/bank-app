@@ -40,7 +40,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping(path = "open/{type}")
+    @PostMapping(path = "/open/{type}") // or PostMapping with a "type" parameter in the body
     public ResponseEntity<String> openAccount(@PathVariable String type, @AuthenticationPrincipal UserPrincipal principal) {
         try {
             accountService.newAccount(principal.getUsername(), type);
@@ -52,7 +52,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping(path = "{accountNumber}/deposit")
+    @PostMapping(path = "/{accountNumber}/deposit")
     public ResponseEntity<?> deposit(@PathVariable String accountNumber, @RequestBody BigDecimal amount,
             @AuthenticationPrincipal UserPrincipal principal) {
         try {
@@ -65,7 +65,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping(path = "{accountNumber}/withdraw")
+    @PostMapping(path = "/{accountNumber}/withdraw")
     public ResponseEntity<?> withdraw(@PathVariable String accountNumber,
             @RequestBody BigDecimal amount, @AuthenticationPrincipal UserPrincipal principal) {
         try {
@@ -93,7 +93,7 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping(path = "{accountNumber}/close")
+    @DeleteMapping(path = "/{accountNumber}")
     public ResponseEntity<String> deleteAccount(@PathVariable String accountNumber,
            @AuthenticationPrincipal UserPrincipal principal) {
         try {

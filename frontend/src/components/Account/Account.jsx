@@ -3,13 +3,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../../api/axiosConfig";
 import "../../styles/Home.css";
-import Deposit from "../Transactions/Deposit";
-import Withdraw from "../Transactions/Withdraw";
+import Deposit from "./Deposit";
+import Withdraw from "./Withdraw";
 import CloseAccount from "./CloseAccount";
 import LineChart from "./LineChart"
 import { UserContext } from "../../UserContext";
+import { getTransactions } from "../../api/transactionApi";
+import { getAccount } from "../../api/accountApi";
 
 function CustomToggle({ children, eventKey }) {
     const showAction = useAccordionButton(eventKey, () => {});
@@ -34,28 +35,25 @@ const Account = () => {
     navigate(`/home`);
   };
 
-  const updateAccount = (updatedAccount) => {
-    setAccount(updatedAccount);
+  const fetchAccountData = async () => {
+    try {
+      const account = getAccount(accountNumber);
+      setAccount(account);
+    } catch (error) {
+      console.error("Error fetching account data:", error);
+    }
+
+    try {
+      const transactions = getTransactions(accountNumber);
+      setTransactions(transactions);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
   };
 
   // Fetch account data
   useEffect(() => {
-    api
-      .get(`/api/v1/account/${accountNumber}`)
-      .then((response) => {
-        setAccount(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    api
-      .get(`/api/v1/account/${accountNumber}/transactions`)
-      .then((response) => {
-        setTransactions(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    fetchAccountData();
   }, [accountNumber, username]);
 
   return (
@@ -126,7 +124,7 @@ const Account = () => {
                   <Col>
                     <Accordion.Collapse eventKey="0">
                       <Card.Body>
-                        <Deposit updateAccount={updateAccount}/> 
+                        <Deposit updateAccount={setAccount}/> 
                       </Card.Body>
                     </Accordion.Collapse>
                   </Col>
@@ -134,7 +132,7 @@ const Account = () => {
                     <CustomToggle eventKey="1">Withdraw</CustomToggle>
                     <Accordion.Collapse eventKey="1">
                       <Card.Body>
-                        <Withdraw balance={account?.balance} updateAccount={updateAccount}/>
+                        <Withdraw balance={account?.balance} setAccount={setAccount}/>
                       </Card.Body>
                     </Accordion.Collapse>
                   </Col>

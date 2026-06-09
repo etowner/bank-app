@@ -1,20 +1,25 @@
 import React, { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "./api/axiosConfig";
+import { getUser, registerUser, loginUser, logoutUser } from "./api/userApi";
+import PropTypes from "prop-types";
 
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
+  UserContextProvider.propTypes = {
+    children: PropTypes.node.isRequired,
+  };
+
   const [user, setUser] = useState(null);
   
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const getUser = async () => {
+  const fetchUser = async () => {
     setError(null);
     try {
-      const response = (await api.get(`/api/v1/user`));
-      setUser(response.data);
+      const user = await getUser();
+      setUser(user);
     } catch (err) {
       console.error("Error getting user:", err.response ? err.response : err.request ? err.request : err.message);
     }
@@ -23,7 +28,7 @@ export const UserContextProvider = ({ children }) => {
   const register = async (username, password) => {
     setError(null);
     try {
-      await api.post(`/api/v1/user/register`, { username, password });
+      await registerUser(username, password);
     } catch (err) {
       setError("Either the username or password was invalid.");
       //console.error("Registration error:", err);
@@ -32,7 +37,7 @@ export const UserContextProvider = ({ children }) => {
     }
 
     try {
-      await getUser();
+      await fetchUser();
       navigate(`/home`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
@@ -43,7 +48,7 @@ export const UserContextProvider = ({ children }) => {
   const login = async (username, password) => {
     setError(null);
     try {
-      await api.post(`/api/v1/user/login`, { username, password });
+      await loginUser(username, password );
     } catch (err) {
       setError("Either the username or password was incorrect.");
       console.error("Login error:", err.response ? err.response : err.request ? err.request : err.message);
@@ -51,7 +56,7 @@ export const UserContextProvider = ({ children }) => {
     }
 
     try {
-      await getUser();
+      await fetchUser();
       navigate(`/home`);
     } catch (err) {
       setError("Something went wrong. Please try again.");
@@ -60,14 +65,14 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const logout = async() => {
-    await api.post('/logout');
+    logoutUser();
     setUser(null);
     navigate('/');
   };
 
   const username = user?.username; // Extract username from user object for easier access
   return (
-    <UserContext.Provider value={{ user, username, setUser, getUser,login, register, error, setError, logout }}>
+    <UserContext.Provider value={{ user, username, setUser, fetchUser,login, register, error, setError, logout }}>
       {children}
     </UserContext.Provider>
   );

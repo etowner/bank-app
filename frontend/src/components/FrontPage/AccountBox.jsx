@@ -1,8 +1,17 @@
 import React, { useState, useContext } from "react";
 import { UserContext } from "../../UserContext";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
+import PropTypes from "prop-types";
 
 const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }) => (
+  AuthForm.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    onUsernameChange: PropTypes.func.isRequired,
+    onPasswordChange: PropTypes.func.isRequired,
+    error: PropTypes.string
+  },
     <Form>
         <Form.Group as={Row} className="mb-3 justify-content-md-center">
             <Form.Label column sm={6}>Enter username:</Form.Label>

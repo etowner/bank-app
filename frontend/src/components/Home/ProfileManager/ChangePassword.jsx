@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { changePassword } from "../../../api/userApi";
+import PropTypes from "prop-types";
 
 export default function ChangePassword({ onClose, onSuccess }) {
+  ChangePassword.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    onSuccess: PropTypes.func.isRequired,
+  };
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -50,7 +56,7 @@ export default function ChangePassword({ onClose, onSuccess }) {
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 1500);
-      consol.log()
+      console.log()
     } catch (err) {
       if (err.response?.status === 401) {
         setError("Current password is incorrect");

@@ -8,7 +8,7 @@ export default function LineChart({ accountNumber, transactions }) {
   let transactionAmounts = [];
   if (transactions && Object.keys(transactions).length > 0) {
      transactionLabels = Object.values(transactions).map(t => 
-      new Date(t.timestamp).toLocaleDateString()
+      new Date(t.timestamp).toLocaleDateString() // May need adjustment based on timestamp format
     );
      transactionAmounts = Object.values(transactions).map(t => t.amount);
   }

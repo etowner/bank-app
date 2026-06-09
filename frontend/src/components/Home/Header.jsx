@@ -2,7 +2,7 @@ import React from "react";
 import { Navbar } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
-import ProfileManager from "../ProfileManager/ProfileManager";
+import ProfileManager from "./ProfileManager/ProfileManager";
 
 const Header = () => {
   return (

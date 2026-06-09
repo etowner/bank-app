@@ -1,8 +1,19 @@
 import React from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-export default function AccList({ username, accList }) {
+export default function AccList({ accList }) {
+  AccList.propTypes = {
+    username: PropTypes.string.isRequired,
+    accList: PropTypes.arrayOf(
+      PropTypes.shape({
+        accountNumber: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        balance: PropTypes.number.isRequired,
+      })
+    ).isRequired,
+  };
   const navigate = useNavigate();
 
   function handleAccount(accountNumber) {

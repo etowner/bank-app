@@ -1,20 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Card, Col, Container, Row, Alert } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { api } from "../../api/axiosConfig";
-import Transfer from "../Transactions/Transfer";
+import Transfer from "./Transfer";
 import AccList from "./AccList";
 import Header from "./Header";
 import "../../styles/Home.css";
 import OpenAccount from "./OpenAccount";
 import PieChart from "./PieChart";
 import { UserContext } from "../../UserContext";
+import { createAccount } from "../../api/accountApi";
 
 const Home = () => {
-  const { user, username, getUser } = useContext(UserContext)
+  const { user, username, fetchUser } = useContext(UserContext)
   const [accList, setAccList] = useState([]);
   const [error, setError] = useState();
-
 
   const openAcc = async (type) => {
     if( accList.length >= 3){
@@ -22,17 +21,17 @@ const Home = () => {
       return;
     }
     try {
-      const response = await api.post(`/api/v1/account/open/${type}`);
-      // console.log("Opened account:", response.data);
+      const newAccount = createAccount(type);
+      // console.log("Opened account:", newAccount);
     } catch (error) {
       console.error(error);
     }
 
-    getUser(); 
+    fetchUser(); 
   };
 
   useEffect(() => {
-    getUser();
+    fetchUser();
     console.log("User data:", user);
   }, []);
   
