@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
-import api from "../../api/axiosConfig";
 import { UserContext } from "../../UserContext";
+import { transfer } from "../../api/transactionApi";
 
 export default function Transfer() {
-  const { getUser } = useContext(UserContext)
+  const { fetchUser } = useContext(UserContext)
   const [amount, setAmount] = useState(0);
   const [accountNumber1, setAccountNumber1] = useState("");
   const [accountNumber2, setAccountNumber2] = useState("");
@@ -27,15 +27,12 @@ export default function Transfer() {
     }
     setLoading(true);
     try {
-        await api.post(
-            `/api/v1/account/transfer`, { accountNumber1, accountNumber2, amount: parseFloat(amount)},
-            { headers: { "Content-Type": "application/json" } }
-        );
+        await transfer(accountNumber1, accountNumber2, parseFloat(amount));
         setAmount(0);
         setAccountNumber1(0);
         setAccountNumber2(0);
         setError(null);
-        await getUser();
+        await fetchUser();
     } catch (error) {
         setError("Transfer failed. Please try again.");
         console.error(error);

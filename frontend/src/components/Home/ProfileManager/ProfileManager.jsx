@@ -1,10 +1,10 @@
 import { useState, useContext } from "react";
 import { Button, Modal, Offcanvas, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import api from "../../api/axiosConfig";
-import { UserContext } from "../../UserContext";
+import { UserContext } from "../../../UserContext";
 import ChangePassword from "./ChangePassword";
 import ChangeUsername from "./ChangeUsername";
+import { deleteUser, deleteAllAccounts } from "../../../api/userApi";
 
 export default function ProfileManager() {
   const { username, logout, setUser, user } = useContext(UserContext);
@@ -33,8 +33,8 @@ export default function ProfileManager() {
   const handleYes = async (event) => {
     event.preventDefault();
     try {
-        await api.delete(`/api/v1/account/closeAll`);
-        await api.delete(`/api/v1/user`);
+        deleteAllAccounts();
+        deleteUser();
         setUser(null);
         navigate("/");
     } catch (error) {

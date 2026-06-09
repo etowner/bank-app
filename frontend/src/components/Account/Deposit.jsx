@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../api/axiosConfig";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
+import { deposit } from "../../api/transactionApi";
+import PropTypes from "prop-types";
 
-export default function Deposit({ updateAccount }) {
+export default function Deposit({ setAccount }) {
+  Deposit.propTypes = {
+    setAccount: PropTypes.func.isRequired,
+  };
+
   const [amount, setAmount] = useState(0);
   const { accountNumber } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
 
   const handleDepositClick = async (event) => {
     event.preventDefault();
@@ -20,14 +26,10 @@ export default function Deposit({ updateAccount }) {
     setLoading(true);
     
     try {
-      const response = await api.post(
-        `/api/v1/account/${accountNumber}/deposit`,
-        parseFloat(amount),
-        { headers: { "Content-Type": "application/json" } },
-      );
+      const updatedAccount = await deposit(accountNumber, parseFloat(amount));
       setAmount(0);
       setError(null);
-      updateAccount(response.data);
+      setAccount(updatedAccount); // replace with setAccount
     } catch (error) {
       setError("Deposit failed. Please try again later.");
       console.error(error);

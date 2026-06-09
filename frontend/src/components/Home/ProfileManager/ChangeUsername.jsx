@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
-import api from "../../api/axiosConfig";
+import { changeUsername } from "../../../api/userApi";
 
 export default function ChangeUsername({ onClose, onSuccess }) {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -36,7 +36,7 @@ export default function ChangeUsername({ onClose, onSuccess }) {
 
     setLoading(true);
     try {
-      await api.put(`/api/v1/user/change-username`, { currentPassword, newUsername });
+      await changeUsername(currentPassword, newUsername);
       setSuccess("Username changed successfully! Please log in again with your new username.");
       setCurrentPassword("");
       setNewUsername("");

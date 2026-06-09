@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
-import api from "../../api/axiosConfig";
+import { changePassword } from "../../../api/userApi";
 
 export default function ChangePassword({ onClose, onSuccess }) {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -42,7 +42,7 @@ export default function ChangePassword({ onClose, onSuccess }) {
 
     setLoading(true);
     try {
-      await api.put(`/api/v1/user/change-password`, { currentPassword, newPassword });
+      await changePassword(currentPassword, newPassword);
       setSuccess("Password changed successfully!");
       setCurrentPassword("");
       setNewPassword("");
