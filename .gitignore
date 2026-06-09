@@ -59,7 +59,7 @@ yarn-error.log*
 ### VS Code ###
 .vscode/
 plan.md
-
+docs/
 
 backend/src/main/resources/application.properties.dev
 frontend/src/tests
