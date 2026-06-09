@@ -36,7 +36,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "serve": "vite preview",
-    "fix-js": "eslint-auto-fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "browserslist": {
     "production": [
