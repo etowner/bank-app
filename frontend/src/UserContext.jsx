@@ -9,6 +9,7 @@ export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const fetchUser = async () => {
