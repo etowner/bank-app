@@ -7,37 +7,37 @@ const ProtectedRoute = ({ children }) => {
   const { user, loading, fetchUser } = use(UserContext);
   const [isResolvingUser, setIsResolvingUser] = useState(true);
   
-  useEffect(() => {
-    let isMounted = true;
+  // useEffect(() => {
+  //   let isMounted = true;
     
-    if (user) {
-      setIsResolvingUser(false);
-      return () => {
-        isMounted = false;
-      };
-    }
+  //   if (user) {
+  //     setIsResolvingUser(false);
+  //     return () => {
+  //       isMounted = false;
+  //     };
+  //   }
 
-    if (typeof fetchUser !== "function") {
-      setIsResolvingUser(false);
-      return () => {
-        isMounted = false;
-      };
-    }
+  //   if (typeof fetchUser !== "function") {
+  //     setIsResolvingUser(false);
+  //     return () => {
+  //       isMounted = false;
+  //     };
+  //   }
 
-    Promise.resolve(fetchUser()).finally(() => {
-      if (isMounted) {
-        setIsResolvingUser(false);
-      }
-    });
+  //   Promise.resolve(fetchUser()).finally(() => {
+  //     if (isMounted) {
+  //       setIsResolvingUser(false);
+  //     }
+  //   });
 
-    return () => {
-      isMounted = false;
-    };
-  }, [user, fetchUser]);
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [user, fetchUser]);
   
-  if (isResolvingUser) {
-    return null;
-  }
+  // if (isResolvingUser) {
+  //   return null;
+  // }
   
   // if (loading) return <div>Loading...</div>;
   return user ? children : <Navigate to="/" />;

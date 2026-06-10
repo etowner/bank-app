@@ -17,6 +17,7 @@ export const UserContextProvider = ({ children }) => {
     try {
       const user = await getUser();
       setUser(user);
+      console.log("Fetched user:", user);
     } catch (err) {
       console.error("Error getting user:", err.response ? err.response : err.request ? err.request : err.message);
     }
