@@ -1,16 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import "../../api/axiosConfig";
 import { Button, Form, Row, Col, Alert } from "react-bootstrap";
 import { withdraw } from "../../api/transactionApi";
-import PropTypes from "prop-types";
+
 
 export default function Withdraw({ balance, setAccount }) {
-  Withdraw.propTypes = {
-    balance: PropTypes.number.isRequired,
-    setAccount: PropTypes.func.isRequired,
-  };
-
   const [amount, setAmount] = useState(0);
   const { accountNumber } = useParams();
   const [error, setError] = useState(null);

@@ -1,16 +1,7 @@
-/* eslint-disable react/prop-types */
-import React, { useContext, useEffect, useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import  { useEffect, useState, use } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
-import {
-  Button,
-  Card,
-  Col,
-  Container,
-  Nav,
-  Navbar,
-  Row,
-  Table,
-} from "react-bootstrap";
+import { Button, Card, Col, Container, Nav, Navbar, Row, Table, } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../styles/Home.css";
 import Deposit from "./Deposit";
@@ -33,11 +24,10 @@ function CustomToggle({ children, eventKey }) {
 }
 
 const Account = () => {
-  const { username } = useContext(UserContext);
+  const { username } = use(UserContext);
   const { accountNumber } = useParams();
   const [account, setAccount] = useState(null);
   const [transactions, setTransactions] = useState([]);
-  const test = "this should warn";
 
   const navigate = useNavigate();
 
@@ -86,7 +76,7 @@ const Account = () => {
           </h1>
         </Row>
         <Row className="mb-3">
-          <h3>Balance: ${account?.balance} </h3>
+          <h3>Balance: {account?.balance} </h3>
         </Row>
 
         <Row className="mb-4 justify-content-md-center">

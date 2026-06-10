@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import globals from "globals";
-import pluginReact from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
+import eslintReact from "@eslint-react/eslint-plugin";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
@@ -8,19 +9,21 @@ export default defineConfig([
     files: ["**/*.{js,mjs,cjs,jsx}"],
     plugins: { js },
     extends: ["js/recommended"],
-    languageOptions: { globals: globals.browser },
-    settings: {
-      react: {
-        version: "detect",
+    languageOptions: {
+      globals: globals.browser,
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
   },
-  pluginReact.configs.flat.recommended,
+  reactHooks.configs.flat.recommended,
+  eslintReact.configs.recommended,
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
     rules: {
       "no-unused-vars": "warn",
-      "react/prop-types": "warn",
     },
   },
 ]);

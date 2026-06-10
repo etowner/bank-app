@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+/* eslint-disable react-hooks/set-state-in-effect */
+import { use, useEffect, useState } from "react";
 import { Card, Col, Container, Row, Alert } from "react-bootstrap";
-import { useParams } from "react-router-dom";
 import Transfer from "./Transfer";
 import AccList from "./AccList";
 import Header from "./Header";
@@ -11,7 +11,7 @@ import { UserContext } from "../../UserContext";
 import { createAccount } from "../../api/accountApi";
 
 const Home = () => {
-  const { user, username, fetchUser } = useContext(UserContext)
+  const { user, username, fetchUser } = use(UserContext)
   const [accList, setAccList] = useState([]);
   const [error, setError] = useState();
 
@@ -21,6 +21,7 @@ const Home = () => {
       return;
     }
     try {
+      // eslint-disable-next-line no-unused-vars
       const newAccount = createAccount(type);
       // console.log("Opened account:", newAccount);
     } catch (error) {
@@ -39,7 +40,7 @@ const Home = () => {
     if (user) {
       setAccList(user.accounts ?? []);
     }
-  }, [user.accountList]);
+  }, [user.accounts]);
 
   return (
     <div className="Home">

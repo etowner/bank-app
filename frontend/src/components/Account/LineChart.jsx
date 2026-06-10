@@ -1,13 +1,9 @@
-import React from "react";
+
 import "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import PropTypes from "prop-types";
+
 
 export default function LineChart({ accountNumber, transactions }) {
-  LineChart.propTypes = {
-    accountNumber: PropTypes.string.isRequired,
-    transactions: PropTypes.object.isRequired,
-  };
   let transactionLabels = [];
   let transactionAmounts = [];
   if (transactions && Object.keys(transactions).length > 0) {

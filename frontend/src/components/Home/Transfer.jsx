@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
+import { useState, use } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
 import { UserContext } from "../../UserContext";
 import { transfer } from "../../api/transactionApi";
 
 export default function Transfer() {
-  const { fetchUser } = useContext(UserContext)
+  const { fetchUser } = use(UserContext)
   const [amount, setAmount] = useState(0);
   const [accountNumber1, setAccountNumber1] = useState("");
   const [accountNumber2, setAccountNumber2] = useState("");

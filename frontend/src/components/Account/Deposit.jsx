@@ -1,30 +1,24 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 import { deposit } from "../../api/transactionApi";
-import PropTypes from "prop-types";
 
 export default function Deposit({ setAccount }) {
-  Deposit.propTypes = {
-    setAccount: PropTypes.func.isRequired,
-  };
-
   const [amount, setAmount] = useState(0);
   const { accountNumber } = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-
   const handleDepositClick = async (event) => {
     event.preventDefault();
-    
+
     if (isNaN(amount) || amount <= 0) {
       setError("Invalid deposit amount. Please enter a valid amount.");
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
       const updatedAccount = await deposit(accountNumber, parseFloat(amount));
       setAmount(0);
@@ -34,7 +28,7 @@ export default function Deposit({ setAccount }) {
       setError("Deposit failed. Please try again later.");
       console.error(error);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
