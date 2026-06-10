@@ -1,16 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../api/axiosConfig";
+import "../../api/axiosConfig";
 import { Button, Form, Row, Col, Alert } from "react-bootstrap";
 import { withdraw } from "../../api/transactionApi";
-import PropTypes from "prop-types";
+
 
 export default function Withdraw({ balance, setAccount }) {
-  Withdraw.propTypes = {
-    balance: PropTypes.number.isRequired,
-    setAccount: PropTypes.func.isRequired,
-  };
-
   const [amount, setAmount] = useState(0);
   const { accountNumber } = useParams();
   const [error, setError] = useState(null);
@@ -19,26 +14,26 @@ export default function Withdraw({ balance, setAccount }) {
   const handleWithdrawClick = async (event) => {
     event.preventDefault();
     if (isNaN(amount) || amount <= 0) {
-        setError("Invalid withdrawal amount. Please enter a valid amount.");
-        return;
+      setError("Invalid withdrawal amount. Please enter a valid amount.");
+      return;
     }
     if (balance - amount < 0) {
-        setError("Insufficient funds.");
-        return;
+      setError("Insufficient funds.");
+      return;
     }
     setLoading(true);
     try {
-        const updateAccount = await withdraw(accountNumber, parseFloat(amount));
-        setError(null);
-        setAmount(0);
-        setAccount(updateAccount);
+      const updateAccount = await withdraw(accountNumber, parseFloat(amount));
+      setError(null);
+      setAmount(0);
+      setAccount(updateAccount);
     } catch (error) {
-        setError("Withdrawal failed. Please try again.");
-        console.error(error);
+      setError("Withdrawal failed. Please try again.");
+      console.error(error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   return (
     <div>

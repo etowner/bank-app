@@ -1,14 +1,10 @@
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser, registerUser, loginUser, logoutUser } from "./api/userApi";
-import PropTypes from "prop-types";
 
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
-  UserContextProvider.propTypes = {
-    children: PropTypes.node.isRequired,
-  };
 
   const [user, setUser] = useState(null);
   
@@ -72,8 +68,8 @@ export const UserContextProvider = ({ children }) => {
 
   const username = user?.username; // Extract username from user object for easier access
   return (
-    <UserContext.Provider value={{ user, username, setUser, fetchUser,login, register, error, setError, logout }}>
+    <UserContext value={{ user, username, setUser, fetchUser,login, register, error, setError, logout }}>
       {children}
-    </UserContext.Provider>
+    </UserContext>
   );
 };

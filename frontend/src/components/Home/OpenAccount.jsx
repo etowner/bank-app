@@ -1,4 +1,3 @@
-import React from "react";
 import { Accordion, Button, Card, ListGroup } from "react-bootstrap";
 import { useAccordionButton } from "react-bootstrap/AccordionButton";
 

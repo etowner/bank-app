@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useContext } from "react";
+import { useState, use } from "react";
 import { Button, Modal, Offcanvas, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../../UserContext";
@@ -8,7 +7,7 @@ import ChangeUsername from "./ChangeUsername";
 import { deleteUser, deleteAllAccounts } from "../../../api/userApi";
 
 export default function ProfileManager() {
-  const { username, logout, setUser, user } = useContext(UserContext);
+  const { username, logout, setUser, user } = use(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);

@@ -1,13 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { changeUsername } from "../../../api/userApi";
-import PropTypes from "prop-types";
 
 export default function ChangeUsername({ onClose, onSuccess }) {
-  ChangeUsername.propTypes = {
-    onClose: PropTypes.func.isRequired,
-    onSuccess: PropTypes.func.isRequired,
-  };
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newUsername, setNewUsername] = useState("");
   const [error, setError] = useState("");
