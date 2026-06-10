@@ -3,7 +3,7 @@ import api from './axiosConfig';
 export const getAccount = async (accountNumber) => {
   const response = await api.get(`/api/v1/account/${accountNumber}`);
   // console.log("getAccount response:", response);
-  return response;
+  return response.data;
 };
 
 export const createAccount = async (type) => {

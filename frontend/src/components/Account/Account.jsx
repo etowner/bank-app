@@ -35,13 +35,9 @@ const Account = () => {
     navigate(`/home`);
   };
 
-  
-
-  // Fetch account data
-  useEffect(() => {
-    const fetchAccountData = async () => {
+  const fetchAccountData = async () => {
     try {
-      const account = getAccount(accountNumber);
+      const account = await getAccount(accountNumber);
       setAccount(account);
       console.log("Fetched account data:", account);
     } catch (error) {
@@ -49,15 +45,48 @@ const Account = () => {
     }
 
     try {
-      const transactions = getTransactions(accountNumber);
+      const transactions = await getTransactions(accountNumber);
       setTransactions(transactions);
       console.log("Fetched transactions:", transactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
   };
+
+  // const fetchAccount = async () => {
+  //   try {
+  //     const account = await getAccount(accountNumber);
+  //     setAccount(account);
+  //     console.log("Fetched account data:", account);
+  //   } catch (error) {
+  //     console.error("Error fetching account data:", error);
+  //   }
+    
+  // };
+
+  // const fetchTransactions = async () => {
+  //   try {
+  //     const transactions = await getTransactions(accountNumber);
+      
+  //     setTransactions(transactions);
+  //     console.log("Fetched transactions:", transactions);
+        
+  //     } catch (error) {
+  //       console.error("Error fetching transactions:", error);
+  //     }
+  // };
+
+  // Fetch account data
+  useEffect(() => {
     fetchAccountData();
-  }, [accountNumber, username]);
+    //fetchAccount();
+  }, [accountNumber, username, account?.balance]);
+
+  // useEffect(() => {
+  //   if (account) {
+  //     fetchTransactions();
+  //   }
+  // }, [account.balance]);
 
   return (
     <div className="Home">
@@ -75,11 +104,11 @@ const Account = () => {
         {/* Account Info */}
         <Row className="mb-3">
           <h1>
-            {account.type} {accountNumber}
+            {account?.type} - {accountNumber}
           </h1>
         </Row>
         <Row className="mb-3">
-          <h3>Balance: {account.balance} </h3>
+          <h3>Balance: ${account?.balance} </h3>
         </Row>
 
         <Row className="mb-4 justify-content-md-center">
