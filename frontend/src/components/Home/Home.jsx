@@ -22,7 +22,7 @@ const Home = () => {
     }
     try {
        
-      const newAccount = createAccount(type);
+      const newAccount = await createAccount(type);
       console.log("Opened account:", newAccount);
     } catch (error) {
       console.error(error);

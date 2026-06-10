@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Document(collection = "users")
 public class User {
@@ -18,8 +19,11 @@ public class User {
     private String password;
 
     // private String email;
+    @DocumentReference
     private List<Account> accounts;
 
+    public User(){}
+    
     public User(String username, String password) {
         this.username = username;
         this.password = password;

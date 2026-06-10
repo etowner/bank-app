@@ -103,7 +103,7 @@ public class AccountService {
     public void depositAmount(String username, String accountNumber, BigDecimal amount) {
         verifyOwnership(accountNumber, username);
         
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadRequestException("Deposit amount must be greater than zero.");
         }
         Account account = getAccount(accountNumber);
@@ -115,7 +115,7 @@ public class AccountService {
 
     public void withdrawAmount(String username, String accountNumber, BigDecimal amount) {
         verifyOwnership(accountNumber, username);
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadRequestException("Withdrawal amount must be greater than zero.");
         }
         Account account = getAccount(accountNumber);

@@ -21,6 +21,8 @@ public class Account {
     private String type;
     private BigDecimal balance;
 
+    public Account() {}
+    
     public Account(String username, String accountNumber, String type) {
         this.username = username;
         this.type = type;

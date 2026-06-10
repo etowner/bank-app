@@ -20,6 +20,8 @@ public class Transaction {
     // private String description;
     private String counterparty; // For transfers, the other account involved
 
+    public Transaction() {}
+    
     public Transaction(String accountNumber, TransactionType type, BigDecimal amount, String counterparty) {
         this.accountNumber = accountNumber;
         this.type = type;
