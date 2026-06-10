@@ -24,7 +24,7 @@ public class User {
         this.username = username;
         this.password = password;
         // this.email = email;
-        accounts = new ArrayList<>();
+        this.accounts = new ArrayList<>();
     }
 
     public String getId() {

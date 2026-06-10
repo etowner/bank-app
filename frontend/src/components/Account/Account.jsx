@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+ 
 import  { useEffect, useState, use } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table, } from "react-bootstrap";
@@ -35,10 +35,15 @@ const Account = () => {
     navigate(`/home`);
   };
 
-  const fetchAccountData = async () => {
+  
+
+  // Fetch account data
+  useEffect(() => {
+    const fetchAccountData = async () => {
     try {
       const account = getAccount(accountNumber);
       setAccount(account);
+      console.log("Fetched account data:", account);
     } catch (error) {
       console.error("Error fetching account data:", error);
     }
@@ -46,13 +51,11 @@ const Account = () => {
     try {
       const transactions = getTransactions(accountNumber);
       setTransactions(transactions);
+      console.log("Fetched transactions:", transactions);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
   };
-
-  // Fetch account data
-  useEffect(() => {
     fetchAccountData();
   }, [accountNumber, username]);
 
@@ -72,11 +75,11 @@ const Account = () => {
         {/* Account Info */}
         <Row className="mb-3">
           <h1>
-            {account?.type} {accountNumber}
+            {account.type} {accountNumber}
           </h1>
         </Row>
         <Row className="mb-3">
-          <h3>Balance: {account?.balance} </h3>
+          <h3>Balance: {account.balance} </h3>
         </Row>
 
         <Row className="mb-4 justify-content-md-center">
@@ -103,7 +106,7 @@ const Account = () => {
                         <tr key={key}>
                           <td>{key}</td>
                           <td>
-                            {value.type} {value?.counterparty}{" "}
+                            {value.type} {value.counterparty}
                           </td>
                           <td>{value.amount}</td>
                           <td>{value.timestamp}</td>
@@ -128,7 +131,7 @@ const Account = () => {
                   <Col>
                     <Accordion.Collapse eventKey="0">
                       <Card.Body>
-                        <Deposit updateAccount={setAccount} />
+                        <Deposit setAccount={setAccount} />
                       </Card.Body>
                     </Accordion.Collapse>
                   </Col>

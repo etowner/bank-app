@@ -65,6 +65,10 @@ public class AccountService {
             throw new ResourceNotFoundException("User not found.");
         }
 
+        if (accountRepository.findByUsername(username).size() >= 3) {
+            throw new BadRequestException("Account limit reached. A user can only have up to 3 accounts.");
+        }
+
         try {
             Account account = new Account(username, generateAccountNumber(), type);
             accountRepository.insert(account);

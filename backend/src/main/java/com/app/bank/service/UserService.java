@@ -30,8 +30,8 @@ public class UserService {
 
     // Finds and returns a User by username, or throws ResourceNotFoundException if not found
     private User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        return userRepository.findWithAccountsByUsername(username)
+            .orElseThrow(() -> new ResourceNotFoundException("User and accounts not found."));
     }
 
     // ---------------------------------------- Main Methods -----------------------------------------

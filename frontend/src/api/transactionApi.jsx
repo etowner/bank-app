@@ -2,7 +2,8 @@ import api from './axiosConfig';
 
 export const getTransactions = async (accountNumber) => {
   const response = await api.get(`/api/v1/account/${accountNumber}/transactions`);
-  return response.data;
+  console.log("getTransactions response:", response);
+  return response;
 };
 
 export const deposit = async (accountNumber, amount) => {
