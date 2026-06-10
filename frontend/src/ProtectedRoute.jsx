@@ -4,7 +4,7 @@ import { UserContext } from "./UserContext";
 
 const ProtectedRoute = ({ children }) => {
 
-  const { user, loading, getUser } = use(UserContext);
+  const { user, loading, fetchUser } = use(UserContext);
   const [isResolvingUser, setIsResolvingUser] = useState(true);
   
   useEffect(() => {
@@ -17,14 +17,14 @@ const ProtectedRoute = ({ children }) => {
       };
     }
 
-    if (typeof getUser !== "function") {
+    if (typeof fetchUser !== "function") {
       setIsResolvingUser(false);
       return () => {
         isMounted = false;
       };
     }
 
-    Promise.resolve(getUser()).finally(() => {
+    Promise.resolve(fetchUser()).finally(() => {
       if (isMounted) {
         setIsResolvingUser(false);
       }
@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children }) => {
     return () => {
       isMounted = false;
     };
-  }, [user, getUser]);
+  }, [user, fetchUser]);
   
   if (isResolvingUser) {
     return null;

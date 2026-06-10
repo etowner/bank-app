@@ -22,6 +22,10 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
+//    useEffect(() => {
+// +    getUser().finally(() => setLoading(false));
+// +  }, []);
+
   const register = async (username, password) => {
     setError(null);
     try {
@@ -69,7 +73,7 @@ export const UserContextProvider = ({ children }) => {
 
   const username = user?.username; // Extract username from user object for easier access
   return (
-    <UserContext value={{ user, username, setUser, fetchUser,login, register, error, setError, logout }}>
+    <UserContext value={{ user, username, setUser, fetchUser,login, register, error, setError, logout, loading }}>
       {children}
     </UserContext>
   );
