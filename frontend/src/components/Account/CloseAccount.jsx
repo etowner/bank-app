@@ -15,7 +15,7 @@ export default function DeleteAccount() {
   const closeAccount = async (event) => {
     event.preventDefault();
     try {
-      deleteAccount(accountNumber);
+      await deleteAccount(accountNumber);
       navigate(`/home`);
     } catch (error) {
       setError("Failed to close account. Please try again.");

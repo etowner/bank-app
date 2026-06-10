@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 public class TransferRequest {
     
     @NotBlank(message = "Source account number is required")
-    private String fromAccountNumber;
+    private String accountNumber1;
 
     @NotBlank(message = "Destination account number is required")
-    private String toAccountNumber;
+    private String accountNumber2;
 
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Amount must be greater than zero")
@@ -19,26 +19,26 @@ public class TransferRequest {
 
     public TransferRequest() {}
 
-    public TransferRequest(String fromAccountNumber, String toAccountNumber, BigDecimal amount) {
-        this.fromAccountNumber = fromAccountNumber;
-        this.toAccountNumber = toAccountNumber;
+    public TransferRequest(String accountNumber1, String accountNumber2, BigDecimal amount) {
+        this.accountNumber1 = accountNumber1;
+        this.accountNumber2 = accountNumber2;
         this.amount = amount;
     }
 
     public String getFromAccountNumber() {
-        return fromAccountNumber;
+        return accountNumber1;
     }
 
-    public void setFromAccountNumber(String fromAccountNumber) {
-        this.fromAccountNumber = fromAccountNumber;
+    public void setFromAccountNumber(String accountNumber1) {
+        this.accountNumber1 = accountNumber1;
     }
 
     public String getToAccountNumber() {
-        return toAccountNumber;
+        return accountNumber2;
     }
 
-    public void setToAccountNumber(String toAccountNumber) {
-        this.toAccountNumber = toAccountNumber;
+    public void setToAccountNumber(String accountNumber2) {
+        this.accountNumber2 = accountNumber2;
     }
 
     public BigDecimal getAmount() {

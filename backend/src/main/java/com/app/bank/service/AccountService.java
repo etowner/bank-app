@@ -146,7 +146,7 @@ public class AccountService {
         Account account1 = getAccount(accountNumber1);
         Account account2 = getAccount(accountNumber2);
 
-        BigDecimal newBalance1 = account1.getBalance().add(request.getAmount());
+        BigDecimal newBalance1 = account1.getBalance().subtract(request.getAmount());
         if (newBalance1.compareTo(BigDecimal.ZERO) < 0) {
             throw new BadRequestException("Insufficient funds in the source account.");
         }
