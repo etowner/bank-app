@@ -1,33 +1,43 @@
 /* eslint-disable react/prop-types */
 import React, { useContext, useEffect, useState } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
-import { Button, Card, Col, Container, Nav, Navbar, Row, Table } from "react-bootstrap";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Nav,
+  Navbar,
+  Row,
+  Table,
+} from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../styles/Home.css";
 import Deposit from "./Deposit";
 import Withdraw from "./Withdraw";
 import CloseAccount from "./CloseAccount";
-import LineChart from "./LineChart"
+import LineChart from "./LineChart";
 import { UserContext } from "../../UserContext";
 import { getTransactions } from "../../api/transactionApi";
 import { getAccount } from "../../api/accountApi";
 
 function CustomToggle({ children, eventKey }) {
-    const showAction = useAccordionButton(eventKey, () => {});
-    
-    return (
-      <Button variant="dark" onClick={showAction} className="mb-3">
-        {" "}
-        {children}
-      </Button>
-    );
-  }
+  const showAction = useAccordionButton(eventKey, () => {});
+
+  return (
+    <Button variant="dark" onClick={showAction} className="mb-3">
+      {" "}
+      {children}
+    </Button>
+  );
+}
 
 const Account = () => {
-  const { username } = useContext(UserContext) 
+  const { username } = useContext(UserContext);
   const { accountNumber } = useParams();
   const [account, setAccount] = useState(null);
   const [transactions, setTransactions] = useState([]);
+  const test = "this should warn";
 
   const navigate = useNavigate();
 
@@ -102,7 +112,9 @@ const Account = () => {
                       Object.entries(transactions).map(([key, value]) => (
                         <tr key={key}>
                           <td>{key}</td>
-                          <td>{value.type} {value?.counterparty} </td>
+                          <td>
+                            {value.type} {value?.counterparty}{" "}
+                          </td>
                           <td>{value.amount}</td>
                           <td>{value.timestamp}</td>
                         </tr>
@@ -115,7 +127,9 @@ const Account = () => {
           {/* Account Actions */}
           <Col sm={5}>
             <Card border="dark" style={{ width: "30rem" }}>
-              <Card.Header style={{ color: "white", backgroundColor: "#282c34" }}>
+              <Card.Header
+                style={{ color: "white", backgroundColor: "#282c34" }}
+              >
                 <h3>Transaction Options</h3>
               </Card.Header>
               <Card.Body>
@@ -124,7 +138,7 @@ const Account = () => {
                   <Col>
                     <Accordion.Collapse eventKey="0">
                       <Card.Body>
-                        <Deposit updateAccount={setAccount}/> 
+                        <Deposit updateAccount={setAccount} />
                       </Card.Body>
                     </Accordion.Collapse>
                   </Col>
@@ -132,7 +146,10 @@ const Account = () => {
                     <CustomToggle eventKey="1">Withdraw</CustomToggle>
                     <Accordion.Collapse eventKey="1">
                       <Card.Body>
-                        <Withdraw balance={account?.balance} setAccount={setAccount}/>
+                        <Withdraw
+                          balance={account?.balance}
+                          setAccount={setAccount}
+                        />
                       </Card.Body>
                     </Accordion.Collapse>
                   </Col>
@@ -143,7 +160,10 @@ const Account = () => {
         </Row>
         <Row className="mb-3">
           <Card>
-            <LineChart accountNumber={accountNumber} transHistory={transactions} />
+            <LineChart
+              accountNumber={accountNumber}
+              transHistory={transactions}
+            />
           </Card>
         </Row>
         <Row className="md-5 justify-content-md-center">
