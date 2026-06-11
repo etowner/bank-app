@@ -6,6 +6,7 @@ import com.app.bank.exception.BadRequestException;
 import com.app.bank.dto.response.UserResponse;
 import com.app.bank.security.UserPrincipal;
 import com.app.bank.service.UserService;
+import com.app.bank.service.ManagementService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -34,11 +35,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 public class UserController {
 
     private final UserService userService;
-
+    private final ManagementService managementService;
     private final AuthenticationManager authenticationManager;
 
-    public UserController(UserService userService, AuthenticationManager authenticationManager) {
+    public UserController(UserService userService, AuthenticationManager authenticationManager, ManagementService managementService) {
         this.userService = userService;
+        this.managementService = managementService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -105,7 +107,7 @@ public class UserController {
         @Valid @RequestBody ChangeUsernameRequest request, HttpServletRequest HttpServletRequest) {
         try {
             String currentUsername = principal.getUsername();
-            userService.changeUsername(currentUsername, request.getCurrentPassword(), request.getNewUsername());
+            managementService.changeUsername(currentUsername, request);
             Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getNewUsername(), request.getCurrentPassword()));
             storeAuthentication(authentication, HttpServletRequest);
@@ -126,7 +128,7 @@ public class UserController {
     public ResponseEntity<String> deleteUser(@AuthenticationPrincipal UserPrincipal principal) {
         try {
             String username = principal.getUsername();
-            userService.deleteUser(username);
+            managementService.deleteUser(username);
             return ResponseEntity.ok("Account deleted successfully");
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

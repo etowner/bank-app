@@ -17,7 +17,7 @@ public class Transaction {
     private TransactionType type;
     private BigDecimal amount;
     private Instant timestamp;
-    // private String description;
+   
     private String counterparty; // For transfers, the other account involved
 
     public Transaction() {}

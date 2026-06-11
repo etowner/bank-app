@@ -161,6 +161,13 @@ public class AccountService {
     }
 
     ///---------------------------------------- User Account Methods -----------------------------------------
+    
+    public void updateAccountUsernames(String currentUsername, String newUsername ){
+        accountRepository.findByUsername(currentUsername).forEach(account -> {
+            account.setUsername(newUsername);
+            accountRepository.save(account);
+        });
+    }
 
     public List<AccountResponse> getUserAccounts(String username) {
         if (!userService.checkforUserName(username)) {

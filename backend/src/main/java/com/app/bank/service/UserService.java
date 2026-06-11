@@ -29,7 +29,7 @@ public class UserService {
     }
 
     // Finds and returns a User by username, or throws ResourceNotFoundException if not found
-    private User findUserByUsername(String username) {
+    public User findUserByUsername(String username) {
         return userRepository.findWithAccountsByUsername(username)
             .orElseThrow(() -> new ResourceNotFoundException("User and accounts not found."));
     }
@@ -64,17 +64,18 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void changeUsername(String currentUsername, String currentPassword, String newUsername) {
+    public void changeUsername(String currentUsername, ChangeUsernameRequest request) {
         User user = findUserByUsername(currentUsername);
         
-        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new BadCredentialsException("Current password is incorrect");
         }
-        if (checkforUserName(newUsername)) {
+        
+        if (checkforUserName(request.getNewUsername())) {
             throw new BadRequestException("Username already exists.");
         }
 
-        user.setUsername(newUsername);
+        user.setUsername(request.getNewUsername());
         userRepository.save(user);
     }
 

@@ -14,7 +14,6 @@ import java.util.List;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-
     private final OwnershipService ownershipService;
 
     public TransactionService(TransactionRepository transactionRepository, OwnershipService ownershipService) {

@@ -22,8 +22,8 @@ export const changePassword = async (currentPassword, newPassword) => {
   await api.put(`/api/v1/user/change-password`, { currentPassword, newPassword });
 };
 
-export const changeUsername = async (newUsername) => {
-  await api.put(`/api/v1/user/change-username`, { newUsername });
+export const changeUsername = async (currentPassword, newUsername) => {
+  await api.put(`/api/v1/user/change-username`, { currentPassword, newUsername });
 };
 
 export const deleteUser = async () => {

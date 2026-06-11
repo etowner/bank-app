@@ -27,7 +27,6 @@ export const UserContextProvider = ({ children }) => {
       await registerUser(username, password);
     } catch (err) {
       setError("Either the username or password was invalid.");
-      //console.error("Registration error:", err);
       console.error("Registration error:",  err.response ? err.response : err.request ? err.request : err.message);
       return; 
     }

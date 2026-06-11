@@ -27,7 +27,7 @@ export default function Transfer() {
     }
     setLoading(true);
     try {
-        console.log("Initiating transfer:", { accountNumber1, accountNumber2, amount: parseFloat(amount) });
+        // console.log("Initiating transfer:", { accountNumber1, accountNumber2, amount: parseFloat(amount) });
         await transfer(accountNumber1, accountNumber2, parseFloat(amount));
         setAmount(0);
         setAccountNumber1("");

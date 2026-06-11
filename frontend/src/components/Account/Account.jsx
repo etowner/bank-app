@@ -40,53 +40,24 @@ const Account = () => {
       const account = await getAccount(accountNumber);
       setAccount(account);
       console.log("Fetched account data:", account);
-    } catch (error) {
-      console.error("Error fetching account data:", error);
+    } catch (err) {
+      console.error("Error fetching account data:", err.response ? err.response : err.request ? err.request : err.message);
     }
 
     try {
       const transactions = await getTransactions(accountNumber);
       setTransactions(transactions);
       console.log("Fetched transactions:", transactions);
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
+    } catch (err) {
+      console.error("Error fetching transactions:", err.response ? err.response : err.request ? err.request : err.message);
     }
   };
 
-  // const fetchAccount = async () => {
-  //   try {
-  //     const account = await getAccount(accountNumber);
-  //     setAccount(account);
-  //     console.log("Fetched account data:", account);
-  //   } catch (error) {
-  //     console.error("Error fetching account data:", error);
-  //   }
-    
-  // };
-
-  // const fetchTransactions = async () => {
-  //   try {
-  //     const transactions = await getTransactions(accountNumber);
-      
-  //     setTransactions(transactions);
-  //     console.log("Fetched transactions:", transactions);
-        
-  //     } catch (error) {
-  //       console.error("Error fetching transactions:", error);
-  //     }
-  // };
-
-  // Fetch account data
   useEffect(() => {
     fetchAccountData();
-    //fetchAccount();
+  
   }, [accountNumber, username, account?.balance]);
 
-  // useEffect(() => {
-  //   if (account) {
-  //     fetchTransactions();
-  //   }
-  // }, [account.balance]);
 
   return (
     <div className="Home">

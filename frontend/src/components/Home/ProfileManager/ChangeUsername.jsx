@@ -37,6 +37,7 @@ export default function ChangeUsername({ onClose, onSuccess }) {
 
     setLoading(true);
     try {
+      console.log("Changing username with:", { currentPassword, newUsername });
       await changeUsername(currentPassword, newUsername);
       setSuccess("Username changed successfully! Please log in again with your new username.");
       setCurrentPassword("");
@@ -47,10 +48,13 @@ export default function ChangeUsername({ onClose, onSuccess }) {
     } catch (err) {
       if (err.response?.status === 401) {
         setError("Current password is incorrect");
+        console.error("Incorrect password:", err.response ? err.response : err.request ? err.request : err.message);
       } else if (err.response?.status === 400) {
         setError(err.response?.data || "Invalid new username or username already exists");
+        console.error("Invalid username or password:", err.response ? err.response : err.request ? err.request : err.message);
       } else {
         setError(err.response?.data || "Failed to change username");
+        console.error("Failed to change username:", err.response ? err.response : err.request ? err.request : err.message);
       }
     } finally {
       setLoading(false);
