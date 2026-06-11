@@ -6,6 +6,7 @@ import com.app.bank.dto.response.TransactionResponse;
 import com.app.bank.model.Transaction;
 import com.app.bank.model.TransactionType;
 import com.app.bank.repo.TransactionRepository;
+import com.app.bank.security.OwnershipService;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -13,12 +14,11 @@ import java.util.List;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final OwnershipService ownershipService;
 
-    private final AccountService accountService;
-
-    public TransactionService(TransactionRepository transactionRepository, AccountService accountService) {
+    public TransactionService(TransactionRepository transactionRepository, OwnershipService ownershipService) {
         this.transactionRepository = transactionRepository;
-        this.accountService = accountService;
+        this.ownershipService = ownershipService;
     }
     
     public void newTransaction(String accountNumber, TransactionType type, BigDecimal amount, String counterparty) {
@@ -31,7 +31,7 @@ public class TransactionService {
     }
 
     public List<TransactionResponse> getAccountTransactions(String accountNumber, String username) {
-        accountService.verifyOwnership(accountNumber, username);
+        ownershipService.verifyAccountOwnership(accountNumber, username);
         return transactionRepository.findByAccountNumber(accountNumber).stream().map(TransactionResponse::new).toList();
     }
 

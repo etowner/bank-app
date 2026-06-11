@@ -23,7 +23,7 @@ export default function Deposit({ setAccount }) {
       const updatedAccount = await deposit(accountNumber, parseFloat(amount));
       setAmount(0);
       setError(null);
-      setAccount(updatedAccount); // replace with setAccount
+      setAccount(updatedAccount); 
     } catch (error) {
       setError("Deposit failed. Please try again later.");
       console.error(error);

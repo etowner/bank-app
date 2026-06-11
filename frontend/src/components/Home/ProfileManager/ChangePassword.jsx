@@ -36,8 +36,8 @@ export default function ChangePassword({ onClose, onSuccess }) {
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError("New password must be at least 6 characters");
+    if (newPassword.length < 3) {
+      setError("New password must be at least 3 characters");
       return;
     }
 

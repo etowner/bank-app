@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Modal, Alert } from "react-bootstrap";
 import "../../api/axiosConfig";
-import deleteAccount from "../../api/accountApi";
+import {deleteAccount} from "../../api/accountApi";
 
 export default function DeleteAccount() {
   const [show, setShow] = useState(false);
@@ -15,7 +15,7 @@ export default function DeleteAccount() {
   const closeAccount = async (event) => {
     event.preventDefault();
     try {
-      deleteAccount(accountNumber);
+      await deleteAccount(accountNumber);
       navigate(`/home`);
     } catch (error) {
       setError("Failed to close account. Please try again.");

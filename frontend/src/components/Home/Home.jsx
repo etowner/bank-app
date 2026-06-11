@@ -21,9 +21,9 @@ const Home = () => {
       return;
     }
     try {
-      // eslint-disable-next-line no-unused-vars
-      const newAccount = createAccount(type);
-      // console.log("Opened account:", newAccount);
+       
+      const newAccount = await createAccount(type);
+      console.log("Opened account:", newAccount);
     } catch (error) {
       console.error(error);
     }
@@ -37,6 +37,7 @@ const Home = () => {
   }, []);
   
   useEffect(() => {
+
     if (user) {
       setAccList(user.accounts ?? []);
     }

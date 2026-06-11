@@ -27,15 +27,16 @@ export default function Transfer() {
     }
     setLoading(true);
     try {
+        // console.log("Initiating transfer:", { accountNumber1, accountNumber2, amount: parseFloat(amount) });
         await transfer(accountNumber1, accountNumber2, parseFloat(amount));
         setAmount(0);
-        setAccountNumber1(0);
-        setAccountNumber2(0);
+        setAccountNumber1("");
+        setAccountNumber2("");
         setError(null);
         await fetchUser();
-    } catch (error) {
+    } catch (err) {
         setError("Transfer failed. Please try again.");
-        console.error(error);
+        console.error("Transfer error:", err.response ? err.response : err.request ? err.request : err.message);
     } finally {
         setLoading(false);
     }

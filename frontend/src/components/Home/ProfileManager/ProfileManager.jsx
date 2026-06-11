@@ -43,11 +43,6 @@ export default function ProfileManager() {
     }
   };
 
-  const handleForgotPassword = () => {
-    console.log("Forgot password feature - Coming soon");
-    // Placeholder for future forgot password functionality
-  };
-
   const handlePasswordChangeClose = () => {
     setShowChangePassword(false);
   };
@@ -109,12 +104,6 @@ export default function ProfileManager() {
                 <ChangePassword onClose={handlePasswordChangeClose} onSuccess={handlePasswordChangeSuccess} />
               </Modal.Body>
             </Modal>
-
-            {/* Forgot Password */}
-            <ListGroup.Item action onClick={handleForgotPassword}>
-              Forgot Password?
-            </ListGroup.Item>
-
             {/* Delete Account */}
             <ListGroup.Item action onClick={handleShowD}>
               Delete Account

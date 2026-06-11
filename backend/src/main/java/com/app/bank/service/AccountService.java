@@ -65,6 +65,10 @@ public class AccountService {
             throw new ResourceNotFoundException("User not found.");
         }
 
+        if (accountRepository.findByUsername(username).size() >= 3) {
+            throw new BadRequestException("Account limit reached. A user can only have up to 3 accounts.");
+        }
+
         try {
             Account account = new Account(username, generateAccountNumber(), type);
             accountRepository.insert(account);
@@ -99,7 +103,7 @@ public class AccountService {
     public void depositAmount(String username, String accountNumber, BigDecimal amount) {
         verifyOwnership(accountNumber, username);
         
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadRequestException("Deposit amount must be greater than zero.");
         }
         Account account = getAccount(accountNumber);
@@ -111,7 +115,7 @@ public class AccountService {
 
     public void withdrawAmount(String username, String accountNumber, BigDecimal amount) {
         verifyOwnership(accountNumber, username);
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadRequestException("Withdrawal amount must be greater than zero.");
         }
         Account account = getAccount(accountNumber);
@@ -142,7 +146,7 @@ public class AccountService {
         Account account1 = getAccount(accountNumber1);
         Account account2 = getAccount(accountNumber2);
 
-        BigDecimal newBalance1 = account1.getBalance().add(request.getAmount());
+        BigDecimal newBalance1 = account1.getBalance().subtract(request.getAmount());
         if (newBalance1.compareTo(BigDecimal.ZERO) < 0) {
             throw new BadRequestException("Insufficient funds in the source account.");
         }
@@ -157,6 +161,13 @@ public class AccountService {
     }
 
     ///---------------------------------------- User Account Methods -----------------------------------------
+    
+    public void updateAccountUsernames(String currentUsername, String newUsername ){
+        accountRepository.findByUsername(currentUsername).forEach(account -> {
+            account.setUsername(newUsername);
+            accountRepository.save(account);
+        });
+    }
 
     public List<AccountResponse> getUserAccounts(String username) {
         if (!userService.checkforUserName(username)) {

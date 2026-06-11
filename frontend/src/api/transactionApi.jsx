@@ -2,6 +2,7 @@ import api from './axiosConfig';
 
 export const getTransactions = async (accountNumber) => {
   const response = await api.get(`/api/v1/account/${accountNumber}/transactions`);
+  //console.log("getTransactions response:", response);
   return response.data;
 };
 
