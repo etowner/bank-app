@@ -7,7 +7,7 @@ import ChangeUsername from "./ChangeUsername";
 import { deleteUser, deleteAllAccounts } from "../../../api/userApi";
 
 export default function ProfileManager() {
-  const { username, logout, setUser, user } = use(UserContext);
+  const { username, logout, setUser } = use(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -33,6 +33,7 @@ export default function ProfileManager() {
   const handleYes = async (event) => {
     event.preventDefault();
     try {
+        // can technically do this in one call
         deleteAllAccounts();
         deleteUser();
         setUser(null);
@@ -50,7 +51,6 @@ export default function ProfileManager() {
   const handlePasswordChangeSuccess = () => {
     setShowChangePassword(false);
     handleClose();
-    console.log(user);
   };
 
   const handleUsernameChangeClose = () => {
@@ -60,7 +60,6 @@ export default function ProfileManager() {
   const handleUsernameChangeSuccess = () => {
     setShowChangeUsername(false);
     handleClose();
-    console.log(user);
     logout();
   };
 
@@ -104,6 +103,7 @@ export default function ProfileManager() {
                 <ChangePassword onClose={handlePasswordChangeClose} onSuccess={handlePasswordChangeSuccess} />
               </Modal.Body>
             </Modal>
+            
             {/* Delete Account */}
             <ListGroup.Item action onClick={handleShowD}>
               Delete Account

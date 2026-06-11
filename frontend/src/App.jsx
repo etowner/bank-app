@@ -12,13 +12,15 @@ function App() {
       <UserContextProvider>
         <Routes>
           <Route path="/" element={<FrontPage />} />
-          <Route path="/home" element={
-            <ProtectedRoute><Home /></ProtectedRoute>
-          } />
-          <Route path="/account/:accountNumber" element={
-            <ProtectedRoute><Account /></ProtectedRoute>
-          } />
-        </Routes>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home" element={
+             <Home />
+            } />
+            <Route path="/account/:accountNumber" element={
+             <Account />
+            } />
+            </Route>
+          </Routes>
       </UserContextProvider>
     </div>
   );

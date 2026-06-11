@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser, registerUser, loginUser, logoutUser } from "./api/userApi";
 
@@ -12,38 +12,32 @@ export const UserContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     setError(null);
+    setLoading(true);
     try {
       const user = await getUser();
       setUser(user);
-      console.log("Fetched user:", user);
+      // console.log("Fetched user:", user);
     } catch (err) {
+      setError(err.response?.data || "Failed to fetch user");
       console.error("Error getting user:", err.response ? err.response : err.request ? err.request : err.message);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
 
-//    useEffect(() => {
-// +    getUser().finally(() => setLoading(false));
-// +  }, []);
 
   const register = async (username, password) => {
     setError(null);
     try {
       await registerUser(username, password);
     } catch (err) {
-      setError("Either the username or password was invalid.");
+      setError(err.response?.data || "Either the username or password was invalid.");
       console.error("Registration error:",  err.response ? err.response : err.request ? err.request : err.message);
       return; 
     }
-
-    try {
-      await fetchUser();
-      navigate(`/home`);
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
-      console.error("Error fetching user after registration:", err.response ? err.response : err.request ? err.request : err.message);
-    }
+    navigate(`/home`);
   };
 
   const login = async (username, password) => {
@@ -55,14 +49,7 @@ export const UserContextProvider = ({ children }) => {
       console.error("Login error:", err.response ? err.response : err.request ? err.request : err.message);
       return; 
     }
-
-    try {
-      await fetchUser();
-      navigate(`/home`);
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
-      console.error("Error fetching user after login:", err.response ? err.response : err.request ? err.request : err.message );
-    }
+    navigate(`/home`);
   };
 
   const logout = async() => {

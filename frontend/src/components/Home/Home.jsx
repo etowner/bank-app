@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { use, useEffect, useState } from "react";
 import { Card, Col, Container, Row, Alert } from "react-bootstrap";
 import Transfer from "./Transfer";
@@ -12,7 +11,7 @@ import { createAccount } from "../../api/accountApi";
 
 const Home = () => {
   const { user, username, fetchUser } = use(UserContext)
-  const [accList, setAccList] = useState([]);
+  const accList = user?.accounts ?? [];
   const [error, setError] = useState();
 
   const openAcc = async (type) => {
@@ -33,15 +32,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchUser();
-    console.log("User data:", user);
-  }, []);
-  
-  useEffect(() => {
-
-    if (user) {
-      setAccList(user.accounts ?? []);
-    }
-  }, [user.accounts]);
+  }, [fetchUser]);
 
   return (
     <div className="Home">

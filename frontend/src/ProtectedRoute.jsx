@@ -1,46 +1,27 @@
 import { use, useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { UserContext } from "./UserContext";
 
+// eslint-disable-next-line no-unused-vars
 const ProtectedRoute = ({ children }) => {
+  const { user, fetchUser } = use(UserContext);
+  // const [loading, setLoading] = useState(true);
+  const [isResolving, setIsResolving] = useState(true);
 
-  const { user, loading, fetchUser } = use(UserContext);
-  const [isResolvingUser, setIsResolvingUser] = useState(true);
+  useEffect(() => {
+    fetchUser().finally(() => setIsResolving(false) );
+  },[fetchUser]);
   
-  // useEffect(() => {
-  //   let isMounted = true;
-    
-  //   if (user) {
-  //     setIsResolvingUser(false);
-  //     return () => {
-  //       isMounted = false;
-  //     };
-  //   }
+  if (isResolving) {
+    return <div>Loading...</div>;
+  }
 
-  //   if (typeof fetchUser !== "function") {
-  //     setIsResolvingUser(false);
-  //     return () => {
-  //       isMounted = false;
-  //     };
-  //   }
-
-  //   Promise.resolve(fetchUser()).finally(() => {
-  //     if (isMounted) {
-  //       setIsResolvingUser(false);
-  //     }
-  //   });
-
-  //   return () => {
-  //     isMounted = false;
-  //   };
-  // }, [user, fetchUser]);
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
   
-  // if (isResolvingUser) {
-  //   return null;
-  // }
-  
-  // if (loading) return <div>Loading...</div>;
-  return user ? children : <Navigate to="/" />;
+  // return user ? children : <Navigate to="/" />;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;
