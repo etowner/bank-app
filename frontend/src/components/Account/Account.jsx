@@ -1,5 +1,6 @@
+/* eslint-disable @eslint-react/jsx-no-leaked-dollar */
  
-import  { useEffect, useState, use } from "react";
+import  { useEffect, useCallback, useState } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table, } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,9 +9,9 @@ import Deposit from "./Deposit";
 import Withdraw from "./Withdraw";
 import CloseAccount from "./CloseAccount";
 import LineChart from "./LineChart";
-import { UserContext } from "../../UserContext";
 import { getTransactions } from "../../api/transactionApi";
 import { getAccount } from "../../api/accountApi";
+import { formatDate } from '../../utils/dateUtils';
 
 function CustomToggle({ children, eventKey }) {
   const showAction = useAccordionButton(eventKey, () => {});
@@ -24,7 +25,6 @@ function CustomToggle({ children, eventKey }) {
 }
 
 const Account = () => {
-  const { username } = use(UserContext);
   const { accountNumber } = useParams();
   const [account, setAccount] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -35,11 +35,11 @@ const Account = () => {
     navigate(`/home`);
   };
 
-  const fetchAccountData = async () => {
+  const fetchAccountData =  useCallback(async () => {
     try {
       const account = await getAccount(accountNumber);
       setAccount(account);
-      console.log("Fetched account data:", account);
+      console.log("Fetched account data:", account, new Date().toLocaleString());
     } catch (err) {
       console.error("Error fetching account data:", err.response ? err.response : err.request ? err.request : err.message);
     }
@@ -47,16 +47,16 @@ const Account = () => {
     try {
       const transactions = await getTransactions(accountNumber);
       setTransactions(transactions);
-      console.log("Fetched transactions:", transactions);
+      console.log("Fetched transactions:", transactions, new Date().toLocaleString());
     } catch (err) {
       console.error("Error fetching transactions:", err.response ? err.response : err.request ? err.request : err.message);
     }
-  };
+  }, [accountNumber]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAccountData();
-  
-  }, [accountNumber, username, account?.balance]);
+  }, [fetchAccountData]);
 
 
   return (
@@ -109,7 +109,7 @@ const Account = () => {
                             {value.type} {value.counterparty}
                           </td>
                           <td>{value.amount}</td>
-                          <td>{value.timestamp}</td>
+                          <td>{formatDate(value.timestamp)}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -131,7 +131,7 @@ const Account = () => {
                   <Col>
                     <Accordion.Collapse eventKey="0">
                       <Card.Body>
-                        <Deposit setAccount={setAccount} />
+                        <Deposit setAccount={setAccount} fetchAccountData={fetchAccountData} />
                       </Card.Body>
                     </Accordion.Collapse>
                   </Col>
@@ -142,6 +142,7 @@ const Account = () => {
                         <Withdraw
                           balance={account?.balance}
                           setAccount={setAccount}
+                          fetchAccountData={fetchAccountData}
                         />
                       </Card.Body>
                     </Accordion.Collapse>

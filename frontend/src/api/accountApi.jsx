@@ -8,7 +8,7 @@ export const getAccount = async (accountNumber) => {
 
 export const createAccount = async (type) => {
   const response = await api.post(`/api/v1/account/open/${type}`);
-  console.log("createAccount response:", response);
+  // console.log("createAccount response:", response);
   return response.data;
 };
 

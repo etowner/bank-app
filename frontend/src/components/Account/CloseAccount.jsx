@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, use} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Modal, Alert } from "react-bootstrap";
-import "../../api/axiosConfig";
+import { UserContext } from "../../UserContext";
 import {deleteAccount} from "../../api/accountApi";
 
 export default function DeleteAccount() {
+  const { fetchUser } = use(UserContext);
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -21,6 +22,7 @@ export default function DeleteAccount() {
       setError("Failed to close account. Please try again.");
       console.error(error);
     }
+    fetchUser(); 
   };
 
   return (

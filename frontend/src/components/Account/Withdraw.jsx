@@ -5,7 +5,7 @@ import { Button, Form, Row, Col, Alert } from "react-bootstrap";
 import { withdraw } from "../../api/transactionApi";
 
 
-export default function Withdraw({ balance, setAccount }) {
+export default function Withdraw({ balance, setAccount, fetchAccountData }) {
   const [amount, setAmount] = useState(0);
   const { accountNumber } = useParams();
   const [error, setError] = useState(null);
@@ -33,6 +33,8 @@ export default function Withdraw({ balance, setAccount }) {
     } finally {
       setLoading(false);
     }
+
+    await fetchAccountData();
   };
 
   return (

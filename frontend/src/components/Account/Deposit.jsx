@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 import { deposit } from "../../api/transactionApi";
 
-export default function Deposit({ setAccount }) {
+export default function Deposit({ setAccount, fetchAccountData }) {
   const [amount, setAmount] = useState(0);
   const { accountNumber } = useParams();
   const [loading, setLoading] = useState(false);
@@ -30,6 +30,8 @@ export default function Deposit({ setAccount }) {
     } finally {
       setLoading(false);
     }
+
+    await fetchAccountData();
   };
 
   return (
