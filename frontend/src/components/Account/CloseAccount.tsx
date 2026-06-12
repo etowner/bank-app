@@ -2,7 +2,7 @@ import { useState, use} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Modal, Alert } from "react-bootstrap";
 import { UserContext } from "../../UserContext";
-import {deleteAccount} from "../../api/accountApi";
+import { deleteAccount } from "../../api/accountApi";
 
 export default function DeleteAccount() {
   const { fetchUser } = use(UserContext);

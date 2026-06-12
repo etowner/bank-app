@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { changeUsername } from "../../../api/userApi";
 
-export default function ChangeUsername({ onClose, onSuccess }) {
+export default function ChangeUsername({ onClose, onSuccess }: { onClose: () => void; onSuccess?: () => void }) {
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newUsername, setNewUsername] = useState("");
@@ -10,7 +10,7 @@ export default function ChangeUsername({ onClose, onSuccess }) {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChangeUsername = async (e) => {
+  const handleChangeUsername = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -45,7 +45,7 @@ export default function ChangeUsername({ onClose, onSuccess }) {
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 2000);
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.status === 401) {
         setError("Current password is incorrect");
         console.error("Incorrect password:", err.response ? err.response : err.request ? err.request : err.message);

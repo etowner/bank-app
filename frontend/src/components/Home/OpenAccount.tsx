@@ -1,7 +1,6 @@
-import { Accordion, Button, Card, ListGroup } from "react-bootstrap";
-import { useAccordionButton } from "react-bootstrap/AccordionButton";
+import { Accordion, Button, Card, ListGroup, useAccordionButton} from "react-bootstrap";
 
-function CustomToggle({ children, eventKey, onToggle }) {
+function CustomToggle({ children, eventKey, onToggle }: { children: React.ReactNode; eventKey: string; onToggle: () => void }) {
   const showAcc = useAccordionButton(eventKey, onToggle);
   
   return (
@@ -11,7 +10,7 @@ function CustomToggle({ children, eventKey, onToggle }) {
   );
 }
 
-export default function OpenAccount({ openAcc, setError}) {
+export default function OpenAccount({ openAcc, setError }: { openAcc: (accountType: string) => void; setError: (error: string | null) => void }) {
   
   return (
     <div>

@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Alert } from "react-bootstrap";
 import Transfer from "./Transfer";
 import AccList from "./AccList";
@@ -6,15 +6,16 @@ import Header from "./Header";
 import "../../styles/Home.css";
 import OpenAccount from "./OpenAccount";
 import PieChart from "./PieChart";
-import { UserContext } from "../../UserContext";
+import { useUserContext } from "../../UserContext";
 import { createAccount } from "../../api/accountApi";
+// import { User } from "../../types";
 
 const Home = () => {
-  const { user, username, fetchUser } = use(UserContext)
+  const { user, username, fetchUser } = useUserContext();
   const accList = user?.accounts ?? [];
-  const [error, setError] = useState();
+  const [error, setError] = useState<string | null>(null);
 
-  const openAcc = async (type) => {
+  const openAcc = async (type: string) => {
     if( accList.length >= 3){
       setError("You can only have 3 accounts");
       return;
@@ -36,7 +37,7 @@ const Home = () => {
 
   return (
     <div className="Home">
-      <Header username={username} />
+      <Header />
       <Container>
         <Row className="mb-5">
           <h2>Welcome {username}</h2>
@@ -45,8 +46,8 @@ const Home = () => {
           {/* Lists Accounts and provides open account options */}
           <Col key={1}>
             <Card border="dark">
-              <AccList username={username} accList={accList} />
-              <OpenAccount username={username} openAcc={openAcc} setError={setError} />
+              <AccList accList={accList} />
+              <OpenAccount openAcc={openAcc} setError={setError} />
               {error && <Alert className="" variant="danger">{error}</Alert>}
             </Card>
           </Col>

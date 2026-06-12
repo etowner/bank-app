@@ -1,10 +1,9 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { UserContext } from "./UserContext";
+import { useUserContext } from "./UserContext";
 
-// eslint-disable-next-line no-unused-vars
-const ProtectedRoute = ({ children }) => {
-  const { user, fetchUser } = use(UserContext);
+const ProtectedRoute = ({ }) => {
+  const { user, fetchUser } = useUserContext();
   // const [loading, setLoading] = useState(true);
   const [isResolving, setIsResolving] = useState(true);
 

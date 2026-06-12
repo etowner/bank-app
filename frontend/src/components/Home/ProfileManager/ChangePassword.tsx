@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { changePassword } from "../../../api/userApi";
 
-export default function ChangePassword({ onClose, onSuccess }) {
+export default function ChangePassword({ onClose, onSuccess }: { onClose: () => void; onSuccess?: () => void }) {
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -11,7 +11,7 @@ export default function ChangePassword({ onClose, onSuccess }) {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChangePassword = async (e) => {
+  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -52,7 +52,7 @@ export default function ChangePassword({ onClose, onSuccess }) {
         if (onSuccess) onSuccess();
       }, 1500);
       console.log()
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.status === 401) {
         setError("Current password is incorrect");
       } else {

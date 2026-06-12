@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 import { deposit } from "../../api/transactionApi";
+// import { Account } from "../../types";
 
 export default function Deposit({ setAccount, fetchAccountData }) {
   const [amount, setAmount] = useState(0);

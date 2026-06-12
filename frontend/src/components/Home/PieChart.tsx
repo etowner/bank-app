@@ -1,7 +1,8 @@
 import "chart.js/auto";
 import { Pie } from "react-chartjs-2";
+import { Account } from "../../types";
 
-export default function PieChart({ accounts }) {
+export default function PieChart({ accounts }: { accounts: Account[] }) {
   const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
 
   const percentages = accounts.map(account => 

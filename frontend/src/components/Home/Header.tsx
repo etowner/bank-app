@@ -1,7 +1,5 @@
 
-import { Navbar } from "react-bootstrap";
-import { Nav } from "react-bootstrap";
-import Container from "react-bootstrap/Container";
+import { Nav, Navbar, Container } from "react-bootstrap";
 import ProfileManager from "./ProfileManager/ProfileManager";
 
 const Header = () => {

@@ -1,6 +1,5 @@
 /* eslint-disable @eslint-react/jsx-no-leaked-dollar */
- 
-import  { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table, } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,7 +13,7 @@ import { getAccount } from "../../api/accountApi";
 import { formatDate } from '../../utils/dateUtils';
 
 function CustomToggle({ children, eventKey }) {
-  const showAction = useAccordionButton(eventKey, () => {});
+  const showAction = useAccordionButton(eventKey, () => { });
 
   return (
     <Button variant="dark" onClick={showAction} className="mb-3">
@@ -35,7 +34,7 @@ const Account = () => {
     navigate(`/home`);
   };
 
-  const fetchAccountData =  useCallback(async () => {
+  const fetchAccountData = useCallback(async () => {
     try {
       const account = await getAccount(accountNumber);
       setAccount(account);
@@ -94,24 +93,19 @@ const Account = () => {
                 <Table bordered hover>
                   <thead>
                     <tr>
-                      <th>#</th>
                       <th>Type</th>
                       <th>Amount</th>
                       <th>Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {transactions &&
-                      Object.entries(transactions).map(([key, value]) => (
-                        <tr key={key}>
-                          <td>{key}</td>
-                          <td>
-                            {value.type} {value.counterparty}
-                          </td>
-                          <td>{value.amount}</td>
-                          <td>{formatDate(value.timestamp)}</td>
-                        </tr>
-                      ))}
+                    {transactions.map((transaction) => (
+                      <tr key={transaction.id}>
+                        <td>{transaction.type} {transaction.counterparty}</td>
+                        <td>{transaction.amount}</td>
+                        <td>{formatDate(transaction.timestamp)}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </Card.Body>

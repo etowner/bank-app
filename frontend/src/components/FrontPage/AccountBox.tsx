@@ -1,9 +1,12 @@
-import { useState, use } from "react";
-import { UserContext } from "../../UserContext";
+import { useState } from "react";
+import { useUserContext } from "../../UserContext";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
 
 
-const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }) => (
+const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }: 
+  { onSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void; username: string; password: string; 
+    onUsernameChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
+    onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void; error: string | null }) => (
     <Form>
         <Form.Group as={Row} className="mb-3 justify-content-md-center">
             <Form.Label column sm={6}>Enter username:</Form.Label>
@@ -25,26 +28,27 @@ const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordCh
 );
 
 const AccountBox = () => {
-  const { login, register, error, setError } = use(UserContext);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [activeTab, setActiveTab] = useState("create");
+  const { login, register, error, setError } = useUserContext();
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<string>("create");
 
 
-  const handleCreate = (event) => {
+  const handleCreate = (event: React.MouseEvent<HTMLButtonElement> | null) => {
+    if (!event) return;
     event.preventDefault();
     register(username, password);
   };
 
-  const handleLog = (event) => {
+  const handleLog = (event: React.MouseEvent<HTMLButtonElement> | null) => {
+    if (!event) return;
     event.preventDefault();
     login(username, password);
   };
 
-  const handleTabSwitch = (tab) => {
+  const handleTabSwitch = (tab: string | null) => {
+    if (tab == null) return;
     setActiveTab(tab);
-    // setUsername("");
-    // setPassword("");
     setError(null);
   };
 
