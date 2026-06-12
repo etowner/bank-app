@@ -1,7 +1,9 @@
 import "chart.js/auto";
+import { ChartOptions } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import { Account } from "../../types";
 
-export default function PieChart({ accounts }) {
+export default function PieChart({ accounts }: { accounts: Account[] }) {
   const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
 
   const percentages = accounts.map(account => 
@@ -24,20 +26,17 @@ export default function PieChart({ accounts }) {
     ],
   };
 
-  const options = {
+  const options: ChartOptions<"pie"> = {
     plugins: {
       legend: {
         display: true,
-        position: "bottom",
+        position: "bottom" as const,
       },
     },
     layout: {
       padding: 20,
-      backgroundColor: "rgba(40, 44, 52, 1)",
     },
-    elements: {
-      backgroundColor: "rgba(40, 44, 52, 1)",
-    },
+
   };
 
   return (

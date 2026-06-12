@@ -1,18 +1,20 @@
-import { useState, use } from "react";
+import { useState } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
-import { UserContext } from "../../UserContext";
+import { useUserContext } from "../../UserContext";
 import { transfer } from "../../api/transactionApi";
+// import { User, Account } from "../../types";
 
 export default function Transfer() {
-  const { fetchUser } = use(UserContext)
+  const { fetchUser } = useUserContext();
   const [amount, setAmount] = useState(0);
   const [accountNumber1, setAccountNumber1] = useState("");
   const [accountNumber2, setAccountNumber2] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleTransferClick = async (event) => {
+  const handleTransferClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    
     if (isNaN(amount) || amount <= 0) {
       setError("Invalid transfer amount. Please enter a valid amount.");
       return;
@@ -27,13 +29,13 @@ export default function Transfer() {
     }
     setLoading(true);
     try {
-        await transfer(accountNumber1, accountNumber2, parseFloat(amount));
+        await transfer(accountNumber1, accountNumber2, amount);
         setAmount(0);
         setAccountNumber1("");
         setAccountNumber2("");
         setError(null);
         await fetchUser();
-    } catch (err) {
+    } catch (err: any) {
         setError(err.response?.data || "Transfer failed. Please try again.");
         console.error("Transfer error:", err.response ? err.response : err.request ? err.request : err.message);
     } finally {
@@ -80,7 +82,7 @@ export default function Transfer() {
             <Col sm={4}>
               <Form.Control
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => setAmount(parseFloat(e.target.value))}
               />
             </Col>
           </Form.Group>

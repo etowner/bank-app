@@ -2,14 +2,24 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 import { deposit } from "../../api/transactionApi";
+import { Account } from "../../types";
 
-export default function Deposit({ setAccount, fetchAccountData }) {
+interface DepositProps {
+  setAccount: (account: Account) => void;
+  fetchAccountData: () => Promise<void>;
+}
+
+export default function Deposit({ setAccount, fetchAccountData }: DepositProps) {
   const [amount, setAmount] = useState(0);
-  const { accountNumber } = useParams();
+  const { accountNumber } = useParams<{ accountNumber: string }>();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleDepositClick = async (event) => {
+   if (!accountNumber) { 
+    return  <div>Loading...</div>;
+  }
+
+  const handleDepositClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     if (isNaN(amount) || amount <= 0) {
@@ -20,7 +30,7 @@ export default function Deposit({ setAccount, fetchAccountData }) {
     setLoading(true);
 
     try {
-      const updatedAccount = await deposit(accountNumber, parseFloat(amount));
+      const updatedAccount = await deposit(accountNumber, amount);
       setAmount(0);
       setError(null);
       setAccount(updatedAccount); 
@@ -43,7 +53,7 @@ export default function Deposit({ setAccount, fetchAccountData }) {
         <Col sm={3}>
           <Form.Control
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => setAmount(parseFloat(e.target.value))}
           />
         </Col>
         <Col sm={2}>

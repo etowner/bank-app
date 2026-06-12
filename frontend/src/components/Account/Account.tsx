@@ -1,6 +1,5 @@
 /* eslint-disable @eslint-react/jsx-no-leaked-dollar */
- 
-import  { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table, } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,9 +11,10 @@ import LineChart from "./LineChart";
 import { getTransactions } from "../../api/transactionApi";
 import { getAccount } from "../../api/accountApi";
 import { formatDate } from '../../utils/dateUtils';
+import { Account, Transaction } from "../../types";
 
-function CustomToggle({ children, eventKey }) {
-  const showAction = useAccordionButton(eventKey, () => {});
+function CustomToggle({ children, eventKey }: { children: React.ReactNode; eventKey: string }) {
+  const showAction = useAccordionButton(eventKey, () => { });
 
   return (
     <Button variant="dark" onClick={showAction} className="mb-3">
@@ -24,10 +24,17 @@ function CustomToggle({ children, eventKey }) {
   );
 }
 
-const Account = () => {
-  const { accountNumber } = useParams();
-  const [account, setAccount] = useState(null);
-  const [transactions, setTransactions] = useState([]);
+
+const AccountPage = () => {
+  let { accountNumber } = useParams<{ accountNumber: string }>();
+  const [account, setAccount] = useState<Account | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(false);
+  
+
+  if (!accountNumber) { 
+    return <div>Loading...</div>;
+  }
 
   const navigate = useNavigate();
 
@@ -35,22 +42,24 @@ const Account = () => {
     navigate(`/home`);
   };
 
-  const fetchAccountData =  useCallback(async () => {
+  const fetchAccountData = useCallback(async () => {
+    setLoading(true);
     try {
-      const account = await getAccount(accountNumber);
-      setAccount(account);
-      console.log("Fetched account data:", account, new Date().toLocaleString());
-    } catch (err) {
+      const acc = await getAccount(accountNumber);
+      setAccount(acc);
+      //console.log("Fetched account data:", acc, new Date().toLocaleString());
+    } catch (err: any) {
       console.error("Error fetching account data:", err.response ? err.response : err.request ? err.request : err.message);
     }
 
     try {
       const transactions = await getTransactions(accountNumber);
       setTransactions(transactions);
-      console.log("Fetched transactions:", transactions, new Date().toLocaleString());
-    } catch (err) {
+      // console.log("Fetched transactions:", transactions, new Date().toLocaleString());
+    } catch (err: any) {
       console.error("Error fetching transactions:", err.response ? err.response : err.request ? err.request : err.message);
     }
+    setLoading(false);
   }, [accountNumber]);
 
   useEffect(() => {
@@ -94,24 +103,19 @@ const Account = () => {
                 <Table bordered hover>
                   <thead>
                     <tr>
-                      <th>#</th>
                       <th>Type</th>
                       <th>Amount</th>
                       <th>Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {transactions &&
-                      Object.entries(transactions).map(([key, value]) => (
-                        <tr key={key}>
-                          <td>{key}</td>
-                          <td>
-                            {value.type} {value.counterparty}
-                          </td>
-                          <td>{value.amount}</td>
-                          <td>{formatDate(value.timestamp)}</td>
-                        </tr>
-                      ))}
+                    {transactions.map((transaction) => (
+                      <tr key={transaction.id}>
+                        <td>{transaction.type} {transaction.counterparty}</td>
+                        <td>{transaction.amount}</td>
+                        <td>{formatDate(transaction.timestamp)}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </Table>
               </Card.Body>
@@ -156,7 +160,7 @@ const Account = () => {
           <Card>
             <LineChart
               accountNumber={accountNumber}
-              transHistory={transactions}
+              transactions={transactions}
             />
           </Card>
         </Row>
@@ -170,4 +174,4 @@ const Account = () => {
   );
 };
 
-export default Account;
+export default AccountPage;

@@ -1,13 +1,14 @@
-import { useState, use } from "react";
+import { useState } from "react";
 import { Button, Modal, Offcanvas, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { UserContext } from "../../../UserContext";
+import { useUserContext } from "../../../UserContext";
 import ChangePassword from "./ChangePassword";
 import ChangeUsername from "./ChangeUsername";
 import { deleteUser, deleteAllAccounts } from "../../../api/userApi";
+// import { User } from "../../../types";
 
 export default function ProfileManager() {
-  const { username, logout, setUser } = use(UserContext);
+  const { username, logout, setUser } = useUserContext();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -25,12 +26,12 @@ export default function ProfileManager() {
 
   const navigate = useNavigate();
 
-  const handleLogOut = (event) => {
+  const handleLogOut = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     logout();
   };
 
-  const handleYes = async (event) => {
+  const handleYes = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
         // can technically do this in one call
