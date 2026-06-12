@@ -6,14 +6,15 @@ import { transfer } from "../../api/transactionApi";
 
 export default function Transfer() {
   const { fetchUser } = useUserContext();
-  const [amount, setAmount] = useState<number>(0);
-  const [accountNumber1, setAccountNumber1] = useState<string>("");
-  const [accountNumber2, setAccountNumber2] = useState<string>("");
+  const [amount, setAmount] = useState(0);
+  const [accountNumber1, setAccountNumber1] = useState("");
+  const [accountNumber2, setAccountNumber2] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleTransferClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    
     if (isNaN(amount) || amount <= 0) {
       setError("Invalid transfer amount. Please enter a valid amount.");
       return;
@@ -32,7 +33,7 @@ export default function Transfer() {
         setAmount(0);
         setAccountNumber1("");
         setAccountNumber2("");
-        setError("");
+        setError(null);
         await fetchUser();
     } catch (err: any) {
         setError(err.response?.data || "Transfer failed. Please try again.");

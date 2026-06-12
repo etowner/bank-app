@@ -85,7 +85,7 @@ public class AccountController {
             accountService.transfer(principal.getUsername(), request);
             return ResponseEntity.ok("Transfer successful.");
         } catch (BadRequestException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid transfer request.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found.");
         } catch (Exception e) {

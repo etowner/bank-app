@@ -4,28 +4,37 @@ import { Button, Form, Row, Col, Alert } from "react-bootstrap";
 import { withdraw } from "../../api/transactionApi";
 import { Account } from "../../types";
 
+interface WithdrawProps {
+  balance: number | undefined;
+  setAccount: (account: Account) => void;
+  fetchAccountData: () => Promise<void>;
+}
 
-export default function Withdraw({ balance, setAccount, fetchAccountData }: 
-  { balance: number; setAccount: (account: any) => void; fetchAccountData: () => Promise<void> }) {
+export default function Withdraw({ balance, setAccount, fetchAccountData }: WithdrawProps) {
   const [amount, setAmount] = useState(0);
-  const { accountNumber } = useParams();
-  const [error, setError] = useState("");
+  const { accountNumber } = useParams<{ accountNumber: string }>();
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleWithdrawClick = async (event: React.FormEvent<HTMLFormElement>) => {
+  if (!accountNumber) { 
+    return  <div>Loading...</div>;
+  }
+
+  const handleWithdrawClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    
     if (isNaN(amount) || amount <= 0) {
       setError("Invalid withdrawal amount. Please enter a valid amount.");
       return;
     }
-    if (balance - amount < 0) {
+    if (balance === undefined || balance - amount < 0) {
       setError("Insufficient funds.");
       return;
     }
     setLoading(true);
     try {
-      const updateAccount = await withdraw(accountNumber, parseFloat(amount));
-      setError("");
+      const updateAccount = await withdraw(accountNumber, amount);
+      setError(null);
       setAmount(0);
       setAccount(updateAccount);
     } catch (error) {
@@ -47,7 +56,7 @@ export default function Withdraw({ balance, setAccount, fetchAccountData }:
         <Col sm={3}>
           <Form.Control
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => setAmount(parseFloat(e.target.value))}
           />
         </Col>
         <Col sm={2}>

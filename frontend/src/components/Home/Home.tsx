@@ -8,7 +8,6 @@ import OpenAccount from "./OpenAccount";
 import PieChart from "./PieChart";
 import { useUserContext } from "../../UserContext";
 import { createAccount } from "../../api/accountApi";
-// import { User } from "../../types";
 
 const Home = () => {
   const { user, username, fetchUser } = useUserContext();

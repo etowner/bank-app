@@ -1,16 +1,23 @@
-
-import Chart from 'chart.js/auto'
+import "chart.js/auto";
 import { Line } from "react-chartjs-2";
+import { ChartOptions } from "chart.js";
+import { Transaction } from "../../types";
+import { formatDate } from '../../utils/dateUtils';
+
+interface LineChartProps {
+  accountNumber: string;
+  transactions: Transaction[]; // Adjust type as needed based on your transaction data structure
+}
 
 
-export default function LineChart({ accountNumber, transactions }) {
-  let transactionLabels = [];
-  let transactionAmounts = [];
-  if (transactions && Object.keys(transactions).length > 0) {
-    transactionLabels = Object.values(transactions).map(
-      (t) => new Date(t.timestamp).toLocaleDateString(), // May need adjustment based on timestamp format
+export default function LineChart({ accountNumber, transactions }: LineChartProps) {
+  let transactionLabels: string[] = [];
+  let transactionAmounts: number[] = [];
+  if (transactions && transactions.length > 0) {
+    transactionLabels = transactions.map(
+      (t) => formatDate(t.timestamp),
     );
-    transactionAmounts = Object.values(transactions).map((t) => t.amount);
+    transactionAmounts = transactions.map((t) => t.amount);
   }
 
   const data = {
@@ -25,21 +32,21 @@ export default function LineChart({ accountNumber, transactions }) {
     ],
   };
 
-  const options = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
     plugins: {
       legend: {
         display: true,
         position: "top",
       },
-    },
-
-    title: {
-      display: true,
-      text: "Transaction graph",
+      title: {
+        display: true,
+        text: "Transaction graph",
+      },
     },
   };
 
+  
   return (
     <div>
       <Line data={data} options={options} />

@@ -29,7 +29,6 @@ export const UserContextProvider = ({ children }: { children: React.ReactNode })
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  // const [username, setUsername] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const fetchUser = useCallback(async () => {
