@@ -10,6 +10,12 @@ const ProtectedRoute = ({ }) => {
   useEffect(() => {
     fetchUser().finally(() => setIsResolving(false) );
   },[fetchUser]);
+
+  useEffect(() => {
+    if (!isResolving && !user) {
+      console.log("User is not authenticated, redirecting to login.");
+    }
+  }, [isResolving, user]);
   
   if (isResolving) {
     return <div>Loading...</div>;

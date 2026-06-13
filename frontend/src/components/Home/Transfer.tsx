@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
 import { useUserContext } from "../../UserContext";
 import { transfer } from "../../api/transactionApi";
-// import { User, Account } from "../../types";
 
 export default function Transfer() {
   const { fetchUser } = useUserContext();
