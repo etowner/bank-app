@@ -1,1 +1,1 @@
-declare module "*.css";
+// Placeholder for global type definitions

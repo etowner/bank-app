@@ -10,8 +10,8 @@ import CloseAccount from "./CloseAccount";
 import LineChart from "./LineChart";
 import { getTransactions } from "../../api/transactionApi";
 import { getAccount } from "../../api/accountApi";
-import { formatDate } from '../../utils/dateUtils';
-import { Account, Transaction } from "../../types";
+import { formatDate } from '../../lib/utils';
+import { Account, Transaction } from "../../lib/types";
 
 function CustomToggle({ children, eventKey }: { children: React.ReactNode; eventKey: string }) {
   const showAction = useAccordionButton(eventKey, () => { });

@@ -1,7 +1,7 @@
 import { createContext, useState, useCallback, use } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser, registerUser, loginUser, logoutUser } from "./api/userApi";
-import { User } from "./types/index";
+import { User } from "./lib/types";
 
 interface UserContextType {
   username: string | null;

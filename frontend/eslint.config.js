@@ -1,29 +1,65 @@
+// @ts-check
 import js from "@eslint/js";
 import globals from "globals";
+import tseslint from "typescript-eslint";
+import reactPlugin from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
-import eslintReact from "@eslint-react/eslint-plugin";
+import reactRefresh from 'eslint-plugin-react-refresh';
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
-    plugins: { js },
-    extends: ["js/recommended"],
+    ignores: [ 'node_modules/', 'dist/', 'build/', 'coverage/', '*.min.js',],
+  },
+
+  // Baseline 
+  {
+    files: ['**/*.{ts,tsx,js,jsx}'],
+    extends: [ js.configs.recommended,],
+    languageOptions: { globals: globals.browser,},
+  },
+
+  // TypeScript
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
+    ],
     languageOptions: {
-      globals: globals.browser,
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/consistent-type-imports': 'warn',
+    },
+  },
+
+  // React + Vite
+  {
+    files: ['**/*.{jsx,tsx}'],
+    plugins: { 'react-refresh': reactRefresh },
+    extends: [
+      reactPlugin.configs.flat.recommended,
+      reactPlugin.configs.flat['jsx-runtime'], // React 17+ 
+      reactRefresh.configs.recommended,
+    ],
+    settings: { react: { version: 'detect' }, },
+    rules: {
+      'react/prop-types': 'off', // TypeScript handles this
+      // 'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
   reactHooks.configs.flat.recommended,
-  eslintReact.configs.recommended,
+  
   {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
-    rules: {
-      "no-unused-vars": "warn",
-    },
+    files: ['*.js', '*.mjs', 'vite.config.*'],
+    extends: [tseslint.configs.disableTypeChecked],
   },
+
+
 ]);

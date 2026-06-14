@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Form, Row, Col, Alert } from "react-bootstrap";
 import { withdraw } from "../../api/transactionApi";
-import { Account } from "../../types";
+import { Account } from "../../lib/types";
 
 interface WithdrawProps {
   balance: number | undefined;
