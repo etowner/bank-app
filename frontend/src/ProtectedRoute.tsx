@@ -9,9 +9,6 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     void fetchUser().finally(() => setIsResolving(false) );
-    console.log("Fetch called:", user, "at", new Intl.DateTimeFormat('en-US', {
-  timeStyle: 'medium'
-}).format(new Date()));
   },[fetchUser]);
 
   useEffect(() => {

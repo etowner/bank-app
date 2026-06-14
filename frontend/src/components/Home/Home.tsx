@@ -32,9 +32,6 @@ const Home = () => {
 
   useEffect(() => {
     void fetchUser();
-    console.log("User data on Home load:", user, "at", new Intl.DateTimeFormat('en-US', {
-  timeStyle: 'medium'
-}).format(new Date()));
   }, [fetchUser]);
 
   return (
