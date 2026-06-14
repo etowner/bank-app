@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { changeUsername } from "../../../api/userApi";
+import { getAxiosError } from "../../../api/axiosConfig";
 
 export default function ChangeUsername({ onClose, onSuccess }: { onClose: () => void; onSuccess?: () => void }) {
 
@@ -37,7 +38,6 @@ export default function ChangeUsername({ onClose, onSuccess }: { onClose: () => 
 
     setLoading(true);
     try {
-      console.log("Changing username with:", { currentPassword, newUsername });
       await changeUsername(currentPassword, newUsername);
       setSuccess("Username changed successfully! Please log in again with your new username.");
       setCurrentPassword("");
@@ -45,17 +45,9 @@ export default function ChangeUsername({ onClose, onSuccess }: { onClose: () => 
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 2000);
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        setError("Current password is incorrect");
-        console.error("Incorrect password:", err.response ? err.response : err.request ? err.request : err.message);
-      } else if (err.response?.status === 400) {
-        setError(err.response?.data || "Invalid new username or username already exists");
-        console.error("Invalid username or password:", err.response ? err.response : err.request ? err.request : err.message);
-      } else {
-        setError(err.response?.data || "Failed to change username");
-        console.error("Failed to change username:", err.response ? err.response : err.request ? err.request : err.message);
-      }
+    } catch (err) {
+      setError(getAxiosError(err));
+      console.error("Error changing username:", err);
     } finally {
       setLoading(false);
     }
@@ -66,7 +58,7 @@ export default function ChangeUsername({ onClose, onSuccess }: { onClose: () => 
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Form onSubmit={handleChangeUsername}>
+      <Form onSubmit={(e) => void handleChangeUsername(e)}>
         <Form.Group className="mb-3" controlId="currentPassword">
           <Form.Label>Current Password</Form.Label>
           <Form.Control
@@ -75,6 +67,7 @@ export default function ChangeUsername({ onClose, onSuccess }: { onClose: () => 
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             disabled={loading}
+            autoComplete="current-password"
           />
         </Form.Group>
 
@@ -86,6 +79,7 @@ export default function ChangeUsername({ onClose, onSuccess }: { onClose: () => 
             value={newUsername}
             onChange={(e) => setNewUsername(e.target.value)}
             disabled={loading}
+            autoComplete="new-username"
           />
           <Form.Text className="text-muted">
             3+ characters. Letters, numbers, underscores, and hyphens only.

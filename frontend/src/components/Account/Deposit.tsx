@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Col, Form, Row, Alert } from "react-bootstrap";
 import { deposit } from "../../api/transactionApi";
-import { Account } from "../../lib/types";
+import type { Account } from "../../lib/types";
 
 interface DepositProps {
   setAccount: (account: Account) => void;
@@ -10,19 +10,17 @@ interface DepositProps {
 }
 
 export default function Deposit({ setAccount, fetchAccountData }: DepositProps) {
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState('');
   const { accountNumber } = useParams<{ accountNumber: string }>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-   if (!accountNumber) { 
-    return  <div>Loading...</div>;
-  }
 
   const handleDepositClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    const parsedAmount = parseFloat(amount);
 
-    if (isNaN(amount) || amount <= 0) {
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
       setError("Invalid deposit amount. Please enter a valid amount.");
       return;
     }
@@ -30,8 +28,8 @@ export default function Deposit({ setAccount, fetchAccountData }: DepositProps) 
     setLoading(true);
 
     try {
-      const updatedAccount = await deposit(accountNumber, amount);
-      setAmount(0);
+      const updatedAccount = await deposit(accountNumber!, parsedAmount);
+      setAmount('');
       setError(null);
       setAccount(updatedAccount); 
     } catch (error) {
@@ -41,8 +39,9 @@ export default function Deposit({ setAccount, fetchAccountData }: DepositProps) 
       setLoading(false);
     }
 
-    await fetchAccountData();
+    void await fetchAccountData();
   };
+
 
   return (
     <div>
@@ -52,12 +51,16 @@ export default function Deposit({ setAccount, fetchAccountData }: DepositProps) 
         </Form.Label>
         <Col sm={3}>
           <Form.Control
+            type="number"
             value={amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount"
+            min="0"
+            step="0.01"
           />
         </Col>
         <Col sm={2}>
-          <Button onClick={handleDepositClick} className="mb-3">
+          <Button onClick={(e) => void handleDepositClick(e)} className="mb-3">
             {loading ? <>Loading..</> : <>Submit</>}
           </Button>
         </Col>

@@ -1,8 +1,8 @@
+import type { User } from '../lib/types';
 import api from './axiosConfig';
 
 export const getUser = async () => {
-  const response = await api.get('/api/v1/user');
-  // console.log("getUser response:", response);
+  const response = await api.get<User>('/api/v1/user');
   return response.data;
 };
 

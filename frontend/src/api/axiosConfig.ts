@@ -1,6 +1,7 @@
+import type {AxiosInstance} from "axios";
 import axios from "axios";
 
-export const api = axios.create({
+export const api: AxiosInstance = axios.create({
   baseURL: "http://localhost:8080",
   withCredentials: true,
   xsrfCookieName: "XSRF-TOKEN",
@@ -10,7 +11,7 @@ export const api = axios.create({
 const getCookie = (name: string) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift(); // Apparently undefined
+    if (parts.length === 2) return parts.pop()!.split(";").shift(); // Apparently undefined
     return null;
 };
 
@@ -21,5 +22,20 @@ api.interceptors.request.use((config) => {
     }
     return config;
 });
+
+export const getAxiosError = (err: unknown): string => {
+    if (axios.isAxiosError(err)) {
+        if (err.response) {
+            const data: unknown = err.response.data;
+            if (typeof data === 'string') return data;
+            return "An unexpected error occurred.";
+        } else if (err.request) {
+            return "Network error. Please check your connection.";
+        } else {
+            return err.message ?? "An unexpected error occurred.";
+        }
+    }
+    return "An unexpected error occurred.";
+};
 
 export default api;

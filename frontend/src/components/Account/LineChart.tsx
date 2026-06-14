@@ -1,14 +1,13 @@
 import "chart.js/auto";
 import { Line } from "react-chartjs-2";
-import { ChartOptions } from "chart.js";
-import { Transaction } from "../../lib/types";
+import type { ChartOptions } from "chart.js";
+import type { Transaction } from "../../lib/types";
 import { formatDate } from '../../lib/utils';
 
 interface LineChartProps {
   accountNumber: string;
   transactions: Transaction[]; // Adjust type as needed based on your transaction data structure
 }
-
 
 export default function LineChart({ accountNumber, transactions }: LineChartProps) {
   let transactionLabels: string[] = [];

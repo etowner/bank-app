@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../../UserContext";
 import ChangePassword from "./ChangePassword";
 import ChangeUsername from "./ChangeUsername";
-import { deleteUser, deleteAllAccounts } from "../../../api/userApi";
-// import { User } from "../../../types";
+import { deleteUser } from "../../../api/userApi";
 
 export default function ProfileManager() {
   const { username, logout, setUser } = useUserContext();
@@ -28,17 +27,15 @@ export default function ProfileManager() {
 
   const handleLogOut = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    logout();
+    void logout();
   };
 
   const handleYes = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
-        // can technically do this in one call
-        deleteAllAccounts();
-        deleteUser();
+        void await deleteUser();
         setUser(null);
-        navigate("/");
+        void navigate("/");
     } catch (error) {
         console.error(error);
         setShowD(false);
@@ -61,7 +58,7 @@ export default function ProfileManager() {
   const handleUsernameChangeSuccess = () => {
     setShowChangeUsername(false);
     handleClose();
-    logout();
+    void logout();
   };
 
   return (
@@ -120,10 +117,10 @@ export default function ProfileManager() {
                 undone!
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={handleYes}>
+                <Button variant="secondary" onClick={(e) => void handleYes(e)}>
                   Yes
                 </Button>
-                <Button variant="primary" onClick={handleCloseD}>
+                <Button variant="primary" onClick={() => void handleCloseD()}>
                   No
                 </Button>
               </Modal.Footer>

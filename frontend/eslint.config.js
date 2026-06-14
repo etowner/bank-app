@@ -5,12 +5,10 @@ import tseslint from "typescript-eslint";
 import reactPlugin from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from 'eslint-plugin-react-refresh';
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  {
-    ignores: [ 'node_modules/', 'dist/', 'build/', 'coverage/', '*.min.js',],
-  },
+  globalIgnores( ['node_modules/', 'dist/', 'build/', 'coverage/', '*.min.js', 'src/tests/', 'vite.config.*',]),
 
   // Baseline 
   {
@@ -42,13 +40,13 @@ export default defineConfig([
   // React + Vite
   {
     files: ['**/*.{jsx,tsx}'],
-    plugins: { 'react-refresh': reactRefresh },
+    // plugins: { 'react-refresh': reactRefresh },
     extends: [
       reactPlugin.configs.flat.recommended,
       reactPlugin.configs.flat['jsx-runtime'], // React 17+ 
       reactRefresh.configs.recommended,
     ],
-    settings: { react: { version: 'detect' }, },
+    settings: { react: { version: '19.0' }, },
     rules: {
       'react/prop-types': 'off', // TypeScript handles this
       // 'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],

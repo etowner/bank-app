@@ -10,7 +10,12 @@ function CustomToggle({ children, eventKey, onToggle }: { children: React.ReactN
   );
 }
 
-export default function OpenAccount({ openAcc, setError }: { openAcc: (accountType: string) => void; setError: (error: string | null) => void }) {
+interface OpenAccountProps {
+  openAcc: (accountType: string) => void;
+  setError: (error: string | null) => void;
+}
+
+export default function OpenAccount({ openAcc, setError }: OpenAccountProps) {
   
   return (
     <div>

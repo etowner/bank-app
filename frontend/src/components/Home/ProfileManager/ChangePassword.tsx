@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { changePassword } from "../../../api/userApi";
+import { getAxiosError } from "../../../api/axiosConfig";
 
 export default function ChangePassword({ onClose, onSuccess }: { onClose: () => void; onSuccess?: () => void }) {
-
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -11,7 +11,7 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleChangePassword = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -52,13 +52,11 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
         if (onSuccess) onSuccess();
       }, 1500);
       console.log()
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        setError("Current password is incorrect");
-      } else {
-        setError(err.response?.data || "Failed to change password");
-      }
-    } finally {
+    } catch (err) {
+      setError(getAxiosError(err));
+      console.error("Error changing password:", err);
+    }
+     finally {
       setLoading(false);
     }
   };
@@ -68,7 +66,7 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Form onSubmit={handleChangePassword}>
+      <Form onSubmit={(e) => void handleChangePassword(e)}>
         <Form.Group className="mb-3" controlId="currentPassword">
           <Form.Label>Current Password</Form.Label>
           <Form.Control
@@ -77,6 +75,7 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
             disabled={loading}
+            autoComplete="current-password"
           />
         </Form.Group>
 
@@ -88,6 +87,7 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             disabled={loading}
+            autoComplete="new-password"
           />
         </Form.Group>
 
@@ -99,6 +99,7 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={loading}
+            autoComplete="new-password"
           />
         </Form.Group>
 

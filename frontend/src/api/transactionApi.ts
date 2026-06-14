@@ -1,13 +1,14 @@
 import api from './axiosConfig';
+import type { Account, Transaction } from '../lib/types';
 
 export const getTransactions = async (accountNumber: string) => {
-  const response = await api.get(`/api/v1/account/${accountNumber}/transactions`);
+  const response = await api.get<Transaction[]>(`/api/v1/account/${accountNumber}/transactions`);
   //console.log("getTransactions response:", response);
   return response.data;
 };
 
 export const deposit = async (accountNumber: string, amount: number) => {
-    const response = await api.post(
+    const response = await api.post<Account>(
         `/api/v1/account/${accountNumber}/deposit`, amount,
         { headers: { "Content-Type": "application/json" } }
     );
@@ -15,7 +16,7 @@ export const deposit = async (accountNumber: string, amount: number) => {
 };
 
 export const withdraw = async (accountNumber: string, amount: number) => {
-    const response = await api.post(
+    const response = await api.post<Account>(
         `/api/v1/account/${accountNumber}/withdraw`, amount ,
         { headers: { "Content-Type": "application/json" } }
     );

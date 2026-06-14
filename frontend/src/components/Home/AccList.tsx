@@ -1,12 +1,12 @@
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { Account } from "../../lib/types";
+import type { Account } from "../../lib/types";
 
 export default function AccList({ accList }: { accList: Account[] }) {
   const navigate = useNavigate();
 
   function handleAccount(accountNumber: string) {
-    navigate(`/account/${accountNumber}`);
+    void navigate(`/account/${accountNumber}`);
   }
 
   return (
@@ -15,8 +15,7 @@ export default function AccList({ accList }: { accList: Account[] }) {
         <h2>Accounts</h2>
       </Card.Header>
       <Card.Body>
-        {accList &&
-          accList.map((account) => {
+        {accList?.map((account) => {
             return (
               <h3 key={account.accountNumber}>
                 <Row className="mb-3">

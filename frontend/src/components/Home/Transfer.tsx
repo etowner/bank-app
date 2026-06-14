@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
 import { useUserContext } from "../../UserContext";
 import { transfer } from "../../api/transactionApi";
+import { getAxiosError } from "../../api/axiosConfig";
 
 export default function Transfer() {
   const { fetchUser } = useUserContext();
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const [accountNumber1, setAccountNumber1] = useState("");
   const [accountNumber2, setAccountNumber2] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -14,7 +15,8 @@ export default function Transfer() {
   const handleTransferClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     
-    if (isNaN(amount) || amount <= 0) {
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
       setError("Invalid transfer amount. Please enter a valid amount.");
       return;
     }
@@ -28,19 +30,19 @@ export default function Transfer() {
     }
     setLoading(true);
     try {
-        await transfer(accountNumber1, accountNumber2, amount);
-        setAmount(0);
+        await transfer(accountNumber1, accountNumber2, parsedAmount);
+        setAmount("");
         setAccountNumber1("");
         setAccountNumber2("");
         setError(null);
         await fetchUser();
-    } catch (err: any) {
-        setError(err.response?.data || "Transfer failed. Please try again.");
-        console.error("Transfer error:", err.response ? err.response : err.request ? err.request : err.message);
+    } catch (err) {
+        setError(getAxiosError(err));
+        console.error("Transfer error:", err);
     } finally {
         setLoading(false);
     }
-    fetchUser();
+    void fetchUser();
 };
 
   return (
@@ -80,8 +82,12 @@ export default function Transfer() {
             </Form.Label>
             <Col sm={4}>
               <Form.Control
+                type="number"
                 value={amount}
-                onChange={(e) => setAmount(parseFloat(e.target.value))}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="Enter amount"
+                min="0"
+                step="0.01"
               />
             </Col>
           </Form.Group>
@@ -89,7 +95,7 @@ export default function Transfer() {
             <Col sm={2}>
               <Button
                 variant="dark"
-                onClick={handleTransferClick}
+                onClick={(e) => void handleTransferClick(e)}
                 className="mb-3"
               >
                 {loading ? <>Loading..</> : <>Submit</>}

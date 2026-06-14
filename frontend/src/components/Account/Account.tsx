@@ -1,4 +1,4 @@
-/* eslint-disable @eslint-react/jsx-no-leaked-dollar */
+
 import { useEffect, useCallback, useState } from "react";
 import { Accordion, useAccordionButton } from "react-bootstrap";
 import { Button, Card, Col, Container, Nav, Navbar, Row, Table, } from "react-bootstrap";
@@ -11,10 +11,11 @@ import LineChart from "./LineChart";
 import { getTransactions } from "../../api/transactionApi";
 import { getAccount } from "../../api/accountApi";
 import { formatDate } from '../../lib/utils';
-import { Account, Transaction } from "../../lib/types";
+import type { Account, Transaction } from "../../lib/types";
+import { getAxiosError } from "../../api/axiosConfig";
 
 function CustomToggle({ children, eventKey }: { children: React.ReactNode; eventKey: string }) {
-  const showAction = useAccordionButton(eventKey, () => { });
+  const showAction = useAccordionButton(eventKey, () => { /* empty */ });
 
   return (
     <Button variant="dark" onClick={showAction} className="mb-3">
@@ -26,45 +27,35 @@ function CustomToggle({ children, eventKey }: { children: React.ReactNode; event
 
 
 const AccountPage = () => {
-  let { accountNumber } = useParams<{ accountNumber: string }>();
+  const { accountNumber } = useParams<{ accountNumber: string }>();
   const [account, setAccount] = useState<Account | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(false);
-  
-
-  if (!accountNumber) { 
-    return <div>Loading...</div>;
-  }
-
+  const [, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/home`);
+    void navigate(`/home`);
   };
 
   const fetchAccountData = useCallback(async () => {
-    setLoading(true);
+    // Fetch account and transactions in parallel, so they will succeed together or fail together
     try {
-      const acc = await getAccount(accountNumber);
-      setAccount(acc);
-      //console.log("Fetched account data:", acc, new Date().toLocaleString());
-    } catch (err: any) {
-      console.error("Error fetching account data:", err.response ? err.response : err.request ? err.request : err.message);
+        const [acc, txns] = await Promise.all([ 
+            getAccount(accountNumber!),
+            getTransactions(accountNumber!)
+        ]);
+        setAccount(acc);
+        setTransactions(txns);
+    } catch (err) {
+        setError(getAxiosError(err));
+        console.error(err);
     }
-
-    try {
-      const transactions = await getTransactions(accountNumber);
-      setTransactions(transactions);
-      // console.log("Fetched transactions:", transactions, new Date().toLocaleString());
-    } catch (err: any) {
-      console.error("Error fetching transactions:", err.response ? err.response : err.request ? err.request : err.message);
-    }
-    setLoading(false);
+   
   }, [accountNumber]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchAccountData();
+    void fetchAccountData();
   }, [fetchAccountData]);
 
 
@@ -159,7 +150,7 @@ const AccountPage = () => {
         <Row className="mb-3">
           <Card>
             <LineChart
-              accountNumber={accountNumber}
+              accountNumber={accountNumber!}
               transactions={transactions}
             />
           </Card>

@@ -27,11 +27,14 @@ const Home = () => {
       console.error(error);
     }
 
-    fetchUser(); 
+    void await fetchUser(); 
   };
 
   useEffect(() => {
-    fetchUser();
+    void fetchUser();
+    console.log("User data on Home load:", user, "at", new Intl.DateTimeFormat('en-US', {
+  timeStyle: 'medium'
+}).format(new Date()));
   }, [fetchUser]);
 
   return (
@@ -46,7 +49,7 @@ const Home = () => {
           <Col key={1}>
             <Card border="dark">
               <AccList accList={accList} />
-              <OpenAccount openAcc={openAcc} setError={setError} />
+              <OpenAccount openAcc={(type) => void openAcc(type)} setError={setError} />
               {error && <Alert className="" variant="danger">{error}</Alert>}
             </Card>
           </Col>

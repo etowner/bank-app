@@ -2,22 +2,29 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useUserContext } from "./UserContext";
 
-const ProtectedRoute = ({ }) => {
+const ProtectedRoute = () => {
   const { user, fetchUser } = useUserContext();
-  // const [loading, setLoading] = useState(true);
+  
   const [isResolving, setIsResolving] = useState(true);
 
   useEffect(() => {
-    fetchUser().finally(() => setIsResolving(false) );
+    void fetchUser().finally(() => setIsResolving(false) );
+    console.log("Fetch called:", user, "at", new Intl.DateTimeFormat('en-US', {
+  timeStyle: 'medium'
+}).format(new Date()));
   },[fetchUser]);
 
   useEffect(() => {
     if (!isResolving && !user) {
       console.log("User is not authenticated, redirecting to login.");
-    }
+    } 
   }, [isResolving, user]);
+
   
   if (isResolving) {
+//     console.log("isResolving at", new Intl.DateTimeFormat('en-US', {
+//   timeStyle: 'medium'
+// }).format(new Date()));
     return <div>Loading...</div>;
   }
 
@@ -25,7 +32,6 @@ const ProtectedRoute = ({ }) => {
     return <Navigate to="/" replace />;
   }
   
-  // return user ? children : <Navigate to="/" />;
   return <Outlet />;
 };
 

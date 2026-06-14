@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Form, Row, Col, Alert } from "react-bootstrap";
 import { withdraw } from "../../api/transactionApi";
-import { Account } from "../../lib/types";
+import type { Account } from "../../lib/types";
 
 interface WithdrawProps {
   balance: number | undefined;
@@ -11,31 +11,31 @@ interface WithdrawProps {
 }
 
 export default function Withdraw({ balance, setAccount, fetchAccountData }: WithdrawProps) {
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState('');
   const { accountNumber } = useParams<{ accountNumber: string }>();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  if (!accountNumber) { 
-    return  <div>Loading...</div>;
-  }
 
   const handleWithdrawClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    
-    if (isNaN(amount) || amount <= 0) {
+    const parsedAmount = parseFloat(amount); 
+
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
       setError("Invalid withdrawal amount. Please enter a valid amount.");
       return;
     }
-    if (balance === undefined || balance - amount < 0) {
+    if (balance === undefined || balance - parsedAmount < 0) {
       setError("Insufficient funds.");
       return;
     }
+
     setLoading(true);
+
     try {
-      const updateAccount = await withdraw(accountNumber, amount);
+      const updateAccount = await withdraw(accountNumber!, parsedAmount);
       setError(null);
-      setAmount(0);
+      setAmount('');
       setAccount(updateAccount);
     } catch (error) {
       setError("Withdrawal failed. Please try again.");
@@ -44,7 +44,7 @@ export default function Withdraw({ balance, setAccount, fetchAccountData }: With
       setLoading(false);
     }
 
-    await fetchAccountData();
+    void fetchAccountData();
   };
 
   return (
@@ -55,12 +55,16 @@ export default function Withdraw({ balance, setAccount, fetchAccountData }: With
         </Form.Label>
         <Col sm={3}>
           <Form.Control
+            type="number"
             value={amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount"
+            min="0"
+            step="0.01"
           />
         </Col>
         <Col sm={2}>
-          <Button onClick={handleWithdrawClick} className="mb-3">
+          <Button onClick={(e) => void handleWithdrawClick(e)} className="mb-3">
             {loading ? <>Loading..</> : <>Submit</>}
           </Button>
         </Col>

@@ -2,11 +2,16 @@ import { useState } from "react";
 import { useUserContext } from "../../UserContext";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
 
+interface AuthFormProps {
+  onSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  username: string;
+  password: string;
+  onUsernameChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error: string | null;
+}
 
-const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }: 
-  { onSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void; username: string; password: string; 
-    onUsernameChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
-    onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void; error: string | null }) => (
+const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }: AuthFormProps) => (
     <Form>
         <Form.Group as={Row} className="mb-3 justify-content-md-center">
             <Form.Label column sm={6}>Enter username:</Form.Label>
@@ -28,22 +33,23 @@ const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordCh
 );
 
 const AccountBox = () => {
-  const { login, register, error, setError } = useUserContext();
+  const { login, register } = useUserContext();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("create");
+  const [error, setError] = useState<string | null>(null);
 
 
   const handleCreate = (event: React.MouseEvent<HTMLButtonElement> | null) => {
     if (!event) return;
     event.preventDefault();
-    register(username, password);
+    void register(username, password);
   };
 
   const handleLog = (event: React.MouseEvent<HTMLButtonElement> | null) => {
     if (!event) return;
     event.preventDefault();
-    login(username, password);
+    void login(username, password);
   };
 
   const handleTabSwitch = (tab: string | null) => {

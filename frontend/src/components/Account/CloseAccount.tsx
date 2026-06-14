@@ -1,28 +1,30 @@
-import { useState, use} from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Modal, Alert } from "react-bootstrap";
-import { UserContext } from "../../UserContext";
+import { useUserContext } from "../../UserContext";
 import { deleteAccount } from "../../api/accountApi";
+import {getAxiosError} from "../../api/axiosConfig";
 
 export default function DeleteAccount() {
-  const { fetchUser } = use(UserContext);
+  const { fetchUser } = useUserContext();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const navigate = useNavigate();
-  const { accountNumber } = useParams();
-  const [error, setError] = useState(null);
+  const { accountNumber } = useParams<{ accountNumber: string }>();
+  const [error, setError] = useState<string | null>(null);
 
-  const closeAccount = async (event) => {
+
+  const closeAccount =  (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
-      await deleteAccount(accountNumber);
-      navigate(`/home`);
-    } catch (error) {
-      setError("Failed to close account. Please try again.");
-      console.error(error);
+      void deleteAccount(accountNumber!);
+      void navigate(`/home`);
+    } catch (err: unknown) {
+      setError(getAxiosError(err));
+      console.error("Error fetching account data:", err);
     }
-    fetchUser(); 
+    void fetchUser(); 
   };
 
   return (
@@ -41,7 +43,7 @@ export default function DeleteAccount() {
         </Modal.Body>
         {error && <Alert variant="danger">{error}</Alert>}
         <Modal.Footer>
-          <Button variant="secondary" onClick={closeAccount}>
+          <Button variant="secondary" onClick={(e) => closeAccount(e)}>
             Yes
           </Button>
           <Button variant="primary" onClick={handleClose}>
