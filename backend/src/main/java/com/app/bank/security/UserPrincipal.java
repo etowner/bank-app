@@ -1,7 +1,8 @@
 package com.app.bank.security;
+
+import com.app.bank.model.User;
 import java.util.Collection;
 import java.util.List;
-import com.app.bank.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

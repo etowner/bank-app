@@ -1,7 +1,5 @@
 package com.app.bank.service;
 
-import org.springframework.stereotype.Service;
-
 import com.app.bank.dto.response.TransactionResponse;
 import com.app.bank.model.Transaction;
 import com.app.bank.model.TransactionType;
@@ -9,6 +7,7 @@ import com.app.bank.repo.TransactionRepository;
 import com.app.bank.security.OwnershipService;
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class TransactionService {

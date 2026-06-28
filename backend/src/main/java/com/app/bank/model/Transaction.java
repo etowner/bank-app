@@ -1,11 +1,10 @@
 package com.app.bank.model;
 
+import java.math.BigDecimal;
 import java.time.Instant;
-
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.bson.types.ObjectId;
-import java.math.BigDecimal;
 
 @Document(collection = "transactions")
 public class Transaction {

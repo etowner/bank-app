@@ -1,12 +1,10 @@
 package com.app.bank.security;
 
-import org.springframework.stereotype.Service;
-
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.repo.AccountRepository;
-
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.stereotype.Service;
 
 @Service
 public class OwnershipService {

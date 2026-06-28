@@ -1,7 +1,6 @@
 package com.app.bank.model;
 
 import java.math.BigDecimal;
-
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

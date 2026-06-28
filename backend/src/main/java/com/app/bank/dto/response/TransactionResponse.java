@@ -1,10 +1,9 @@
 package com.app.bank.dto.response;
 
+import com.app.bank.model.Transaction;
+import com.app.bank.model.TransactionType;
 import java.math.BigDecimal;
 import java.time.Instant;
-
-import com.app.bank.model.TransactionType;
-import com.app.bank.model.Transaction;
 
 public class TransactionResponse {
 

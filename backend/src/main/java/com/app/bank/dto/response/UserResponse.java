@@ -1,7 +1,7 @@
 package com.app.bank.dto.response;
 
-import java.util.List;
 import com.app.bank.model.User;
+import java.util.List;
 
 public class UserResponse {
     

@@ -1,17 +1,16 @@
 package com.app.bank.service;
 
+import com.app.bank.dto.request.*;
+import com.app.bank.dto.response.AccountResponse;
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.Account;
 import com.app.bank.model.User;
 import com.app.bank.repo.AccountRepository;
-import com.app.bank.dto.request.*;
-import com.app.bank.dto.response.AccountResponse;
 import com.mongodb.DuplicateKeyException;
-
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.math.BigDecimal;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;

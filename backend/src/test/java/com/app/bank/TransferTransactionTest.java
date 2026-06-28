@@ -1,11 +1,14 @@
 package com.app.bank;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.app.bank.dto.request.TransferRequest;
 import com.app.bank.model.Account;
 import com.app.bank.model.User;
-import com.app.bank.service.AccountService;
 import com.app.bank.repo.AccountRepository;
 import com.app.bank.repo.UserRepository;
+import com.app.bank.service.AccountService;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class TransferTransactionTest {
