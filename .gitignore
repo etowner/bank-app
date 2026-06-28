@@ -64,3 +64,5 @@ docs/
 backend/src/main/resources/application.properties.dev
 frontend/src/tests
 backend/src/test
+
+*.tsbuildinfo
