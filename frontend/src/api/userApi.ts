@@ -27,7 +27,7 @@ export const changeUsername = async (currentPassword: string, newUsername: strin
 };
 
 export const deleteUser = async () => {
-  await api.delete('/api/v1/user/close');
+  await api.delete('/api/v1/user');
 };
 
 export const deleteAllAccounts = async () => {

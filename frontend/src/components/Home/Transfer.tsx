@@ -42,7 +42,6 @@ export default function Transfer() {
     } finally {
         setLoading(false);
     }
-    void fetchUser();
 };
 
   return (

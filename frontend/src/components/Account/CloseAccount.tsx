@@ -20,11 +20,12 @@ export default function DeleteAccount() {
     try {
       void deleteAccount(accountNumber!);
       void navigate(`/home`);
+      void fetchUser(); 
     } catch (err: unknown) {
       setError(getAxiosError(err));
       console.error("Error fetching account data:", err);
     }
-    void fetchUser(); 
+    
   };
 
   return (

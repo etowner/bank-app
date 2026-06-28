@@ -11,23 +11,22 @@ import { createAccount } from "../../api/accountApi";
 
 const Home = () => {
   const { user, username, fetchUser } = useUserContext();
-  const accList = user?.accounts ?? [];
+  const accounts = user?.accounts ?? [];
   const [error, setError] = useState<string | null>(null);
 
   const openAcc = async (type: string) => {
-    if( accList.length >= 3){
+    if (accounts.length >= 3) {
       setError("You can only have 3 accounts");
       return;
     }
     try {
-       
       const newAccount = await createAccount(type);
       console.log("Opened account:", newAccount);
     } catch (error) {
       console.error(error);
     }
 
-    void await fetchUser(); 
+    void (await fetchUser());
   };
 
   useEffect(() => {
@@ -45,9 +44,16 @@ const Home = () => {
           {/* Lists Accounts and provides open account options */}
           <Col key={1}>
             <Card border="dark">
-              <AccList accList={accList} />
-              <OpenAccount openAcc={(type) => void openAcc(type)} setError={setError} />
-              {error && <Alert className="" variant="danger">{error}</Alert>}
+              <AccList accounts={accounts} />
+              <OpenAccount
+                openAcc={(type) => void openAcc(type)}
+                setError={setError}
+              />
+              {error && (
+                <Alert className="" variant="danger">
+                  {error}
+                </Alert>
+              )}
             </Card>
           </Col>
           <Col key={2}>
@@ -55,7 +61,7 @@ const Home = () => {
           </Col>
           <Col key={3}>
             <Card style={{ width: "32rem" }} className="mb-2">
-              <PieChart accounts={accList} />
+              <PieChart accounts={accounts} />
             </Card>
           </Col>
         </Row>

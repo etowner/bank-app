@@ -33,12 +33,11 @@ const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordCh
 );
 
 const AccountBox = () => {
-  const { login, register } = useUserContext();
+  const { login, register, error, setError } = useUserContext();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("create");
-  const [error, setError] = useState<string | null>(null);
-
+  
 
   const handleCreate = (event: React.MouseEvent<HTMLButtonElement> | null) => {
     if (!event) return;

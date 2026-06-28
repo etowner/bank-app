@@ -93,7 +93,7 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping(path = "/{accountNumber}")
+    @DeleteMapping(path = "/{accountNumber}/close")
     public ResponseEntity<String> deleteAccount(@PathVariable String accountNumber,
            @AuthenticationPrincipal UserPrincipal principal) {
         try {

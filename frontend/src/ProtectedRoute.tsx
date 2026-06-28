@@ -19,9 +19,6 @@ const ProtectedRoute = () => {
 
   
   if (isResolving) {
-//     console.log("isResolving at", new Intl.DateTimeFormat('en-US', {
-//   timeStyle: 'medium'
-// }).format(new Date()));
     return <div>Loading...</div>;
   }
 

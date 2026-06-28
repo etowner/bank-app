@@ -8,7 +8,7 @@ import type { User } from "./lib/types";
 
 export const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
 
@@ -61,7 +61,7 @@ export const UserContextProvider = ({ children }: { children: React.ReactNode })
   const username = user?.username ?? null; // Extract username from user object for easier access
   
   return (
-    <UserContext value={{ user, username, setUser, fetchUser,login, register, logout }}>
+    <UserContext value={{ user, username, setUser, fetchUser,login, register, logout, error, setError }}>
       {children}
     </UserContext>
   );
