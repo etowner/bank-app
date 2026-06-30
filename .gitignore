@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 **/application*.properties
+*.properties
 .cache/
 
 ### STS ###
@@ -62,3 +63,4 @@ docs/
 
 *.tsbuildinfo
 .vite/
+logs/

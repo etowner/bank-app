@@ -33,12 +33,12 @@ export default function ProfileManager() {
   const handleYes = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     try {
-        void await deleteUser();
-        setUser(null);
-        void navigate("/");
+      void await deleteUser();
+      setUser(null);
+      void navigate("/");
     } catch (error) {
-        console.error(error);
-        setShowD(false);
+      console.error(error);
+      setShowD(false);
     }
   };
 

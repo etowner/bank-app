@@ -13,7 +13,7 @@ const Home = () => {
   const { user, username, fetchUser } = useUserContext();
   const accounts = user?.accounts ?? [];
   const [error, setError] = useState<string | null>(null);
-
+  
   const openAcc = async (type: string) => {
     if (accounts.length >= 3) {
       setError("You can only have 3 accounts");
@@ -22,11 +22,12 @@ const Home = () => {
     try {
       const newAccount = await createAccount(type);
       console.log("Opened account:", newAccount);
-    } catch (error) {
-      console.error(error);
+      await fetchUser();
+    } catch (err) {
+      setError("Failed to open account. Please try again later.");
+      console.error(err);
     }
 
-    void (await fetchUser());
   };
 
   useEffect(() => {

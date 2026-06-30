@@ -40,15 +40,15 @@ const AccountPage = () => {
   const fetchAccountData = useCallback(async () => {
     // Fetch account and transactions in parallel, so they will succeed together or fail together
     try {
-        const [acc, txns] = await Promise.all([ 
-            getAccount(accountNumber!),
-            getTransactions(accountNumber!)
-        ]);
-        setAccount(acc);
-        setTransactions(txns);
+      const [acc, txns] = await Promise.all([ 
+        getAccount(accountNumber!),
+        getTransactions(accountNumber!)
+      ]);
+      setAccount(acc);
+      setTransactions(txns);
     } catch (err) {
-        setError(getAxiosError(err));
-        console.error(err);
+      setError(getAxiosError(err));
+      console.error(err);
     }
    
   }, [accountNumber]);

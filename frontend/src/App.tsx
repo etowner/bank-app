@@ -19,8 +19,8 @@ function App() {
             <Route path="/account/:accountNumber" element={
              <Account />
             } />
-            </Route>
-          </Routes>
+          </Route>
+        </Routes>
       </UserContextProvider>
     </div>
   );

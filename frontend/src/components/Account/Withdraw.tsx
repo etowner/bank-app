@@ -37,7 +37,7 @@ export default function Withdraw({ balance, setAccount, fetchAccountData }: With
       setError(null);
       setAmount('');
       setAccount(updateAccount);
-      void await fetchAccountData();
+      await fetchAccountData();
     } catch (error) {
       setError("Withdrawal failed. Please try again.");
       console.error(error);

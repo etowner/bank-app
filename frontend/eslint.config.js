@@ -5,6 +5,7 @@ import tseslint from "typescript-eslint";
 import reactPlugin from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from 'eslint-plugin-react-refresh';
+import eslintConfigPrettier from "eslint-config-prettier";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
@@ -58,6 +59,8 @@ export default defineConfig([
     files: ['*.js', '*.mjs', 'vite.config.*'],
     extends: [tseslint.configs.disableTypeChecked],
   },
+
+  eslintConfigPrettier
 
 
 ]);

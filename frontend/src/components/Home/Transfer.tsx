@@ -16,33 +16,37 @@ export default function Transfer() {
     event.preventDefault();
     
     const parsedAmount = parseFloat(amount);
+
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       setError("Invalid transfer amount. Please enter a valid amount.");
       return;
     }
+
     if (accountNumber1 === accountNumber2) {
       setError("Source and destination accounts must be different.");
       return;
     }
+
     if (!accountNumber1 || !accountNumber2) {
       setError("Please enter both account IDs.");
       return;
     }
+
     setLoading(true);
     try {
-        await transfer(accountNumber1, accountNumber2, parsedAmount);
-        setAmount("");
-        setAccountNumber1("");
-        setAccountNumber2("");
-        setError(null);
-        await fetchUser();
+      await transfer(accountNumber1, accountNumber2, parsedAmount);
+      setAmount("");
+      setAccountNumber1("");
+      setAccountNumber2("");
+      setError(null);
+      await fetchUser();
     } catch (err) {
-        setError(getAxiosError(err));
-        console.error("Transfer error:", err);
+      setError(getAxiosError(err));
+      console.error("Transfer error:", err);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   return (
     <div>
