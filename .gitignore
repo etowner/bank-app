@@ -4,7 +4,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 **/application*.properties
+*.properties
 .cache/
+logs/
 
 ### STS ###
 .apt_generated
@@ -59,5 +61,6 @@ yarn-error.log*
 ### VS Code ###
 .vscode/
 docs/
+
 
 *.tsbuildinfo
