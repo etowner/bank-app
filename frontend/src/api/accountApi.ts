@@ -14,5 +14,5 @@ export const createAccount = async (type: string) => {
 };
 
 export const deleteAccount = async (accountNumber: string) => {
-  await api.delete(`/api/v1/account/${accountNumber}`);
+  await api.delete(`/api/v1/account/${accountNumber}/close`);
 };

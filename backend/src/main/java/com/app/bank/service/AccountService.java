@@ -84,8 +84,11 @@ public class AccountService {
         return findAccount(accountNumber);
     }
 
-    public AccountResponse getAccountResponse(String accountNumber) { 
+    public AccountResponse getAccountResponse(String accountNumber, String username) { 
         Account account = getAccount(accountNumber);
+        if (!account.getUsername().equals(username)) {
+            throw new AccessDeniedException("You do not own this account.");
+        }
         return new AccountResponse(account);
     }
 
@@ -130,11 +133,11 @@ public class AccountService {
 
     @Transactional // Ensure that both account updates succeed or fail together
     public void transfer(String username, TransferRequest request) {
-        String accountNumber1 = request.getFromAccountNumber();
+        String accountNumber1 = request.getAccountNumber1();
         verifyOwnership(accountNumber1, username);
         
         // Check if account exists, ownership not required for destination account
-        String accountNumber2 = request.getToAccountNumber();
+        String accountNumber2 = request.getAccountNumber2();
         findAccount(accountNumber2); 
         
         BigDecimal amount = request.getAmount();

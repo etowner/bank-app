@@ -11,7 +11,7 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChangePassword = async (e: React.ChangeEvent<HTMLFormElement>) => {
+  const handleChangePassword = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -51,7 +51,7 @@ export default function ChangePassword({ onClose, onSuccess }: { onClose: () => 
       setTimeout(() => {
         if (onSuccess) onSuccess();
       }, 1500);
-      console.log()
+  
     } catch (err) {
       setError(getAxiosError(err));
       console.error("Error changing password:", err);

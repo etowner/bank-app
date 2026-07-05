@@ -9,7 +9,7 @@ public class ManagementService {
     private final UserService userService;
     private final AccountService accountService;
     
-    public ManagementService(UserService userService, AccountService accountService, TransactionService transactionService) {
+    public ManagementService(UserService userService, AccountService accountService) {
         this.userService = userService;
         this.accountService = accountService;
     }

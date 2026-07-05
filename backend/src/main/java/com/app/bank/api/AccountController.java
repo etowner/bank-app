@@ -29,7 +29,7 @@ public class AccountController {
     @GetMapping(path = "/{accountNumber}")
     public ResponseEntity<AccountResponse> getUserAccount(@PathVariable String accountNumber,
             @AuthenticationPrincipal UserPrincipal principal) {
-        return ResponseEntity.ok(accountService.getAccountResponse(accountNumber));
+        return ResponseEntity.ok(accountService.getAccountResponse(accountNumber, principal.getUsername()));
     }
 
     @PostMapping(path = "/open/{type}")
@@ -44,7 +44,7 @@ public class AccountController {
             @RequestBody BigDecimal amount,
             @AuthenticationPrincipal UserPrincipal principal) {
         accountService.depositAmount(principal.getUsername(), accountNumber, amount);
-        return ResponseEntity.ok(accountService.getAccountResponse(accountNumber));
+        return ResponseEntity.ok(accountService.getAccountResponse(accountNumber, principal.getUsername()));
     }
 
     @PostMapping(path = "/{accountNumber}/withdraw")
@@ -52,7 +52,7 @@ public class AccountController {
             @RequestBody BigDecimal amount,
             @AuthenticationPrincipal UserPrincipal principal) {
         accountService.withdrawAmount(principal.getUsername(), accountNumber, amount);
-        return ResponseEntity.ok(accountService.getAccountResponse(accountNumber));
+        return ResponseEntity.ok(accountService.getAccountResponse(accountNumber, principal.getUsername()));
     }
 
     @PostMapping(path = "/transfer")

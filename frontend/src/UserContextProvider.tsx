@@ -61,8 +61,8 @@ export const UserContextProvider = ({ children }: { children: React.ReactNode })
   const username = user?.username ?? null; // Extract username from user object for easier access
   
   return (
-    <UserContext value={{ user, username, setUser, fetchUser,login, register, logout, error, setError }}>
+    <UserContext.Provider value={{ user, username, setUser, fetchUser,login, register, logout, error, setError }}>
       {children}
-    </UserContext>
+    </UserContext.Provider>
   );
 };

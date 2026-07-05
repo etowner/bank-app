@@ -25,19 +25,19 @@ public class TransferRequest {
         this.amount = amount;
     }
 
-    public String getFromAccountNumber() {
+    public String getAccountNumber1() {
         return accountNumber1;
     }
 
-    public void setFromAccountNumber(String accountNumber1) {
+    public void setAccountNumber1(String accountNumber1) {
         this.accountNumber1 = accountNumber1;
     }
 
-    public String getToAccountNumber() {
+    public String getAccountNumber2() {
         return accountNumber2;
     }
 
-    public void setToAccountNumber(String accountNumber2) {
+    public void setAccountNumber2(String accountNumber2) {
         this.accountNumber2 = accountNumber2;
     }
 

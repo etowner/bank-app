@@ -1,10 +1,7 @@
 import type {AxiosInstance} from "axios";
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL;
-if (!baseURL) {
-  throw new Error("VITE_API_BASE_URL is not defined");
-}
+const baseURL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 
 export const api: AxiosInstance = axios.create({
   baseURL,
