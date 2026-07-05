@@ -6,7 +6,21 @@
 version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+    directory: "/frontend" 
+    schedule:
+      interval: "daily" 
+  - package-ecosystem: "maven"
+    directory: "/backend"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker"
+    directories: 
+      - "/frontend"
+      - "/backend"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "docker-compose"
+    directory: "/"
     schedule:
       interval: "daily"
 

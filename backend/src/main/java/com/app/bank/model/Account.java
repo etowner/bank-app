@@ -1,81 +1,60 @@
 package com.app.bank.model;
 
-import java.util.HashMap;
+import java.math.BigDecimal;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "Accounts")
+@Document(collection = "accounts")
 public class Account {
     @Id
     private ObjectId id;
     
     @Indexed
-    private String userID;
-    private String type;
-
+    private String username;
+    
     @Indexed(unique = true)
-    private int accountID;
+    private String accountNumber;
+    
+    private String type;
+    private BigDecimal balance;
 
-    private double balance;
-    private int transNum;
-
-    private HashMap<Integer, Transaction> transHistory;
-
-    public Account(String userID, int accountID, String type) {
-        this.userID = userID;
+    public Account() {}
+    
+    public Account(String username, String accountNumber, String type) {
+        this.username = username;
         this.type = type;
-        this.accountID = accountID;
-        this.balance = 0;
-        this.transHistory = new HashMap<>(); 
+        this.accountNumber = accountNumber;
+        this.balance = BigDecimal.ZERO;
     }
 
-    public String getUserID() {
-        return userID;
+    public String getId() {
+        return id.toHexString();
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
     public String getType() {
         return type;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public int getAccountID() {
-        return accountID;
-    }
-
-    public void setAccountID(int accountID) {
-        this.accountID = accountID;
-    }
-
-    public double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public HashMap<Integer, Transaction> getTransHistory() {
-        return new HashMap<>(transHistory);
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 
-    public void addTrans(int transNum, Transaction trans) {
-        transHistory.put(transNum, trans);
-    }
-
-    public void deposit(double amount) {
-        balance += amount;
-        transNum++;
-        addTrans(transNum, new Transaction(TransactionType.DEPOSIT, amount));
-    }
-
-    public boolean withdraw(double amount) {
-        if (amount <= balance) {
-            balance -= amount;
-            transNum++;
-            addTrans(transNum, new Transaction(TransactionType.WITHDRAW, amount));
-            return true;
-        }
-        return false;
-    }
 }
