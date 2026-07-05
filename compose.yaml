@@ -23,9 +23,10 @@ services:
       context: ./backend
       target: development
     restart: always
+    volumes:
+      - ./secrets.properties:/app/secrets.properties:ro
     ports:
       - 8080:8080
-    env_file: .env
     develop:
       watch:
         - action: rebuild 

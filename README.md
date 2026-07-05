@@ -66,7 +66,7 @@ git clone https://github.com/etowner/bank_app.git
 cd bank_app
 ```
 
-### Create .env (`bank_app/backend/.env`)
+### Create secrets.properties (`bank_app/backend/secrets.properties`)
 
 ```text
 MONGO_DATABASE=your_mongo_database
@@ -105,11 +105,8 @@ Create application.properties file (`backend/src/main/resources/application.prop
 ```properties
 # MongoDB
 spring.application.name=your_app_name
-
+spring.config.import=optional:file:./secrets.properties
 spring.mongodb.uri=mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_CLUSTER}/${MONGO_DATABASE}
-spring.mongodb.database=${MONGO_DATABASE}
-# Alternative URI (uncomment if needed)
-# spring.mongodb.uri=${MONGODB_URI}
 
 # Logging (optional)
 logging.level.root=INFO
@@ -146,7 +143,7 @@ bank_app/
 │   ├── src/main/
 │   │   ├── java/         # Application source code
 │   │   └── resources/    # Application properties
-│   ├── .env
+│   ├── secrets.properties # 
 │   └── pom.xml           # Maven dependencies
 ├── frontend/             # React + Vite application
 │   ├── public/

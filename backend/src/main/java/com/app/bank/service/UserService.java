@@ -1,78 +1,87 @@
 package com.app.bank.service;
 
+import com.app.bank.dto.request.*;
+import com.app.bank.dto.response.UserResponse;
 import com.app.bank.exception.BadRequestException;
 import com.app.bank.exception.ResourceNotFoundException;
 import com.app.bank.model.User;
 import com.app.bank.repo.UserRepository;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    // For testing purposes only - returns all users in the database
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    // Helper method to validate user input: userID and password must be non-null and non-blank
-    public boolean validateUser(User user){
-        return user != null 
-            && user.getUserID() != null && !user.getUserID().isBlank()
-            && user.getPassword() != null && !user.getPassword().isBlank();
+    // ---------------------------------------- Helper Methods -----------------------------------------
+    
+    // Checks if a user with the given username exists in the database
+    public boolean checkforUserName(String username) { 
+        return userRepository.findByUsername(username).isPresent();
     }
 
-    // Checks if a user with the given userID exists in the database
-    public boolean checkforUser(String userID) {
-        if (userID == null || userID.isBlank()) return false;  
-        return userRepository.findByUserID(userID).isPresent();
+    // Finds and returns a User by username, or throws ResourceNotFoundException if not found
+    public User findUserByUsername(String username) {
+        return userRepository.findWithAccountsByUsername(username)
+            .orElseThrow(() -> new ResourceNotFoundException("User and accounts not found."));
     }
 
-    // Overloaded method to check if a User object exists in the database based on its userID
-    public boolean checkforUser(User user) {
-        return user != null && checkforUser(user.getUserID());
-    }
+    // ---------------------------------------- Main Methods -----------------------------------------
 
-    public void newUser(User user) {
-        // Checks for null or blank userID/password
-        if (!validateUser(user)) { 
-            throw new BadRequestException("UserID and password are required.");
+    // Registers a new user after validating input and checking for existing username
+    public void register(RegisterRequest request) {
+        if (checkforUserName(request.getUsername())) { 
+            throw new BadRequestException("A user with this username already exists.");
         }
-        // Checks if userID already exists
-        if (checkforUser(user.getUserID())) { 
-            throw new BadRequestException("A user with this userID already exists.");
-        }
-        // Create new User with encoded password and save to repository
-        User encodedUser = new User(user.getUserID(), passwordEncoder.encode(user.getPassword())); 
+
+        User encodedUser = new User(request.getUsername(), passwordEncoder.encode(request.getPassword()));
         userRepository.insert(encodedUser);
     }
 
-    // Checks if the provided password matches the stored hashed password
-    public boolean checkforUserPassword(User user) {
-        if (!validateUser(user)) return false;
-        Optional<User> existingUser = userRepository.findByUserID(user.getUserID());
-        return existingUser.filter(User -> passwordEncoder.matches(user.getPassword(), User.getPassword())).isPresent();
+    // Retrieves a User by username with all accounts and returns a UserResponse DTO
+    public UserResponse getUser(String username) {
+        User user = findUserByUsername(username);
+        return new UserResponse(user);
     }
 
-    // Retrieves a User by userID with all accounts
-    public Optional<User> getUser(String userID) {
-        if (userID == null || userID.isBlank()) return Optional.empty();
-        return userRepository.findWithAccountsByUserID(userID);
+
+    public void changePassword(String username, String currentPassword, String newPassword) {
+        User user = findUserByUsername(username);
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
-    public void deleteUser(String userID) {
-        Optional<User> user = getUser(userID);
-        if (user.isEmpty()) throw new ResourceNotFoundException("User not found.");
-        userRepository.delete(user.get());
+    public void changeUsername(String currentUsername, ChangeUsernameRequest request) {
+        User user = findUserByUsername(currentUsername);
+        
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+        
+        if (checkforUserName(request.getNewUsername())) {
+            throw new BadRequestException("Username already exists.");
+        }
+
+        user.setUsername(request.getNewUsername());
+        userRepository.save(user);
+    }
+
+    public void deleteUser(String username) {
+        User user = findUserByUsername(username);
+        userRepository.delete(user);
     }
 
     

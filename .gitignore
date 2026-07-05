@@ -5,6 +5,8 @@ target/
 !**/src/test/**/target/
 **/application*.properties
 *.properties
+**/application*.properties
+*.properties
 .cache/
 logs/
 
@@ -62,5 +64,6 @@ yarn-error.log*
 .vscode/
 docs/
 
-
 *.tsbuildinfo
+.vite/
+logs/

@@ -2,6 +2,7 @@ package com.app.bank.model;
 
 public enum TransactionType {
     DEPOSIT,
-    WITHDRAW,
-    TRANSFER
+    WITHDRAWAL,
+    TRANSFER_FROM,
+    TRANSFER_TO
 }
