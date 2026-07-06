@@ -154,9 +154,9 @@ public class AccountService {
         }
         
         account1.setBalance(newBalance1);
-        accountRepository.save(account1);
-
         account2.setBalance(account2.getBalance().add(amount));
+        
+        accountRepository.save(account1);
         accountRepository.save(account2);
         transactionService.transfer(accountNumber1, accountNumber2, amount);
 
