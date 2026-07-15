@@ -18,7 +18,6 @@ public class User {
     private String username;
     private String password;
 
-    // private String email;
     @DocumentReference
     private List<Account> accounts;
 
@@ -27,7 +26,6 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        // this.email = email;
         this.accounts = new ArrayList<>();
     }
 
@@ -50,9 +48,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    // public String getEmail() {
-    //     return email;
-    // }
 
     public List<Account> getAccountList() {
         return accounts;
