@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -24,12 +25,15 @@ import com.app.bank.model.User;
 import com.app.bank.repo.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,104 +49,136 @@ public class UserServiceTests {
     private UserService userService;
 
     private RegisterRequest registerRequest;
-    private static final String USERNAME = "testUser";
-    private static final String RAW_PASSWORD = "testPass";
-    private static final String ENCODED_PASSWORD = "encoded_testPass";
+    private String USERNAME = "testUser";
+    private String RAW_PASSWORD = "testPass";
+    private String ENCODED_PASSWORD = "encoded_testPass";
+
 
     @BeforeEach
     public void setUp() {
        registerRequest = new RegisterRequest(USERNAME, RAW_PASSWORD);
-       when(passwordEncoder.encode(RAW_PASSWORD)).thenReturn(ENCODED_PASSWORD);
     }
 
-    // Registration Tests
+    @Nested
+    @DisplayName("Registration Tests")
+    class RegistrationTests {
+        @Test
+        public void register_shouldReturnEncodedPassword_whenValidUser() { 
+            when(passwordEncoder.encode(RAW_PASSWORD)).thenReturn(ENCODED_PASSWORD); 
+            when(userRepository.findByUsername(registerRequest.getUsername())).thenReturn(Optional.empty());
+         
+            userService.register(registerRequest);
 
-    @Test
-    public void register_shouldInsertUser_whenValidUser(){
-        when(userRepository.findByUsername(registerRequest.getUsername())).thenReturn(Optional.empty());
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+            verify(userRepository, times(1)).insert(userCaptor.capture());
+            User savedUser = userCaptor.getValue();
 
-        userService.register(registerRequest);
+            assertNotNull(savedUser);
+            assertEquals(USERNAME, savedUser.getUsername());
+            assertEquals(ENCODED_PASSWORD, savedUser.getPassword());
+        }
 
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).insert(userCaptor.capture());
-        User savedUser = userCaptor.getValue();
-
-        assertNotNull(savedUser);
-        assertEquals(USERNAME, savedUser.getUsername());
-        assertEquals(ENCODED_PASSWORD, savedUser.getPassword());
-    }
-
-    @Test
-    public void register_shouldThrowBadRequest_whenUserAlreadyExists() {
-        User existingUser = new User(USERNAME, passwordEncoder.encode(RAW_PASSWORD));
-        
-        when(userRepository.findByUsername(existingUser.getUsername())).thenReturn(Optional.of(existingUser));
-        BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.register(registerRequest));
-        
-        assertEquals("A user with this username already exists.", exception.getMessage());
-        verify(userRepository, never()).insert(existingUser);
+        @Test
+        public void register_shouldThrowBadRequest_whenUserAlreadyExists() {
+            User existingUser = new User(USERNAME, passwordEncoder.encode(RAW_PASSWORD));
+            
+            when(userRepository.findByUsername(existingUser.getUsername())).thenReturn(Optional.of(existingUser));
+            BadRequestException exception = assertThrows(BadRequestException.class, () -> userService.register(registerRequest));
+            
+            assertEquals("A user with this username already exists.", exception.getMessage());
+            verify(userRepository, never()).insert(existingUser);
+        }
     }
 
     // Get User Test
+    @Nested
+    @DisplayName("Get User Tests")
+    class GetUserTests {
+        @Test
+        public void getUser_returnsUserResponse_whenUserExists() {
+            User existingUser = new User(USERNAME, passwordEncoder.encode(RAW_PASSWORD));
+            
+            when(userRepository.findWithAccountsByUsername(existingUser.getUsername())).thenReturn(Optional.of(existingUser));
+            UserResponse userResponse = userService.getUser(existingUser.getUsername());
+            
+            assertNotNull(userResponse);
+            assertEquals(existingUser.getUsername(), userResponse.getUsername());
+        }
 
-    @Test
-    public void getUser_shouldReturnUserResponse_whenUserExists() {
-        User existingUser = new User(USERNAME, passwordEncoder.encode(RAW_PASSWORD));
-        
-        when(userRepository.findWithAccountsByUsername(existingUser.getUsername())).thenReturn(Optional.of(existingUser));
-        UserResponse userResponse = userService.getUser(existingUser.getUsername());
-        
-        assertNotNull(userResponse);
-        assertEquals(existingUser.getUsername(), userResponse.getUsername());
+
+        @Test
+        public void getUser_throwsResourceNotFoundException_whenUserDoesNotExist() {
+            when(userRepository.findWithAccountsByUsername(USERNAME)).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> userService.getUser(USERNAME));
+        }
     }
+    
 
     // Change Username Test
-    @Test
-    public void changeUsername_shouldUpdateUsername_whenValid() {
-        String newUsername = "newUsername";
-        ChangeUsernameRequest request = new ChangeUsernameRequest(newUsername, RAW_PASSWORD);
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-        
-        userService.changeUsername(USERNAME, request);
+    @Nested
+    @DisplayName("Change Username Tests")
+    class ChangeUsernameTests {
+       
+        @Test
+        public void changeUsername_shouldUpdateUsername_whenValid() {
+            String newUsername = "newUsername";
+            ChangeUsernameRequest request = new ChangeUsernameRequest(RAW_PASSWORD, newUsername);
+            
+            when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new User(USERNAME, ENCODED_PASSWORD)));
+            when(passwordEncoder.matches(RAW_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
+            when(userRepository.findByUsername(newUsername)).thenReturn(Optional.empty());
+            
+            userService.changeUsername(USERNAME, request);
 
-        verify(userRepository).save(userCaptor.capture());
-        User savedUser = userCaptor.getValue();
-        
-        assertNotEquals(USERNAME, savedUser.getUsername()); 
-        assertEquals(newUsername, savedUser.getUsername());  
-    }
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+            verify(userRepository).save(userCaptor.capture());
+            User savedUser = userCaptor.getValue();
+            
+            assertEquals(newUsername, savedUser.getUsername());  
+        }
 
-    @Test
-    public void changeUsername_shouldThrowBadRequest_whenNewUsernameExists() {
-        String newUsername = USERNAME; 
-        ChangeUsernameRequest request = new ChangeUsernameRequest(newUsername, RAW_PASSWORD);
-        
-        when(userRepository.findByUsername(newUsername)).thenReturn(Optional.of(new User(newUsername, ENCODED_PASSWORD)));
-        
-        BadRequestException exception = assertThrows(BadRequestException.class, 
-            () -> userService.changeUsername(USERNAME, request)
-        );
-        
-        assertEquals("Username already exists.", exception.getMessage());
-        verify(userRepository, never()).save(any(User.class));
+        @Test
+        public void changeUsername_shouldThrowBadRequest_whenNewUsernameExists() {
+            String newUsername = USERNAME; 
+            ChangeUsernameRequest request = new ChangeUsernameRequest(RAW_PASSWORD, newUsername);
+            
+            when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(new User(USERNAME, ENCODED_PASSWORD)));
+            when(passwordEncoder.matches(RAW_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
+            when(userRepository.findByUsername(newUsername)).thenReturn(Optional.of(new User(newUsername, ENCODED_PASSWORD)));
+            
+            
+            BadRequestException exception = assertThrows(BadRequestException.class, 
+                () -> userService.changeUsername(USERNAME, request)
+            );
+            
+            assertEquals("Username already exists.", exception.getMessage());
+            verify(userRepository, never()).save(any(User.class));
+        }
     }
 
     // Change Password Test
-    
-    @Test
-    public void changePassword_shouldUpdatePassword_whenValid() {
-        String currentPassword = RAW_PASSWORD;
-        String newPassword = "newPassword";
-        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+    @Nested
+    @DisplayName("Change Password Tests")
+    class ChangePasswordTests {
         
-        when(passwordEncoder.matches(RAW_PASSWORD, currentPassword)).thenReturn(true);
-        userService.changePassword(USERNAME, currentPassword, newPassword);
+        @Test
+        public void changePassword_shouldUpdatePassword_whenValid() {
+            String newPassword = "newPassword";
+            String encodedNewPassword = "encoded_newPassword";
 
-        verify(userRepository).save(userCaptor.capture()); 
-        User savedUser = userCaptor.getValue();
-        
-        assertNotEquals(currentPassword, savedUser.getPassword());
-        assertEquals(newPassword, savedUser.getPassword());
+            when(userRepository.findByUsername(USERNAME))
+                .thenReturn(Optional.of(new User(USERNAME, ENCODED_PASSWORD)));
+            when(passwordEncoder.matches(RAW_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
+            when(passwordEncoder.encode(newPassword)).thenReturn(encodedNewPassword);
+
+            userService.changePassword(USERNAME, RAW_PASSWORD, newPassword);
+
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+            verify(userRepository).save(userCaptor.capture());
+
+            assertEquals(encodedNewPassword, userCaptor.getValue().getPassword());
+        }
+
 
     }
 }

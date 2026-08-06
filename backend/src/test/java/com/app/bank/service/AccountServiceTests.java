@@ -24,6 +24,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.access.AccessDeniedException;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,19 +64,18 @@ public class AccountServiceTests {
 
         @Test 
         @DisplayName("Should create new account successfully")
-        void shouldCreateNewAccountSuccessfully() {
+        void newAccount_createsAccountSuccessfully_whenValidUser() {
             when(userService.checkforUserName(testUsername)).thenReturn(true);
             when(accountRepository.findByUsername(testUsername)).thenReturn(List.of());
-            when(mongoTemplate.update(any())).thenReturn(any());
 
             assertDoesNotThrow(() -> accountService.newAccount(testUsername, "Checking"));
             verify(accountRepository, times(1)).insert(any(Account.class));
+            verify(mongoTemplate).updateFirst(any(Query.class), any(Update.class), eq(User.class));
         }
 
-        @Test // Need to fix
+        @Test
         @DisplayName("Should throw BadRequestException when username is null")
-        void shouldThrowBadRequestWhenUsernameNull() {
-            // String nullUsername = null;
+        void newAccount_shouldThrowBadRequest_WhenUsernameNull() {
             Account invalidAccount = new Account(null, "1234567890", "Checking");
             BadRequestException ex = assertThrows(BadRequestException.class,
                     () -> accountService.newAccount(null, "Checking"));
@@ -84,7 +85,7 @@ public class AccountServiceTests {
 
         @Test
         @DisplayName("Should throw BadRequestException when username is blank")
-        void shouldThrowBadRequestWhenUsernameBlank() {
+        void newAccount_shouldThrowBadRequest_WhenUsernameBlank() {
             BadRequestException ex = assertThrows(BadRequestException.class,
                     () -> accountService.newAccount("   ", "Checking"));
             assertEquals("Account username and type are required.", ex.getMessage());
@@ -92,7 +93,7 @@ public class AccountServiceTests {
 
         @Test
         @DisplayName("Should throw BadRequestException when type is null")
-        void shouldThrowBadRequestWhenTypeNull() {
+        void newAccount_shouldThrowBadRequest_WhenTypeNull() {
             BadRequestException ex = assertThrows(BadRequestException.class,
                     () -> accountService.newAccount(testUsername, null));
             assertEquals("Account username and type are required.", ex.getMessage());
@@ -100,7 +101,7 @@ public class AccountServiceTests {
 
         @Test
         @DisplayName("Should throw BadRequestException when type is blank")
-        void shouldThrowBadRequestWhenTypeBlank() {
+        void newAccount_shouldThrowBadRequest_WhenTypeBlank() {
             BadRequestException ex = assertThrows(BadRequestException.class,
                     () -> accountService.newAccount(testUsername, ""));
             assertEquals("Account username and type are required.", ex.getMessage());
@@ -108,7 +109,7 @@ public class AccountServiceTests {
 
         @Test
         @DisplayName("Should throw ResourceNotFoundException when user does not exist")
-        void shouldThrowResourceNotFoundWhenUserNotExists() {
+        void newAccount_shouldThrowResourceNotFound_WhenUserNotExists() {
             when(userService.checkforUserName(testUsername)).thenReturn(false);
 
             ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
@@ -429,6 +430,7 @@ public class AccountServiceTests {
         @Test
         @DisplayName("Should delete all user accounts successfully")
         void shouldDeleteAllUserAccountsSuccessfully() {
+            when(userService.checkforUserName(testUsername)).thenReturn(true);
             Account account1 = new Account(testUsername, "1111111111", "Checking");
             Account account2 = new Account(testUsername, "2222222222", "Savings");
             when(accountRepository.findByUsername(testUsername)).thenReturn(List.of(account1, account2));
@@ -442,6 +444,7 @@ public class AccountServiceTests {
         @Test
         @DisplayName("Should handle empty account list when deleting all accounts")
         void shouldHandleEmptyAccountListWhenDeleting() {
+            when(userService.checkforUserName(testUsername)).thenReturn(true);
             when(accountRepository.findByUsername(testUsername)).thenReturn(List.of());
 
             accountService.deleteUserAccounts(testUsername);
