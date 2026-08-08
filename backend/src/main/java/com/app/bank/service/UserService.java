@@ -30,8 +30,8 @@ public class UserService {
 
     // Finds and returns a User by username, or throws ResourceNotFoundException if not found
     public User findUserByUsername(String username) {
-        return userRepository.findWithAccountsByUsername(username)
-            .orElseThrow(() -> new ResourceNotFoundException("User and accounts not found."));
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found."));
     }
 
     // ---------------------------------------- Main Methods -----------------------------------------
@@ -48,7 +48,8 @@ public class UserService {
 
     // Retrieves a User by username with all accounts and returns a UserResponse DTO
     public UserResponse getUser(String username) {
-        User user = findUserByUsername(username);
+        User user = userRepository.findWithAccountsByUsername(username)
+            .orElseThrow(() -> new ResourceNotFoundException("User and accounts not found."));
         return new UserResponse(user);
     }
 
@@ -77,6 +78,7 @@ public class UserService {
 
         user.setUsername(request.getNewUsername());
         userRepository.save(user);
+        
     }
 
     public void deleteUser(String username) {
