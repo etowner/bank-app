@@ -22,6 +22,7 @@ public class Transaction {
     public Transaction() {}
     
     public Transaction(String accountNumber, TransactionType type, BigDecimal amount, String counterparty) {
+        this.id = new ObjectId();
         this.accountNumber = accountNumber;
         this.type = type;
         this.amount = amount;
