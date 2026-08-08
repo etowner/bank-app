@@ -33,7 +33,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,9 +61,9 @@ public class UserServiceTests {
 
     @Nested
     @DisplayName("Registration Tests")
-    class RegistrationTests {
+    public class RegistrationTests {
         @Test
-        public void register_shouldReturnEncodedPassword_whenValidUser() { 
+        void register_shouldReturnEncodedPassword_whenValidUser() { 
             when(passwordEncoder.encode(RAW_PASSWORD)).thenReturn(ENCODED_PASSWORD); 
             when(userRepository.findByUsername(registerRequest.getUsername())).thenReturn(Optional.empty());
          
@@ -79,7 +79,7 @@ public class UserServiceTests {
         }
 
         @Test
-        public void register_shouldThrowBadRequest_whenUserAlreadyExists() {
+        void register_shouldThrowBadRequest_whenUserAlreadyExists() {
             User existingUser = new User(USERNAME, passwordEncoder.encode(RAW_PASSWORD));
             
             when(userRepository.findByUsername(existingUser.getUsername())).thenReturn(Optional.of(existingUser));
@@ -93,9 +93,10 @@ public class UserServiceTests {
     // Get User Test
     @Nested
     @DisplayName("Get User Tests")
-    class GetUserTests {
+    public class GetUserTests {
+        
         @Test
-        public void getUser_returnsUserResponse_whenUserExists() {
+        void getUser_returnsUserResponse_whenUserExists() {
             User existingUser = new User(USERNAME, passwordEncoder.encode(RAW_PASSWORD));
             
             when(userRepository.findWithAccountsByUsername(existingUser.getUsername())).thenReturn(Optional.of(existingUser));
@@ -105,9 +106,8 @@ public class UserServiceTests {
             assertEquals(existingUser.getUsername(), userResponse.getUsername());
         }
 
-
         @Test
-        public void getUser_throwsResourceNotFoundException_whenUserDoesNotExist() {
+        void getUser_throwsResourceNotFoundException_whenUserDoesNotExist() {
             when(userRepository.findWithAccountsByUsername(USERNAME)).thenReturn(Optional.empty());
             assertThrows(ResourceNotFoundException.class, () -> userService.getUser(USERNAME));
         }
@@ -117,10 +117,10 @@ public class UserServiceTests {
     // Change Username Test
     @Nested
     @DisplayName("Change Username Tests")
-    class ChangeUsernameTests {
+    public class ChangeUsernameTests {
        
         @Test
-        public void changeUsername_shouldUpdateUsername_whenValid() {
+        void changeUsername_shouldUpdateUsername_whenValid() {
             String newUsername = "newUsername";
             ChangeUsernameRequest request = new ChangeUsernameRequest(RAW_PASSWORD, newUsername);
             
@@ -138,7 +138,7 @@ public class UserServiceTests {
         }
 
         @Test
-        public void changeUsername_shouldThrowBadRequest_whenNewUsernameExists() {
+        void changeUsername_shouldThrowBadRequest_whenNewUsernameExists() {
             String newUsername = USERNAME; 
             ChangeUsernameRequest request = new ChangeUsernameRequest(RAW_PASSWORD, newUsername);
             
@@ -154,6 +154,18 @@ public class UserServiceTests {
             assertEquals("Username already exists.", exception.getMessage());
             verify(userRepository, never()).save(any(User.class));
         }
+
+        @Test
+        void changeUsername_shouldThrowBadCredentials_whenPasswordIsIncorrect() {
+            when(userRepository.findByUsername(USERNAME))
+                .thenReturn(Optional.of(new User(USERNAME, ENCODED_PASSWORD)));
+            when(passwordEncoder.matches(RAW_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
+
+            assertThrows(BadCredentialsException.class,
+                () -> userService.changeUsername(USERNAME, new ChangeUsernameRequest(RAW_PASSWORD, "newUsername")));
+
+            verify(userRepository, never()).save(any(User.class));
+        }
     }
 
     // Change Password Test
@@ -162,7 +174,7 @@ public class UserServiceTests {
     class ChangePasswordTests {
         
         @Test
-        public void changePassword_shouldUpdatePassword_whenValid() {
+        void changePassword_shouldUpdatePassword_whenValid() {
             String newPassword = "newPassword";
             String encodedNewPassword = "encoded_newPassword";
 
@@ -179,6 +191,42 @@ public class UserServiceTests {
             assertEquals(encodedNewPassword, userCaptor.getValue().getPassword());
         }
 
+        @Test
+        void changePassword_shouldThrowBadCredentials_whenPasswordIsIncorrect() {
+            when(userRepository.findByUsername(USERNAME))
+                .thenReturn(Optional.of(new User(USERNAME, ENCODED_PASSWORD)));
+            when(passwordEncoder.matches(RAW_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
+            assertThrows(BadCredentialsException.class,
+                () -> userService.changePassword(USERNAME, RAW_PASSWORD, "newPassword"));
+
+            verify(userRepository, never()).save(any(User.class));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Delete User Tests")
+    class DeleteUserTests {
+
+        @Test
+        void deleteUser_shouldDeleteUser_whenUserExists() {
+            User existingUser = new User(USERNAME, ENCODED_PASSWORD);
+            when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.of(existingUser));
+
+            userService.deleteUser(USERNAME);
+
+            verify(userRepository).delete(existingUser);
+        }
+
+        @Test
+        void deleteUser_shouldThrowResourceNotFound_whenUserDoesNotExist() {
+            when(userRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class,
+                () -> userService.deleteUser(USERNAME));
+
+            verify(userRepository, never()).delete(any(User.class));
+        }
     }
 }
