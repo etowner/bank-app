@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class AccountService {
 
     // ---------------------------------------- Verify Methods -----------------------------------------
     public void verifyOwnership(String accountNumber, String username) {
-        Account account = getAccount(accountNumber);
+        Account account = findAccount(accountNumber);
         if (!account.getUsername().equals(username)) {
             throw new AccessDeniedException("You do not own this account.");
         }
@@ -71,16 +72,16 @@ public class AccountService {
         try {
             Account account = new Account(username, generateAccountNumber(), type);
             accountRepository.insert(account);
-            mongoTemplate.update(User.class)
-                .matching(Criteria.where("username").is(account.getUsername()))
-                .apply(new Update().push("accounts").value(account))
-                .first();
+             mongoTemplate.updateFirst(
+                new Query(Criteria.where("username").is(username)), 
+                new Update().push("accounts").value(account), 
+                User.class);
         } catch (DuplicateKeyException e) {
             throw new BadRequestException("Account creation failed, please try again.");
         }
     }
 
-    private Account getAccount(String accountNumber) {
+    public Account getAccount(String accountNumber) {
         return findAccount(accountNumber);
     }
 
