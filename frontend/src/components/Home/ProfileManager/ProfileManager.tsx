@@ -5,6 +5,7 @@ import { useUserContext } from "../../../UserContext";
 import ChangePassword from "./ChangePassword";
 import ChangeUsername from "./ChangeUsername";
 import { deleteUser } from "../../../api/userApi";
+import { deleteAllAccounts } from "../../../api/accountApi";
 
 export default function ProfileManager() {
   const { username, logout, setUser } = useUserContext();
@@ -34,6 +35,7 @@ export default function ProfileManager() {
     event.preventDefault();
     try {
       void await deleteUser();
+      void await deleteAllAccounts();
       setUser(null);
       void navigate("/");
     } catch (error) {
