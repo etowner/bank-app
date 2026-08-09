@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "module": "ESNext",
+    "module": "esnext",
     "lib": ["ES2023"],
     "skipLibCheck": true,
 
-    // Bundler Mode
+    // Module Mode
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
   
     // Linting
     "strict": true,
