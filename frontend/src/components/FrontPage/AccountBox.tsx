@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useUserContext } from "../../UserContext";
+import { useUserContext } from "../../context/UserContext";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
 
 interface AuthFormProps {

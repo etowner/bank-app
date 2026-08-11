@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Card, Col, Form, Row, Alert } from "react-bootstrap";
-import { useUserContext } from "../../UserContext";
+import { useUserContext } from "../../context/UserContext";
 import { transfer } from "../../api/transactionApi";
 import { getAxiosError } from "../../api/axiosConfig";
 

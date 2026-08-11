@@ -6,7 +6,7 @@ import Header from "./Header";
 import "../../styles/Home.css";
 import OpenAccount from "./OpenAccount";
 import PieChart from "./PieChart";
-import { useUserContext } from "../../UserContext";
+import { useUserContext } from "../../context/UserContext";
 import { createAccount } from "../../api/accountApi";
 
 const Home = () => {
