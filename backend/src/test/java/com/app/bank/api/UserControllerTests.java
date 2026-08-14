@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import java.util.ArrayList;
 
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -56,6 +58,7 @@ public class UserControllerTests {
 
     private String testUsername = "testuser";
     private String testPassword = "password123";
+    private String encodedPassword = "encoded_testPass";
 
 
     @BeforeEach
@@ -188,12 +191,13 @@ public class UserControllerTests {
         @Test
         @WithMockUser(username = "testuser")
         @DisplayName("Should return 404 when user not found")
-        void shouldReturnNotFoundWhenUserNotExists() throws Exception {
+        void shouldReturnNotFound_WhenUserNotExists() throws Exception {
             when(userService.getUser(testUsername))
                     .thenThrow(new ResourceNotFoundException("User not found."));
 
             mvc.perform(get("/api/v1/user")
                     .contentType(MediaType.APPLICATION_JSON))
+                    .andDo(print())
                     .andExpect(status().isNotFound());
         }
     }

@@ -5,10 +5,10 @@ if (!window.matchMedia) {
 		matches: false,
 		media: '',
 		onchange: null,
-		addListener: () => {},
-		removeListener: () => {},
-		addEventListener: () => {},
-		removeEventListener: () => {},
+		addListener: () => { /* empty */ },
+		removeListener: () => {/* empty */},
+		addEventListener: () => {/* empty */},
+		removeEventListener: () => {/* empty */},
 		dispatchEvent: () => false,
 	});
 }

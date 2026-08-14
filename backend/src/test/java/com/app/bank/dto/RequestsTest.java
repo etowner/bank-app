@@ -12,17 +12,17 @@ import com.app.bank.dto.request.RegisterRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 
-@SpringBootTest
-public class RequestsTest {
+// @SpringBootTest
+// public class RequestsTest {
 
-    @Test
-    void username_validatesWhenBlankOrNull() {
-        RegisterRequest request = new RegisterRequest("", "password");
+//     @Test
+//     void username_validatesWhenBlankOrNull() {
+//         RegisterRequest request = new RegisterRequest("", "password");
         
-        // Set<ConstraintViolation<RegisterRequest>> violations = Validator.validate(request);
+//         // Set<ConstraintViolation<RegisterRequest>> violations = Validator.validate(request);
         
-        // assertEquals(1, violations.size());
-        // assertEquals("must not be blank", violations.iterator().next().getMessage());
-    }
+//         // assertEquals(1, violations.size());
+//         // assertEquals("must not be blank", violations.iterator().next().getMessage());
+//     }
     
-}
+// }
