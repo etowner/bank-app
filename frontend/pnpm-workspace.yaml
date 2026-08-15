@@ -1,6 +1,6 @@
 allowBuilds:
   esbuild: true
-  unrs-resolver: set this to true or false
+
 minimumReleaseAgeExclude:
   - '@typescript-eslint/eslint-plugin@8.67.0'
   - '@typescript-eslint/parser@8.67.0'
