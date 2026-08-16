@@ -7,9 +7,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.app.bank.api.AccountController;
 import com.app.bank.api.UserController;
+import com.app.bank.dto.response.UserResponse;
 import com.app.bank.model.User;
 import com.app.bank.service.AccountService;
-import com.app.bank.security.DatabaseUserDetailsService;
+import com.app.bank.service.ManagementService;
 import com.app.bank.service.UserService;
 import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,13 @@ public class AuthenticationSecurityTests {
     private AuthenticationManager authenticationManager;
 
     @MockitoBean
+    private ManagementService managementService;
+
+    @MockitoBean
     private DatabaseUserDetailsService userDetailsService;
+
+    @MockitoBean
+    private UserPrincipal userPrincipal;
     
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -64,14 +71,16 @@ public class AuthenticationSecurityTests {
         mvc.perform(get("/api/v1/user").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
-    // @Test
-    // public void protectedEndpoint_allowsAuthenticatedRequests() throws Exception
-    // {
-    // when(userService.getUser("testUser")).thenReturn(new UserResponse("testUser",
-    // "testPass")));
-    // mvc.perform(get("/api/v1/user")
-    // .with(user("testUser").roles("USER"))
-    // .contentType(MediaType.APPLICATION_JSON))
-    // .andExpect(status().isOk());
-    // }
+    
+    @Test
+    public void protectedEndpoint_allowsAuthenticatedRequests() throws Exception {
+        User user = new User("testUser", "testPass");
+        UserPrincipal principal = new UserPrincipal(user);
+        // when(userDetailsService.loadUserByUsername("testUser")).thenReturn(new UserPrincipal(user));
+        when(userService.getUser(principal.getUsername())).thenReturn(new UserResponse(user));
+        mvc.perform(get("/api/v1/user")
+            .with(user(principal))
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+        }
 }
