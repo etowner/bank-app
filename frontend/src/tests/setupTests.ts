@@ -1,14 +1,12 @@
 import '@testing-library/jest-dom/vitest';
 
-if (!window.matchMedia) {
-	window.matchMedia = () => ({
-		matches: false,
-		media: '',
-		onchange: null,
-		addListener: () => { /* empty */ },
-		removeListener: () => {/* empty */},
-		addEventListener: () => {/* empty */},
-		removeEventListener: () => {/* empty */},
-		dispatchEvent: () => false,
-	});
-}
+// import { setupServer } from 'msw/node';
+// import { handlers } from './handlers';
+
+// export const server = setupServer(...handlers);
+
+// import { server } from './src/mocks/server';
+
+// beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
+// afterEach(() => server.resetHandlers());
+// afterAll(() => server.close());

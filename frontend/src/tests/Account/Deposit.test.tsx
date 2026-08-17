@@ -2,11 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, test, vi, beforeEach } from "vitest";
-import Deposit from "../components/Transactions/Deposit";
-import { UserContext } from "../UserContext";
-import api from "../api/axiosConfig";
-import React from "react";
-vi.mock("../api/axiosConfig", () => ({
+import Deposit from "../../components/Account/Deposit";
+import { UserContext } from "../../context/UserContext";
+import api from "../../api/axiosConfig";
+
+vi.mock("../../api/axiosConfig", () => ({
   default: {
     put: vi.fn(),
   },
