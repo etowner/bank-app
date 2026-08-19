@@ -6,6 +6,9 @@ vi.mock('./AccountBox', () => ({
   default: () => <div data-testid="account-box">Mocked AccountBox</div>,
 }));
 
+test('render with context', () => {
+  render(<FrontPage />);
+})
 
 describe("FrontPage", () => {
   beforeEach(() => {
