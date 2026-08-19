@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
-import { useUserContext } from "../../context/UserContext";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap";
-
+import { registerUser, loginUser } from "../../api/userApi";
+import { getAxiosError } from "../../api/axiosConfig";
 interface AuthFormProps {
   onSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void;
   username: string;
@@ -33,11 +34,35 @@ const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordCh
 );
 
 const AccountBox = () => {
-  const { login, register, error, setError } = useUserContext();
+  const [error, setError] = useState<string | null>(null);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("create");
+  const navigate = useNavigate();
   
+  const register = async (username: string, password: string) => {
+    setError(null);
+    try {
+      await registerUser(username, password);
+    } catch (err) {
+      setError(getAxiosError(err));
+      console.error("Registration error:", err);
+      return; 
+    }
+    void navigate(`/home`);
+  };
+
+  const login = async (username: string, password: string) => {
+    setError(null);
+    try {
+      await loginUser(username, password );
+    } catch (err) {
+      setError(getAxiosError(err));
+      console.error("Login error:", err);
+      return; 
+    }
+    void navigate(`/home`);
+  };
 
   const handleCreate = (event: React.MouseEvent<HTMLButtonElement> | null) => {
     if (!event) return;
