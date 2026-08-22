@@ -14,16 +14,16 @@ interface AuthFormProps {
 
 const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }: AuthFormProps) => (
     <Form>
-        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+        <Form.Group controlId="username" as={Row} className="mb-3 justify-content-md-center">
             <Form.Label column sm={6}>Enter username:</Form.Label>
             <Col>
                 <Form.Control autoComplete="on" value={username} onChange={onUsernameChange} />
             </Col>
         </Form.Group>
-        <Form.Group as={Row} className="mb-3 justify-content-md-center">
+        <Form.Group controlId="password" as={Row} className="mb-3 justify-content-md-center">
             <Form.Label column>Enter password:</Form.Label>
             <Col sm={6}>
-                <Form.Control autoComplete="on" type="password" value={password} onChange={onPasswordChange} />
+                <Form.Control id="password" autoComplete="on" type="password" value={password} onChange={onPasswordChange} />
             </Col>
         </Form.Group>
         <Button variant="light" onClick={onSubmit} size="lg" className="mb-3">
