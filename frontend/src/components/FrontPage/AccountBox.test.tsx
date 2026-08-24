@@ -20,7 +20,6 @@ const getLoginPanel  = () => screen.getByRole('tabpanel', { name: /log in/i });
 
 const renderAccountBox = () => render(<MemoryRouter> <AccountBox /> </MemoryRouter> );
 
-
 describe("AccountBox", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -40,16 +39,10 @@ describe("AccountBox", () => {
     
     expect(screen.getByLabelText(/enter username/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/enter password/i)).toBeInTheDocument();
-    expect(within(getCreatePanel()).getByRole('button', { name: /submit/i }))
-        .toBeInTheDocument();
-  });
-
-
-  test('shows no error alert on first render', () => {
-    renderAccountBox();
+    expect(within(getCreatePanel()).getByRole('button', { name: /submit/i })).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
-  
+
   test('handleTabSwitch should update active key', async () => {
     const user = userEvent.setup();
     renderAccountBox();
@@ -68,7 +61,7 @@ describe("AccountBox", () => {
       renderAccountBox();
 
       await user.click(within(getCreatePanel()).getByRole('button', { name: /submit/i }));
-      await screen.findByRole('alert');
+      await screen.findAllByRole('alert');
 
       await user.click(screen.getByRole('tab', { name: /log in/i }));
 
@@ -78,12 +71,18 @@ describe("AccountBox", () => {
   });
 
   describe('Create Account tab', () => {
+   beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getAxiosError).mockReturnValue('Test error message');
+  });
+
     it('calls registerUser with the typed credentials', async () => {
       const user = userEvent.setup();
       vi.mocked(registerUser).mockResolvedValue(undefined);
       renderAccountBox();
 
       const panel = getCreatePanel();
+      screen.debug(panel);
       await user.type(within(panel).getByLabelText(/enter username/i), 'alice');
       await user.type(within(panel).getByLabelText(/enter password/i), 'secret99');
       await user.click(within(panel).getByRole('button', { name: /submit/i }));
@@ -114,6 +113,11 @@ describe("AccountBox", () => {
   });
 
   describe('Log In tab', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+      vi.mocked(getAxiosError).mockReturnValue('Test error message');
+    });
+
     it('calls loginUser with the typed credentials', async () => {
       const user = userEvent.setup();
       vi.mocked(loginUser).mockResolvedValue(undefined);
@@ -122,6 +126,7 @@ describe("AccountBox", () => {
       await user.click(screen.getByRole('tab', { name: /log in/i }));
 
       const panel = getLoginPanel();
+      screen.debug(panel);
       await user.type(within(panel).getByLabelText(/enter username/i), 'bob');
       await user.type(within(panel).getByLabelText(/enter password/i), 'hunter2');
       await user.click(within(panel).getByRole('button', { name: /submit/i }));

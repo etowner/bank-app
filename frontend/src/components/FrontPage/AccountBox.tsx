@@ -4,6 +4,7 @@ import { Alert, Button, Form, Tab, Tabs, Card, Col, Row } from "react-bootstrap"
 import { registerUser, loginUser } from "../../api/userApi";
 import { getAxiosError } from "../../api/axiosConfig";
 interface AuthFormProps {
+  idPrefix: string; 
   onSubmit: (e: React.MouseEvent<HTMLButtonElement>) => void;
   username: string;
   password: string;
@@ -12,25 +13,26 @@ interface AuthFormProps {
   error: string | null;
 }
 
-const AuthForm = ({ onSubmit, username, password, onUsernameChange, onPasswordChange, error }: AuthFormProps) => (
-    <Form>
-        <Form.Group controlId="username" as={Row} className="mb-3 justify-content-md-center">
-            <Form.Label column sm={6}>Enter username:</Form.Label>
-            <Col>
-                <Form.Control autoComplete="on" value={username} onChange={onUsernameChange} />
-            </Col>
-        </Form.Group>
-        <Form.Group controlId="password" as={Row} className="mb-3 justify-content-md-center">
-            <Form.Label column>Enter password:</Form.Label>
-            <Col sm={6}>
-                <Form.Control id="password" autoComplete="on" type="password" value={password} onChange={onPasswordChange} />
-            </Col>
-        </Form.Group>
-        <Button variant="light" onClick={onSubmit} size="lg" className="mb-3">
-            Submit
-        </Button>
-        {error && <Alert variant="danger">{error}</Alert>}
-    </Form>
+const AuthForm = ({ idPrefix, onSubmit, username, password, 
+                    onUsernameChange, onPasswordChange, error }: AuthFormProps) => (
+  <Form>
+    <Form.Group as={Row} controlId={`${idPrefix}-username`} className="mb-3 justify-content-md-center">
+      <Form.Label column sm={6}>Enter username:</Form.Label>
+      <Col>
+        <Form.Control autoComplete="username" value={username} onChange={onUsernameChange} />
+      </Col>
+    </Form.Group>
+    <Form.Group as={Row} controlId={`${idPrefix}-password`} className="mb-3 justify-content-md-center">
+      <Form.Label column>Enter password:</Form.Label>
+      <Col sm={6}>
+        <Form.Control autoComplete="current-password" type="password" value={password} onChange={onPasswordChange} />
+      </Col>
+    </Form.Group>
+    <Button variant="light" onClick={onSubmit} size="lg" className="mb-3">
+      Submit
+    </Button>
+    {error && <Alert variant="danger">{error}</Alert>}
+  </Form>
 );
 
 const AccountBox = () => {
@@ -85,14 +87,14 @@ const AccountBox = () => {
   return (
     <Card style={{ width: "35rem" }} bg="secondary" text="light">
       <Card.Body>
-        <Tabs activeKey={activeTab} onSelect={handleTabSwitch} className="mb-3" fill>
+        <Tabs activeKey={activeTab} onSelect={handleTabSwitch} className="mb-3" unmountOnExit fill>
           <Tab eventKey="create" title="Create Account">
-            <AuthForm onSubmit={handleCreate} username={username} 
+            <AuthForm idPrefix="create" onSubmit={handleCreate} username={username} 
             password={password} onUsernameChange={(e) => setUsername(e.target.value)}
             onPasswordChange={(e) => setPassword(e.target.value)} error={error} />
           </Tab>
           <Tab eventKey="log" title="Log In">
-            <AuthForm onSubmit={handleLog} username={username} 
+            <AuthForm idPrefix="log" onSubmit={handleLog} username={username} 
             password={password} onUsernameChange={(e) => setUsername(e.target.value)}
             onPasswordChange={(e) => setPassword(e.target.value)} error={error} />
           </Tab>
