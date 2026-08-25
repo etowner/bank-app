@@ -3,8 +3,7 @@ import { useUserContext } from "../../context/UserContext";
 import { render, screen, waitFor } from '../../lib/test-utils';
 import { createAccount } from "../../api/accountApi";
 import { userEvent } from '@testing-library/user-event';
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { Account } from "../../lib/types";
+import { MemoryRouter } from "react-router-dom";
 
 const mockNavigate = vi.fn();
 
