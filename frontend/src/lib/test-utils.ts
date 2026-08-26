@@ -10,3 +10,4 @@ function render(ui: React.ReactElement,
 export * from '@testing-library/react'
 // override React Testing Library's render with our own
 export {render}
+
