@@ -1,18 +1,16 @@
-
 import { useEffect, useCallback, useState } from "react";
-import { Accordion, useAccordionButton } from "react-bootstrap";
-import { Button, Card, Col, Container, Nav, Navbar, Row, Table, } from "react-bootstrap";
+import { Button, Card, Col, Container, Nav, Navbar, Row, Table, Accordion, useAccordionButton  } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import "../../styles/Home.css";
 import Deposit from "./Deposit";
 import Withdraw from "./Withdraw";
 import CloseAccount from "./CloseAccount";
 import LineChart from "./LineChart";
 import { getTransactions } from "../../api/transactionApi";
 import { getAccount } from "../../api/accountApi";
+import { getAxiosError } from "../../api/axiosConfig";
 import { formatDate } from '../../lib/utils';
 import type { Account, Transaction } from "../../lib/types";
-import { getAxiosError } from "../../api/axiosConfig";
+import "../../styles/Home.css";
 
 function CustomToggle({ children, eventKey }: { children: React.ReactNode; eventKey: string }) {
   const showAction = useAccordionButton(eventKey, () => { /* empty */ });

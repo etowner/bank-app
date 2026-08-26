@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Alert } from "react-bootstrap";
-import Transfer from "./Transfer";
-import AccList from "./AccList";
-import Header from "./Header";
-import "../../styles/Home.css";
-import OpenAccount from "./OpenAccount";
-import PieChart from "./PieChart";
 import { useUserContext } from "../../context/UserContext";
 import { createAccount } from "../../api/accountApi";
+import Transfer from "./Transfer";
+import Header from "./Header";
+import OpenAccount from "./OpenAccount";
+import PieChart from "./PieChart";
+import AccountList from "./AccountList";
+import "../../styles/Home.css";
 
 const Home = () => {
   const { user, username, fetchUser } = useUserContext();
   const accounts = user?.accounts ?? [];
+  const numOfAccounts = user?.numOfAccounts ?? 0;
   const [error, setError] = useState<string | null>(null);
   
   const openAcc = async (type: string) => {
-    if (accounts.length >= 3) {
+    if (numOfAccounts >= 3) {
       setError("You can only have 3 accounts");
       return;
     }
@@ -45,7 +46,7 @@ const Home = () => {
           {/* Lists Accounts and provides open account options */}
           <Col key={1}>
             <Card border="dark">
-              <AccList accounts={accounts} />
+              <AccountList accounts={accounts} />
               <OpenAccount
                 openAcc={(type) => void openAcc(type)}
                 setError={setError}

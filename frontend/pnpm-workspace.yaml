@@ -1,5 +1,6 @@
 allowBuilds:
   esbuild: true
+  msw: true
 
 minimumReleaseAgeExclude:
   - '@typescript-eslint/eslint-plugin@8.67.0'

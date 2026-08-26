@@ -1,10 +1,14 @@
-import { Accordion, Button, Card, ListGroup, useAccordionButton} from "react-bootstrap";
+import { Accordion, Button, Card, ListGroup, useAccordionButton, AccordionContext} from "react-bootstrap";
+import { use } from "react";
 
 function CustomToggle({ children, eventKey, onToggle }: { children: React.ReactNode; eventKey: string; onToggle: () => void }) {
-  const showAcc = useAccordionButton(eventKey, onToggle);
+ 
+  const { activeEventKey } = use(AccordionContext);
+   const showAcc = useAccordionButton(eventKey, onToggle);
+    const isExpanded = activeEventKey === eventKey;
   
   return (
-    <Button variant="dark" onClick={showAcc} className="mb-3">
+    <Button variant="dark" onClick={showAcc} className="mb-3" aria-expanded={isExpanded}>
       {children}
     </Button>
   );

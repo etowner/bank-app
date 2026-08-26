@@ -2,7 +2,7 @@ import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import type { Account } from "../../lib/types";
 
-export default function AccList({ accounts }: { accounts: Account[] }) {
+export default function AccountList({ accounts }: { accounts: Account[] }) {
   const navigate = useNavigate();
 
   function handleAccount(accountNumber: string) {
