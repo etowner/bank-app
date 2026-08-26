@@ -55,7 +55,7 @@ export default function Transfer() {
           <h2>Transfer</h2>
         </Card.Header>
         <Card.Body>
-          <Form.Group as={Row} className="mb-1">
+          <Form.Group controlId="transfer-from" as={Row} className="mb-1">
             <Form.Label column sm={5}>
               <h3>Transfer from:</h3>
             </Form.Label>
@@ -67,7 +67,7 @@ export default function Transfer() {
               />
             </Col>
           </Form.Group>
-          <Form.Group as={Row} className="mb-1">
+          <Form.Group controlId="transfer-to" as={Row} className="mb-1">
             <Form.Label column sm={5}>
               <h3> Transfer to: </h3>
             </Form.Label>
@@ -79,7 +79,7 @@ export default function Transfer() {
               />
             </Col>
           </Form.Group>
-          <Form.Group as={Row} className="mb-1">
+          <Form.Group controlId="transfer-amount" as={Row} className="mb-1">
             <Form.Label column sm={6}>
               <h3>Transfer amount:</h3>
             </Form.Label>

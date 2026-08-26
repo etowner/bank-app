@@ -145,7 +145,7 @@ export default function ProfileManager() {
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="primary" onClick={handleLogOut}>
-                  Log Out
+                  Yes
                 </Button>
               </Modal.Footer>
             </Modal>

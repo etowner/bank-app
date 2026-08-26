@@ -15,13 +15,15 @@ export default function DeleteAccount() {
   const [error, setError] = useState<string | null>(null);
 
 
-  const closeAccount =  (event: React.MouseEvent<HTMLButtonElement>) => {
+
+  const closeAccount =  async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    
     try {
-      void deleteAccount(accountNumber!);
+      await deleteAccount(accountNumber!);
       void navigate(`/home`);
-      void fetchUser(); 
-    } catch (err: unknown) {
+      // void fetchUser(); 
+    } catch (err) {
       setError(getAxiosError(err));
       console.error("Error fetching account data:", err);
     }
@@ -42,14 +44,14 @@ export default function DeleteAccount() {
         <Modal.Body style={{ textAlign: "center" }}>
           Are you sure you want to delete this account? This cannot be undone!
         </Modal.Body>
-        {error && <Alert variant="danger">{error}</Alert>}
         <Modal.Footer>
-          <Button variant="secondary" onClick={(e) => closeAccount(e)}>
+          <Button variant="secondary" onClick={(e) => void closeAccount(e)}>
             Yes
           </Button>
           <Button variant="primary" onClick={handleClose}>
             No
           </Button>
+           {error && <Alert variant="danger">{error}</Alert>}
         </Modal.Footer>
       </Modal>
     </div>
